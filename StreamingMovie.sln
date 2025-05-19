@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamingMovie.Web", "StreamingMovie.Web\StreamingMovie.Web.csproj", "{750AF427-A9EE-4E89-9BF8-13055C49533C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamingMovie.Domain", "StreamingMovie.Domain\StreamingMovie.Domain.csproj", "{FD15141A-FD4E-4563-B256-6ED1EF143599}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamingMovie.Application", "StreamingMovie.Service\StreamingMovie.Application.csproj", "{854FDA3E-F47E-42B1-B096-FDB6C78974BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamingMovie.Application", "StreamingMovie.Application\StreamingMovie.Application.csproj", "{854FDA3E-F47E-42B1-B096-FDB6C78974BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamingMovie.Infrastructure", "StreamingMovie.Infrastructure\StreamingMovie.Infrastructure.csproj", "{A6BF9CB3-7490-4000-BCE7-5764E76E63BB}"
 EndProject
