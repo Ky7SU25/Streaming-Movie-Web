@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("StreamingMovie.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2c0fe0846f710ee4df3222994c9bef6fbab8d7fe")]
 [assembly: System.Reflection.AssemblyProductAttribute("StreamingMovie.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("StreamingMovie.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
