@@ -7,8 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StreamingMovie.Domain\StreamingMovie.Domain.csproj" />
-    <ProjectReference Include="..\StreamingMovie.Service\StreamingMovie.Application.csproj" />
+    <ProjectReference Include="..\StreamingMovie.Application\StreamingMovie.Application.csproj" />
+    <ProjectReference Include="..\StreamingMovie.Infrastructure\StreamingMovie.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

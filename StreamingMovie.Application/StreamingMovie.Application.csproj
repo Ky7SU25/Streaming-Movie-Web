@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StreamingMovie.Domain\StreamingMovie.Domain.csproj" />
-    <ProjectReference Include="..\StreamingMovie.Infrastructure\StreamingMovie.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
