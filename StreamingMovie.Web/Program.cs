@@ -1,10 +1,20 @@
-using StreamingMovie.Infrastructure.Extensions;
+﻿using StreamingMovie.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Configure authentication
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
 
 var app = builder.Build();
 
@@ -21,6 +31,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication(); // Phải gọi trước UseAuthorization
 app.UseAuthorization();
 
 app.MapControllerRoute(

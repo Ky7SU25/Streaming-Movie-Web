@@ -6,7 +6,7 @@ using StreamingMovie.Domain.Entities;
 
 namespace StreamingMovie.Infrastructure.Data;
 
-public class MovieDbContext : IdentityDbContext
+public class MovieDbContext : IdentityDbContext<User>
 {
     public MovieDbContext(DbContextOptions<MovieDbContext> options) : base(options)
     {

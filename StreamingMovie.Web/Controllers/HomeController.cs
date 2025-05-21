@@ -15,6 +15,10 @@ namespace StreamingMovie.Web.Controllers
 
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                ViewData["WelcomeMessage"] = $"Welcome {User.Identity.Name}!";
+            }
             return View();
         }
 
