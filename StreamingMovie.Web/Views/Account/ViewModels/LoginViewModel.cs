@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace StreamingMovie.Web.ViewModels;
+namespace StreamingMovie.Web.Views.Account.ViewModels;
 
 public class LoginViewModel
 {

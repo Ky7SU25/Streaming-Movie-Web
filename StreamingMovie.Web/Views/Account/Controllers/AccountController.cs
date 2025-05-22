@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StreamingMovie.Domain.Entities;
-using StreamingMovie.Web.Models;
-using StreamingMovie.Web.ViewModels;
+using StreamingMovie.Web.Views.Account.ViewModels;
+using StreamingMovie.Web.Views.Home.Controllers;
+using StreamingMovie.Web.Views.Shared.ViewModels;
 using System.Diagnostics;
 
-namespace StreamingMovie.Web.Controllers;
+namespace StreamingMovie.Web.Views.Account.Controllers;
 
 public class AccountController : Controller
 {
