@@ -20,26 +20,31 @@
 <!-- Normal Breadcrumb End -->
 
 <!-- Signup Section Begin -->
-
 <section class="signup spad">
     <div class="container">
         <div class="row">
             <div class="col-lg-6">
                 <div class="login__form">
                     <h3>Sign Up</h3>
-                    <form action="#">
+                    <form asp-action="Register" method="post">
+
+                        <span asp-validation-for="Email" class="text-danger position-relative"></span>
                         <div class="input__item">
-                            <input type="text" placeholder="Email address">
+                            <input asp-for="Email" placeholder="Email address" class="form-control" required />
                             <span class="icon_mail"></span>
                         </div>
-                        <div class="input__item">
+
+                        @* <div class="input__item">
                             <input type="text" placeholder="Your Name">
                             <span class="icon_profile"></span>
-                        </div>
+                        </div> *@
+
+                        <span asp-validation-for="Password" class="text-danger position-relative"></span>
                         <div class="input__item">
-                            <input type="text" placeholder="Password">
+                            <input asp-for="Password" placeholder="Password" class="form-control" required />
                             <span class="icon_lock"></span>
                         </div>
+
                         <button type="submit" class="site-btn">Sign Up</button>
                     </form>
                     <h5>Already have an account? <a asp-action="Login" asp-controller="Account">Log In!</a></h5>

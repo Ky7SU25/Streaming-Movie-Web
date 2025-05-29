@@ -190,6 +190,10 @@ ol {
 	display: inline-block;
 	padding: 12px 30px;
 }
+	.site-btn:hover {
+		background: #990000; /* đỏ đậm hơn */
+		cursor: pointer; /* con trỏ tay khi hover */
+	}
 
 /* Preloder */
 
@@ -1771,7 +1775,6 @@ ol {
 	height: 50px;
 	width: 100%;
 	font-size: 15px;
-	color: #b7b7b7;
 	background: #ffffff;
 	border: none;
 	padding-left: 76px;
@@ -1789,7 +1792,7 @@ ol {
 	color: #b7b7b7;
 }
 
-.login__form form .input__item input::-ms-input-placeholder {
+.login__form form .input__item input:-ms-input-placeholder {
 	color: #b7b7b7;
 }
 
