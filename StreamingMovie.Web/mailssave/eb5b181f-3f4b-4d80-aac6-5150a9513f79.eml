@@ -1,0 +1,10 @@
+From: Huy Tran <trandinhgiahuy2004@gmail.com>
+Date: Sat, 31 May 2025 16:16:21 +0700
+Subject: Test Email from ASP.NET Core
+Message-Id: <28Y8XRDVAQU4.M6BCYXWTT5JZ1@desktop-u113ctk>
+Sender: Huy Tran <trandinhgiahuy2004@gmail.com>
+To: huytdgde180948@fpt.edu.vn
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<h1>Hello!</h1><p>This is a test email sent using MailKit.</p>

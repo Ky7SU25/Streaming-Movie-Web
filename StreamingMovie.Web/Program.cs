@@ -1,4 +1,5 @@
 ﻿using StreamingMovie.Infrastructure.Extensions;
+using StreamingMovie.Infrastructure.Extensions.Mail;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ builder.Services.AddControllersWithViews();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddMailService(builder.Configuration);
 
 // Configure authentication
 builder.Services.ConfigureApplicationCookie(options =>
