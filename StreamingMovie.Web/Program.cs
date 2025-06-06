@@ -1,4 +1,5 @@
 ﻿using StreamingMovie.Infrastructure.Extensions;
+using StreamingMovie.Infrastructure.Extensions.Database;
 using StreamingMovie.Infrastructure.Extensions.Mail;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,8 +9,7 @@ builder.Services.AddControllersWithViews();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddMailService(builder.Configuration);
+builder.Services.AddCoreInfrastructure(builder.Configuration);
 
 // Configure authentication
 builder.Services.ConfigureApplicationCookie(options =>
@@ -36,8 +36,6 @@ app.UseRouting();
 app.UseAuthentication(); // Phải gọi trước UseAuthorization
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

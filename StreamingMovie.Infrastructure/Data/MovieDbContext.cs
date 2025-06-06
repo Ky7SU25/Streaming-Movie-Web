@@ -1,27 +1,39 @@
-﻿
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using StreamingMovie.Domain.Entities;
 
 namespace StreamingMovie.Infrastructure.Data;
 
-public class MovieDbContext : IdentityDbContext<User>
+/// <summary>
+/// Represents the database context.
+/// </summary>
+public class MovieDbContext : IdentityDbContext<User, Role, int>
 {
-    public MovieDbContext(DbContextOptions<MovieDbContext> options) : base(options)
-    {
-    }
+    public MovieDbContext(DbContextOptions<MovieDbContext> options)
+        : base(options) { }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
-        // Đổi tên các bảng mặc định của Identity
-        builder.Entity<User>().ToTable("Users");
-        builder.Entity<IdentityRole>().ToTable("Roles");
-        builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
-        builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
-        builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
-        builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
-        builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+        builder.ApplyConfigurationsFromAssembly(typeof(MovieDbContext).Assembly);
+
+        RemoveAspNetPrefixInIdentityTable(builder: builder);
+    }
+
+    private static void RemoveAspNetPrefixInIdentityTable(ModelBuilder builder)
+    {
+        const string AspNetPrefix = "AspNet";
+
+        foreach (var entityType in builder.Model.GetEntityTypes())
+        {
+            var tableName = entityType.GetTableName();
+
+            if (tableName.StartsWith(value: AspNetPrefix))
+            {
+                entityType.SetTableName(name: tableName[6..]);
+            }
+        }
     }
 }

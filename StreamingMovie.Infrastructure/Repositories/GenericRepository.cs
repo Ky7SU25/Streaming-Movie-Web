@@ -6,7 +6,12 @@ using StreamingMovie.Infrastructure.Data;
 
 namespace StreamingMovie.Infrastructure.Repositories;
 
-public class GenericRepository<T> : IGenericRepository<T> where T : class
+/// <summary>
+/// Generic repository
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public class GenericRepository<T> : IGenericRepository<T>
+    where T : class
 {
     protected readonly MovieDbContext _dbContext;
     protected readonly DbSet<T> _dbSet;
@@ -51,7 +56,8 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         try
         {
             var entity = await _dbSet.FindAsync(id);
-            if (entity == null) return false;
+            if (entity == null)
+                return false;
 
             _dbSet.Remove(entity);
             await _dbContext.SaveChangesAsync();
@@ -74,7 +80,8 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         try
         {
             var entity = await _dbSet.FindAsync(id);
-            if (entity == null) return false;
+            if (entity == null)
+                return false;
 
             _dbSet.Remove(entity);
             await _dbContext.SaveChangesAsync();
@@ -111,7 +118,9 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
     #endregion
 
-    public virtual async Task<IEnumerable<T>> FindAsync(params Expression<Func<T, bool>>[] predicates)
+    public virtual async Task<IEnumerable<T>> FindAsync(
+        params Expression<Func<T, bool>>[] predicates
+    )
     {
         IQueryable<T> query = _dbSet;
         foreach (var prep in predicates)
@@ -126,7 +135,9 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await _dbSet.ToListAsync(); // => params => redundant
     }
 
-    public virtual async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
+    public virtual async Task<IEnumerable<T>> GetAllAsync(
+        params Expression<Func<T, object>>[] includes
+    )
     {
         IQueryable<T> query = _dbSet;
         if (includes != null)
