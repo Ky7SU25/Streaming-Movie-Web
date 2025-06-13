@@ -1,4 +1,8 @@
-﻿using StreamingMovie.Infrastructure.Extensions;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
+using StreamingMovie.Domain.Entities;
+using StreamingMovie.Infrastructure.Data;
+using StreamingMovie.Infrastructure.Extensions;
 using StreamingMovie.Infrastructure.Extensions.Database;
 using StreamingMovie.Infrastructure.Extensions.Mail;
 
@@ -19,6 +23,34 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 var app = builder.Build();
+
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<MovieDbContext>();
+
+    // Can database be connected.
+    var canConnect = await context.Database.CanConnectAsync();
+
+    // Database cannot be connected.
+    if (!canConnect)
+    {
+        throw new HostAbortedException(message: "Cannot connect database.");
+    }
+
+    // Try seed data.
+    var seeder = new DatabaseSeeder(
+        context: context,
+        scope.ServiceProvider.GetRequiredService<UserManager<User>>(),
+        scope.ServiceProvider.GetRequiredService<RoleManager<Role>>()
+    );
+    var seedResult = await seeder.SeedAllAsync();
+
+    // Data cannot be seed.
+    if (!seedResult)
+    {
+        throw new HostAbortedException(message: "Database seeding is false.");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
