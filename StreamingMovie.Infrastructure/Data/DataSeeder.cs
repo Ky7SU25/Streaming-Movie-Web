@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Threading;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StreamingMovie.Domain.Entities;
 
@@ -31,7 +32,7 @@ namespace StreamingMovie.Infrastructure.Data
             await SeedVideoServersAsync();
             await SeedActorsAsync();
             await SeedDirectorsAsync();
-            //await SeedUsersAsync();
+            await SeedUsersAsync();
             await SeedMoviesAsync();
             await SeedSeriesAsync();
             await SeedEpisodesAsync();
@@ -43,13 +44,13 @@ namespace StreamingMovie.Infrastructure.Data
             await SeedSeriesCategoriesAsync();
             await SeedSeriesActorsAsync();
             await SeedSeriesDirectorsAsync();
-            await SeedFavoritesAsync();
-            await SeedRatingsAsync();
-            await SeedCommentsAsync();
-            await SeedPlaylistsAsync();
-            await SeedPlaylistItemsAsync();
-            await SeedNotificationsAsync();
-            await SeedWatchHistoriesAsync();
+            //await SeedFavoritesAsync();
+            //await SeedRatingsAsync();
+            //await SeedCommentsAsync();
+            //await SeedPlaylistsAsync();
+            //await SeedPlaylistItemsAsync();
+            //await SeedNotificationsAsync();
+            //await SeedWatchHistoriesAsync();
 
             try
             {
@@ -71,7 +72,6 @@ namespace StreamingMovie.Infrastructure.Data
                 {
                     new Role { Name = "Admin", NormalizedName = "ADMIN" },
                     new Role { Name = "User", NormalizedName = "USER" },
-                    new Role { Name = "Premium", NormalizedName = "PREMIUM" }
                 };
 
                 foreach (var role in roles)
@@ -79,6 +79,7 @@ namespace StreamingMovie.Infrastructure.Data
                     await _roleManager.CreateAsync(role);
                 }
             }
+            await _context.SaveChangesAsync(cancellationToken: CancellationToken.None);
         }
 
         private async Task SeedCountriesAsync()
@@ -110,6 +111,7 @@ namespace StreamingMovie.Infrastructure.Data
                 };
 
                 await _context.Countries.AddRangeAsync(countries);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -242,6 +244,7 @@ namespace StreamingMovie.Infrastructure.Data
                 };
 
                 await _context.Categories.AddRangeAsync(categories);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -278,6 +281,7 @@ namespace StreamingMovie.Infrastructure.Data
                 };
 
                 await _context.VideoQualities.AddRangeAsync(qualities);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -318,6 +322,7 @@ namespace StreamingMovie.Infrastructure.Data
                 };
 
                 await _context.VideoServers.AddRangeAsync(servers);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -493,6 +498,7 @@ namespace StreamingMovie.Infrastructure.Data
                 };
 
                 await _context.Actors.AddRangeAsync(actors);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -585,6 +591,7 @@ namespace StreamingMovie.Infrastructure.Data
                 };
 
                 await _context.Directors.AddRangeAsync(directors);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -597,8 +604,8 @@ namespace StreamingMovie.Infrastructure.Data
                     (
                         new User
                         {
-                            UserName = "admin@streaming.com",
-                            Email = "admin@streaming.com",
+                            UserName = "admin",
+                            Email = "datnvdz8b@gmail.com",
                             FullName = "System Administrator",
                             EmailConfirmed = true,
                             SubscriptionType = "Premium",
@@ -612,23 +619,8 @@ namespace StreamingMovie.Infrastructure.Data
                     (
                         new User
                         {
-                            UserName = "john.doe@example.com",
-                            Email = "john.doe@example.com",
-                            FullName = "John Doe",
-                            EmailConfirmed = true,
-                            SubscriptionType = "Premium",
-                            SubscriptionStartDate = DateTime.Now,
-                            SubscriptionEndDate = DateTime.Now.AddMonths(6),
-                            IsActive = true
-                        },
-                        "User@123",
-                        "Premium"
-                    ),
-                    (
-                        new User
-                        {
-                            UserName = "jane.smith@example.com",
-                            Email = "jane.smith@example.com",
+                            UserName = "user",
+                            Email = "datnvdz2k4@gmail.com",
                             FullName = "Jane Smith",
                             EmailConfirmed = true,
                             SubscriptionType = "Basic",
@@ -648,6 +640,8 @@ namespace StreamingMovie.Infrastructure.Data
                     {
                         await _userManager.AddToRoleAsync(user, role);
                     }
+
+                    await _context.SaveChangesAsync(cancellationToken: CancellationToken.None);
                 }
             }
         }
@@ -819,6 +813,7 @@ namespace StreamingMovie.Infrastructure.Data
                 };
 
                 await _context.Movies.AddRangeAsync(movies);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -872,6 +867,7 @@ namespace StreamingMovie.Infrastructure.Data
                 };
 
                 await _context.Series.AddRangeAsync(series);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -927,6 +923,7 @@ namespace StreamingMovie.Infrastructure.Data
                 };
 
                 await _context.Episodes.AddRangeAsync(episodes);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -965,6 +962,7 @@ namespace StreamingMovie.Infrastructure.Data
                 }
 
                 await _context.MovieVideos.AddRangeAsync(movieVideos);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -1005,6 +1003,7 @@ namespace StreamingMovie.Infrastructure.Data
                 }
 
                 await _context.EpisodeVideos.AddRangeAsync(episodeVideos);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -1034,6 +1033,7 @@ namespace StreamingMovie.Infrastructure.Data
                 };
 
                 await _context.MovieCategories.AddRangeAsync(movieCategories);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -1056,6 +1056,7 @@ namespace StreamingMovie.Infrastructure.Data
                 };
 
                 await _context.MovieActors.AddRangeAsync(movieActors);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -1076,6 +1077,7 @@ namespace StreamingMovie.Infrastructure.Data
                 };
 
                 await _context.MovieDirectors.AddRangeAsync(movieDirectors);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -1112,6 +1114,7 @@ namespace StreamingMovie.Infrastructure.Data
                 };
 
                 await _context.SeriesCategories.AddRangeAsync(seriesCategories);
+                await _context.SaveChangesAsync();
             }
         }
 
