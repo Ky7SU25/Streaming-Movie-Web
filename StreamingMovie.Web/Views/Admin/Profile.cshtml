@@ -1,24 +1,26 @@
-﻿
+﻿@{
+    Layout = null;
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png" />
-    <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
-    <title>Argon Dashboard 2 Tailwind by Creative Tim</title>
+    <link rel="apple-touch-icon" sizes="76x76" href="~/assets/img/apple-icon.png" />
+    <link rel="icon" type="image/png" href="~/assets/img/favicon.png" />
+    <title>Profile</title>
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <!-- Nucleo Icons -->
-    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
-    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link href="~/assets/admincss/nucleo-icons.css" rel="stylesheet" />
+    <link href="~/assets/admincss/nucleo-svg.css" rel="stylesheet" />
     <!-- Popper -->
     <script src="~/js/popper.min.js"></script>
     <!-- Main Styling -->
-    <link href="../assets/css/argon-dashboard-tailwind.css?v=1.0.1" rel="stylesheet" />
+    <link href="~/assets/admincss/argon-dashboard-tailwind.css?v=1.0.1" rel="stylesheet" />
 </head>
 <body class="m-0 font-sans antialiased font-normal dark:bg-slate-900 text-base leading-default bg-gray-50 text-slate-500">
     <div class="absolute bg-y-50 w-full top-0 bg-[url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/profile-layout-header.jpg')] min-h-75">
@@ -29,8 +31,8 @@
         <div class="h-19">
             <i class="absolute top-0 right-0 p-4 opacity-50 cursor-pointer fas fa-times text-slate-400 xl:hidden" sidenav-close></i>
             <a class="block px-8 py-6 m-0 text-sm whitespace-nowrap text-slate-700" href="https://demos.creative-tim.com/argon-dashboard-tailwind/pages/dashboard.html" target="_blank">
-                <img src="../assets/img/logo-ct-dark.png" class="inline h-full max-w-full transition-all duration-200 dark:hidden ease-nav-brand max-h-8" alt="main_logo" />
-                <img src="../assets/img/logo-ct.png" class="hidden h-full max-w-full transition-all duration-200 dark:inline ease-nav-brand max-h-8" alt="main_logo" />
+                <img src="~/assets/img/logo-ct-dark.png" class="inline h-full max-w-full transition-all duration-200 dark:hidden ease-nav-brand max-h-8" alt="main_logo" />
+                <img src="~/assets/img/logo-ct.png" class="hidden h-full max-w-full transition-all duration-200 dark:inline ease-nav-brand max-h-8" alt="main_logo" />
                 <span class="ml-1 font-semibold transition-all duration-200 dark:text-white ease-nav-brand">Argon Dashboard 2</span>
             </a>
         </div>
@@ -118,22 +120,7 @@
             </ul>
         </div>
 
-        <div class="mx-4">
-            <!-- load phantom colors for card after: -->
-            <p class="invisible hidden text-gray-800 text-red-500 text-red-600 text-blue-500 dark:text-white dark:opacity-60 after:bg-gradient-to-tl after:from-zinc-800 after:to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 after:from-blue-700 after:to-cyan-500 after:from-orange-500 after:to-yellow-500 after:from-green-600 after:to-lime-400 after:from-red-600 after:to-orange-600 after:from-slate-600 after:to-slate-300 text-emerald-500 text-cyan-500 text-slate-400"></p>
-            <div class="relative flex flex-col min-w-0 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border" sidenav-card>
-                <img class="w-1/2 mx-auto" src="../assets/img/illustrations/icon-documentation.svg" alt="sidebar illustrations">
-                <div class="flex-auto w-full p-4 pt-0 text-center">
-                    <div class="transition-all duration-200 ease-nav-brand">
-                        <h6 class="mb-0 dark:text-white text-slate-700 ">Need help?</h6>
-                        <p class="mb-0 font-semibold leading-tight dark:text-white dark:opacity-60 text-xs">Please check our docs</p>
-                    </div>
-                </div>
-            </div>
-            <a href="https://www.creative-tim.com/learning-lab/tailwind/html/quick-start/argon-dashboard/" target="_blank" class="inline-block w-full px-8 py-2 mb-4 font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 text-xs hover:shadow-xs hover:-translate-y-px">Documentation</a>
-            <!-- pro btn  -->
-            <a class="inline-block w-full px-8 py-2 font-bold leading-normal text-center text-white align-middle transition-all ease-in bg-blue-500 border-0 rounded-lg shadow-md select-none bg-150 bg-x-25 text-xs hover:shadow-xs hover:-translate-y-px" href="https://www.creative-tim.com/product/argon-dashboard-pro-tailwind?ref=sidebarfree" target="_blank">Upgrade to pro</a>
-        </div>
+        
     </aside>
 
     <div class="relative h-full max-h-screen transition-all duration-200 ease-in-out xl:ml-68">
@@ -200,7 +187,7 @@
                                     <a class="ease py-1.2 clear-both block w-full whitespace-nowrap rounded-lg bg-transparent px-4 duration-300 lg:transition-colors" href="javascript:;">
                                         <div class="flex py-1">
                                             <div class="my-auto">
-                                                <img src="../assets/img/team-2.jpg" class="inline-flex items-center justify-center mr-4 text-white text-sm h-9 w-9 max-w-none rounded-xl" />
+                                                <img src="~/assets/img/team-2.jpg" class="inline-flex items-center justify-center mr-4 text-white text-sm h-9 w-9 max-w-none rounded-xl" />
                                             </div>
                                             <div class="flex flex-col justify-center">
                                                 <h6 class="mb-1 font-normal leading-normal dark:text-white text-sm"><span class="font-semibold">New message</span> from Laur</h6>
@@ -217,7 +204,7 @@
                                     <a class="ease py-1.2 clear-both block w-full whitespace-nowrap rounded-lg px-4 duration-300 lg:transition-colors" href="javascript:;">
                                         <div class="flex py-1">
                                             <div class="my-auto">
-                                                <img src="../assets/img/small-logos/logo-spotify.svg" class="inline-flex items-center justify-center mr-4 text-white text-sm bg-gradient-to-tl from-zinc-800 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 h-9 w-9 max-w-none rounded-xl" />
+                                                <img src="~/assets/img/small-logos/logo-spotify.svg" class="inline-flex items-center justify-center mr-4 text-white text-sm bg-gradient-to-tl from-zinc-800 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 h-9 w-9 max-w-none rounded-xl" />
                                             </div>
                                             <div class="flex flex-col justify-center">
                                                 <h6 class="mb-1 font-normal leading-normal dark:text-white text-sm"><span class="font-semibold">New album</span> by Travis Scott</h6>
@@ -271,7 +258,7 @@
                 <div class="flex flex-wrap -mx-3">
                     <div class="flex-none w-auto max-w-full px-3">
                         <div class="relative inline-flex items-center justify-center text-white transition-all duration-200 ease-in-out text-base h-19 w-19 rounded-xl">
-                            <img src="../assets/img/team-1.jpg" alt="profile_image" class="w-full shadow-2xl rounded-xl" />
+                            <img src="~/assets/img/team-1.jpg" alt="profile_image" class="w-full shadow-2xl rounded-xl" />
                         </div>
                     </div>
                     <div class="flex-none w-auto max-w-full px-3 my-auto">
@@ -390,7 +377,7 @@
                 </div>
                 <div class="w-full max-w-full px-3 mt-6 shrink-0 md:w-4/12 md:flex-0 md:mt-0">
                     <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
-                        <img class="w-full rounded-t-2xl" src="../assets/img/bg-profile.jpg" alt="profile cover image">
+                        <img class="w-full rounded-t-2xl" src="~/assets/img/bg-profile.jpg" alt="profile cover image">
                         <div class="flex flex-wrap justify-center -mx-3">
                             <div class="w-4/12 max-w-full px-3 flex-0 ">
                                 <div class="mb-6 -mt-6 lg:mb-0 lg:-mt-16">
@@ -561,7 +548,7 @@
     </div>
 </body>
 <!-- plugin for scrollbar  -->
-<script src="../assets/js/plugins/perfect-scrollbar.min.js" async></script>
+<script src="~/assets/js/plugins/perfect-scrollbar.min.js" async></script>
 <!-- main script file  -->
-<script src="../assets/js/argon-dashboard-tailwind.js?v=1.0.1" async></script>
+<script src="~/assets/js/argon-dashboard-tailwind.js?v=1.0.1" async></script>
 </html>
