@@ -4,12 +4,12 @@ using StreamingMovie.Domain.Entities;
 
 namespace StreamingMovie.Web.Views.Movie.Controllers
 {
-    public class CategoryController : Controller
+    public class MovieController : Controller
     {
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
 
-        public CategoryController(SignInManager<User> signInManager, UserManager<User> userManager)
+        public MovieController(SignInManager<User> signInManager, UserManager<User> userManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -20,7 +20,7 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
-        public IActionResult Matching(string returnUrl = null)
+        public IActionResult Watching(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();

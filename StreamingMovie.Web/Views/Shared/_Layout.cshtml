@@ -41,18 +41,29 @@
                 </div>
                 <div class="col-lg-8">
                     <div class="header__nav">
+                        @functions {
+                            public string IsActive(string controller, string action)
+                            {
+                                var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+                                var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+                                return (currentController == controller && currentAction == action) ? "active" : "";
+                            }
+                        }
                         <nav class="header__menu mobile-menu">
                             <ul>
-                                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" && ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")">
+                                <li class="@IsActive("Home", "Index")">
                                     <a asp-action="Index" asp-controller="Home">Homepage</a>
                                 </li>
-                                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Category" && ViewContext.RouteData.Values["action"].ToString() == "Categories" ? "active" : "")">
-                                    <a asp-action="Categories" asp-controller="Category">Categories</a>
+                                <li class="@IsActive("Category", "Categories")">
+                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                        Categories
+                                    </a>
+                                    @await Component.InvokeAsync("CategoryMenu")
                                 </li>
-                                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Blog" && ViewContext.RouteData.Values["action"].ToString() == "Blogs" ? "active" : "")">
+                                <li class="@IsActive("Blog", "Blogs")">
                                     <a asp-action="Blogs" asp-controller="Blog">Blog</a>
                                 </li>
-                                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" && ViewContext.RouteData.Values["action"].ToString() == "Contact" ? "active" : "")">
+                                <li class="@IsActive("Home", "Contact")">
                                     <a asp-action="Contact" asp-controller="Home">Contacts</a>
                                 </li>
                             </ul>
@@ -88,16 +99,16 @@
                 <div class="col-lg-6">
                     <div class="footer__nav">
                         <ul>
-                            <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" && ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")">
+                            <li class="@IsActive("Home", "Index")">
                                 <a asp-action="Index" asp-controller="Home">Homepage</a>
                             </li>
-                            <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Category" && ViewContext.RouteData.Values["action"].ToString() == "Categories" ? "active" : "")">
+                            <li class="@IsActive("Category", "Categories")">
                                 <a asp-action="Categories" asp-controller="Category">Categories</a>
                             </li>
-                            <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Blog" && ViewContext.RouteData.Values["action"].ToString() == "Blogs" ? "active" : "")">
+                            <li class="@IsActive("Blog", "Blogs")">
                                 <a asp-action="Blogs" asp-controller="Blog">Blog</a>
                             </li>
-                            <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" && ViewContext.RouteData.Values["action"].ToString() == "Contact" ? "active" : "")">
+                            <li class="@IsActive("Home", "Contact")">
                                 <a asp-action="Contact" asp-controller="Home">Contacts</a>
                             </li>
                         </ul>

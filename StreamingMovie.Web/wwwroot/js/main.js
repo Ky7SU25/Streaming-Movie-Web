@@ -51,16 +51,16 @@
     });
 
     /*------------------
-		Navigation
-	--------------------*/
+        Navigation
+    --------------------*/
     $(".mobile-menu").slicknav({
         prependTo: '#mobile-menu-wrap',
         allowParentLinks: true
     });
 
     /*------------------
-		Hero Slider
-	--------------------*/
+        Hero Slider
+    --------------------*/
     var hero_s = $(".hero__slider");
     hero_s.owlCarousel({
         loop: true,
@@ -93,9 +93,20 @@
     /*------------------
         Scroll To Top
     --------------------*/
-    $("#scrollToTopButton").click(function() {
+    $("#scrollToTopButton").click(function () {
         $("html, body").animate({ scrollTop: 0 }, "slow");
         return false;
-     });
+    });
 
 })(jQuery);
+
+window.addEventListener('scroll', function () {
+    const header = document.querySelector('.header');
+    if (!header) return;
+
+    if (window.scrollY > 0) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+});
