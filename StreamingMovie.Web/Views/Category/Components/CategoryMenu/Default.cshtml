@@ -1,0 +1,12 @@
+﻿@model IEnumerable<StreamingMovie.Domain.Entities.Category>
+
+<ul class="dropdown">
+    @foreach (var category in Model)
+    {
+        <li>
+            <a asp-controller="Category" asp-action="Detail" asp-route-slug="@category.Slug">
+                @category.Name
+            </a>
+        </li>
+    }
+</ul>

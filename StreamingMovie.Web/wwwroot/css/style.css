@@ -140,6 +140,7 @@ ol {
 .set-bg {
 	background-repeat: no-repeat;
 	background-size: cover;
+	background-position: top center;
 }
 
 .spad {
@@ -329,15 +330,21 @@ ol {
 -----------------------*/
 
 .header {
-	background: #070720;
-	position: sticky;
-	box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+	position: fixed;
+	box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 	top: 0;
-    z-index: 1000; 
-	background: url('../img/slider-bg2.jpg') no-repeat;
-	background-size: cover;
-	background-attachment: fixed
+	left: 0;
+	width: 100%;
+	z-index: 1000;
+	transition: background-color 0.3s ease;
+	background-color: rgba(7, 7, 32, 0.6); 
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
 }
+	.header.scrolled {
+		background-color: #070720;
+		box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+	}
 
 .header__logo {
 	padding: 20px 0 17px;
@@ -451,10 +458,9 @@ ol {
 -----------------------*/
 
 .hero {
-	padding: 40px;
+	padding-top: 100px;
+	padding-bottom: 50px;
 	background: url('../img/slider-bg.jpg') no-repeat;
-	background-size: cover;
-	background-attachment: fixed
 }
 
 .hero__items {
@@ -1305,7 +1311,7 @@ ol {
 -----------------------*/
 
 .breadcrumb-option {
-	padding-top: 35px;
+	padding-top: 85px;
 }
 
 .breadcrumb__links a {
@@ -1340,7 +1346,8 @@ ol {
 -----------------------*/
 
 .normal-breadcrumb {
-	height: 280px;
+	padding-top: 50px;
+	height: 350px;
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
@@ -2352,8 +2359,4 @@ ol {
 	.anime__review__item__text {
 		padding: 18px 20px 20px;
 	}
-}
-
-.bg-fixed {
-	background-attachment: fixed;
 }
