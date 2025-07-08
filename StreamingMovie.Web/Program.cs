@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using StreamingMovie.Application.Services;
 using StreamingMovie.Domain.Entities;
 using StreamingMovie.Infrastructure.Data;
 using StreamingMovie.Infrastructure.Extensions;
@@ -10,6 +11,10 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddCoreInfrastructure(builder.Configuration);
+
+//add service
+builder.Services.AddScoped<DetailMovieService>();
+
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

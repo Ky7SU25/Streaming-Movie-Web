@@ -1,4 +1,5 @@
-﻿@{
+﻿@model StreamingMovie.Domain.Entities.Movie;
+@{
     ViewData["Title"] = "Movie Details";
 }
 
@@ -32,8 +33,8 @@
                 <div class="col-lg-9">
                     <div class="anime__details__text">
                         <div class="anime__details__title">
-                            <h3>Fate Stay Night: Unlimited Blade</h3>
-                            <span>フェイト／ステイナイト, Feito／sutei naito</span>
+                            <h3> @Model.Title </h3>
+                            <span>@Model.OriginalTitle</span>
                         </div>
                         <div class="anime__details__rating">
                             <div class="rating">
@@ -46,10 +47,7 @@
                             <span>1.029 Votes</span>
                         </div>
                         <p>
-                            Every human inhabiting the world of Alcia is branded by a “Count” or a number written on
-                            their body. For Hina’s mother, her total drops to 0 and she’s pulled into the Abyss,
-                            never to be seen again. But her mother’s last words send Hina on a quest to find a
-                            legendary hero from the Waste War - the fabled Ace!
+                            @Model.Description
                         </p>
                         <div class="anime__details__widget">
                             <div class="row">
