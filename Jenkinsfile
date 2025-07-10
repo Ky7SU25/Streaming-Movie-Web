@@ -41,6 +41,7 @@ pipeline {
             steps {
                 script {
                     def result = sh(script: """
+                        chmod +x deploy.sh
                         ./deploy.sh
                     """, returnStatus: true)
                     if (result != 0) {
