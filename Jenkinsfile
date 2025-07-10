@@ -13,29 +13,28 @@ pipeline {
                 git branch: 'main', url: 'git@github.com:Ky7SU25/Streaming-Movie-Web'
             }
         }
+
+        stage('Build Image') {
+            steps {
+                script {
+                    COMMIT = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    IMAGE_TAG = "${IMAGE}:${COMMIT}"
+                    echo "Building image: ${IMAGE_TAG}"
+                    docker.build(IMAGE_TAG)
+                }
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                script {
+                    sh """
+                        docker tag ${IMAGE}:${COMMIT} ${IMAGE}:latest
+                        docker push ${IMAGE}:${COMMIT}
+                        docker push ${IMAGE}:latest
+                    """
+                }
+            }
+        }
     }
-
-     stage('Build Image') {
-          steps {
-              script {
-                 COMMIT = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                 IMAGE_TAG = "${IMAGE}:${COMMIT}"
-                 echo "Building image: ${IMAGE_TAG}"
-                 docker.build(IMAGE_TAG)
-             }
-         }
-     }
-
-     stage('Push Image') {
-          steps {
-              script {
-                  sh """
-                      docker tag ${IMAGE}:${COMMIT} ${IMAGE}:latest
-                      docker push ${IMAGE}:${COMMIT}
-                      docker push ${IMAGE}:latest
-                  """
-              }
-          }
-      }
-
 }
