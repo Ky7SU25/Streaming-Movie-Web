@@ -21,7 +21,8 @@ if docker compose pull; then
     echo "$CURRENT_IMAGE" > "$PREV_IMAGE_FILE"
 
     echo "==> Starting new container"
-    docker compose up -d --force-recreate
+    docker compose down
+    docker compose up -d
 else
     echo "==> Failed to pull. Rolling back…"
     if [ -f "$PREV_IMAGE_FILE" ]; then
