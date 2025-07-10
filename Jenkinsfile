@@ -41,6 +41,7 @@ pipeline {
             steps {
                 script {
                     def result = sh(script: """
+                        cp /var/lib/jenkins/configs/deploy.sh .
                         chmod +x deploy.sh
                         ./deploy.sh
                     """, returnStatus: true)
