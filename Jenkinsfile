@@ -1,10 +1,16 @@
 pipeline {
     agent any
 
-    stages { 
-        stage('Test Webhook') {
+    environment {
+        APP_NAME = "streaming-movie-web-web"
+        REGISTRY = "103.109.187.143:5001/nguyendat"
+        IMAGE = "${REGISTRY}/${APP_NAME}"
+    }
+
+    stages {
+        stage('Checkout') {
             steps {
-                echo "✅ Webhook OK — Commit đã được Jenkins nhận!"
+                git branch: 'main', url: 'git@github.com:Ky7SU25/Streaming-Movie-Web'
             }
         }
     }
