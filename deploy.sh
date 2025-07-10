@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# cd về thư mục chứa script
+# cd
 cd "$(dirname "$0")"
 
 # load env
