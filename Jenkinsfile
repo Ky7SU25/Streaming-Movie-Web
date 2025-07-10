@@ -36,5 +36,18 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    def result = sh(script: """
+                        ./deploy.sh
+                    """, returnStatus: true)
+                    if (result != 0) {
+                        error "Deploy failed. Rollback attempted."
+                    }
+                }
+            }
+        }
     }
 }
