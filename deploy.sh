@@ -15,7 +15,7 @@ fi
 PREV_IMAGE_FILE="/tmp/${APP_NAME}_prev_image"
 
 echo "==> Pulling latest image"
-if docker-compose pull; then
+if docker compose pull; then
     echo "==> Saving current image"
     CURRENT_IMAGE=$(docker inspect --format='{{.Config.Image}}' ${APP_NAME} || echo "")
     echo "$CURRENT_IMAGE" > "$PREV_IMAGE_FILE"
