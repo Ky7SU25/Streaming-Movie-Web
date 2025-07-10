@@ -19,7 +19,7 @@ if docker compose pull; then
     echo "==> Saving current image"
     CURRENT_IMAGE=$(docker inspect --format='{{.Config.Image}}' ${APP_NAME} || echo "")
     echo "$CURRENT_IMAGE" > "$PREV_IMAGE_FILE"
-
+    cp /var/lib/jenkins/configs/.env .
     echo "==> Starting new container"
     docker compose down
     docker compose up -d
