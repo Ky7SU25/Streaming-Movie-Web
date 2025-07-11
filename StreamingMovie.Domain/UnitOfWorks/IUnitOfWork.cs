@@ -37,5 +37,6 @@ namespace StreamingMovie.Domain.UnitOfWorks
         IVideoQualityRepository VideoQualityRepository { get; }
         IVideoServerRepository VideoServerRepository { get; }
         IWatchHistoryRepository WatchHistoryRepository { get; }
+        IUnifiedMovieRepository UnifiedMovieRepository { get; }
     }
 }

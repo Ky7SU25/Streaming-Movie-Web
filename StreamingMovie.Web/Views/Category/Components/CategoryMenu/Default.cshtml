@@ -1,10 +1,23 @@
 ﻿@model IEnumerable<StreamingMovie.Domain.Entities.Category>
 
-<ul class="dropdown">
+<style>
+    .category-item {
+        height: 40px;
+    }
+        .category-link:hover {
+            background-color: #444;
+            color: #ffc107 !important;
+        }
+</style>
+
+<ul class="dropdown row py-2" style="width: 600px;">
     @foreach (var category in Model)
     {
-        <li>
-            <a asp-controller="Category" asp-action="Detail" asp-route-slug="@category.Slug">
+        <li class="col-3 category-item">
+            <a class="category-link text-white fs-7 d-block px-2"
+               asp-controller="Movie"
+               asp-action="Category"
+               asp-route-slug="@category.Slug">
                 @category.Name
             </a>
         </li>

@@ -1,0 +1,102 @@
+﻿@using StreamingMovie.Application.Coomon.Pagination
+@using StreamingMovie.Application.DTOs
+@model PagedResult<UnifiedMovieDTO>
+@{
+    var filter = ViewBag.Filter as MovieFilterDTO;
+}
+
+<div class="row">
+    @if (Model.TotalItems > 0)
+    {
+        @foreach (var movie in Model.Items)
+        {
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <a class="product__item" asp-action="Details" asp-controller="Movie">
+                    <div class="product__item__pic set-bg">
+                        <img src="@movie.PosterUrl" alt="@movie.Title" class="w-100 h-100 object-fit-cover" />
+                        @* <div class="ep">18 / 18</div>
+                                        <div class="comment"><i class="fa fa-comments"></i> 11</div> *@
+                        <div class="view"><i class="fa fa-eye"></i> @movie.ViewCount</div>
+
+                    </div>
+                    <div class="product__item__text">
+                        <ul>
+                            <li>@movie.Status</li>
+                            <li>@(movie.IsSeries == true ? "Series" : "Movie")</li>
+                        </ul>
+                        <h5><a href="#">@movie.Title</a></h5>
+                    </div>
+                </a>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center text-white my-5">
+            <h5>No result found.</h5>
+        </div>
+    }
+</div>
+<div class="product__pagination d-flex justify-content-center gap-2">
+    <form method="get" action="/filter" class="ajax-form @(Model.Page <= 1 ? "invisible" : "")">
+        @foreach (var kvp in BuildFilterQuery(filter, Model.Page - 1))
+        {
+            <input type="hidden" name="@kvp.Key" value="@kvp.Value" />
+        }
+        <button class="btn-pagination" type="submit"><i class="fa fa-angle-double-left"></i></button>
+    </form>
+
+    @for (int i = 1; i <= Model.TotalPages; i++)
+    {
+        <form method="get" action="/filter" class="ajax-form @(i == Model.Page ? "current-page" : "")">
+            @foreach (var kvp in BuildFilterQuery(filter, i))
+            {
+                <input type="hidden" name="@kvp.Key" value="@kvp.Value" />
+            }
+            <button class="btn-pagination" type="submit">@i</button>
+        </form>
+    }
+
+    <form method="get" action="/filter" class="ajax-form @(Model.Page >= Model.TotalPages ? "invisible" : "")">
+        @foreach (var kvp in BuildFilterQuery(filter, Model.Page + 1))
+        {
+            <input type="hidden" name="@kvp.Key" value="@kvp.Value" />
+        }
+        <button class="btn-pagination" type="submit"><i class="fa fa-angle-double-right"></i></button>
+    </form>
+</div>
+
+@functions {
+    IEnumerable<KeyValuePair<string, object>> BuildFilterQuery(MovieFilterDTO filter, int page)
+    {
+        var query = new List<KeyValuePair<string, object>>();
+
+        if (!string.IsNullOrEmpty(filter.Keyword))
+            query.Add(new("keyword", filter.Keyword));
+
+        if (filter.Categories?.Any() == true)
+            foreach (var c in filter.Categories)
+                query.Add(new("categories", c));
+
+        if (filter.Countries?.Any() == true)
+            foreach (var c in filter.Countries)
+                query.Add(new("countries", c));
+
+        if (filter.Years?.Any() == true)
+            foreach (var y in filter.Years)
+                query.Add(new("years", y));
+
+        if (filter.Type.HasValue)
+            query.Add(new("type", filter.Type));
+
+        if (!string.IsNullOrEmpty(filter.Status))
+            query.Add(new("status", filter.Status));
+
+        if (filter.OrderBy.HasValue)
+            query.Add(new("orderBy", filter.OrderBy));
+
+        query.Add(new("page", page < 1 ? 1 : page));
+
+        return query;
+    }
+}
