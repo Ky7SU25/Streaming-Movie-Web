@@ -1,24 +1,26 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using StreamingMovie.Domain.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
+using StreamingMovie.Application.Interfaces;
 
 namespace StreamingMovie.Web.Views.Category.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly SignInManager<User> _signInManager;
-        private readonly UserManager<User> _userManager;
+        private readonly ICategoryService _categoryService;
 
-        public CategoryController(SignInManager<User> signInManager, UserManager<User> userManager)
+        public CategoryController(ICategoryService categoryService)
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
+            _categoryService = categoryService;
         }
 
-        public IActionResult Categories(string returnUrl = null)
+
+        [HttpGet]
+        [Route("categories")]
+        public async Task<IActionResult> Categories(string returnUrl = null)
         {
+            var categories = await _categoryService.GetAllAsync();
+
             ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            return View(categories);
         }
     }
 }

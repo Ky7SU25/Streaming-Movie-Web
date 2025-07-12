@@ -1,19 +1,17 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using StreamingMovie.Application.Services;
+﻿using Microsoft.AspNetCore.Identity;
 using StreamingMovie.Domain.Entities;
-using StreamingMovie.Domain.Interfaces;
 using StreamingMovie.Infrastructure.Data;
 using StreamingMovie.Infrastructure.Extensions;
-using StreamingMovie.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddRouting(options =>
+{
+    options.LowercaseUrls = true;
+    options.AppendTrailingSlash = false;
+});
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
 builder.Services.AddCoreInfrastructure(builder.Configuration);
 
 builder.Services.ConfigureApplicationCookie(options =>
@@ -64,5 +62,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseStatusCodePagesWithReExecute("/Home/Error404");
 
 app.Run();

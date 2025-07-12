@@ -1,4 +1,4 @@
-/*  ---------------------------------------------------
+﻿/*  ---------------------------------------------------
     Theme Name: Anime
     Description: Anime video tamplate
     Author: Colorib
@@ -100,6 +100,7 @@
 
 })(jQuery);
 
+// Sticky Header
 window.addEventListener('scroll', function () {
     const header = document.querySelector('.header');
     if (!header) return;
@@ -110,3 +111,12 @@ window.addEventListener('scroll', function () {
         header.classList.remove('scrolled');
     }
 });
+
+// Filter Toggle
+window.toggleComponent = function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+
+    var isHidden = window.getComputedStyle(el).display === "none";
+    el.style.display = isHidden ? "block" : "none";
+};
