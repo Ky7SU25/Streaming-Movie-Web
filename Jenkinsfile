@@ -8,6 +8,18 @@ pipeline {
     }
 
     stages {
+	stage('Cleanup') {
+            steps {
+	        script {
+                    sh """
+                        cp /var/lib/jenkins/configs/cleanup.sh .
+                        chmod +x cleanup.sh
+                        ./cleanup.sh
+                    """
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'git@github.com:Ky7SU25/Streaming-Movie-Web'
