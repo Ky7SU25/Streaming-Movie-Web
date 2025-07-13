@@ -1,4 +1,6 @@
-﻿using MailKit.Security;
+﻿using System;
+using System.Threading.Tasks;
+using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
@@ -16,6 +18,7 @@ public class MailService : IMailService
         _mailSettings = mailSettings.Value;
         _logger = logger;
     }
+
     public async Task SendMailAsync(MailContent mailContent)
     {
         var email = new MimeMessage();
@@ -23,7 +26,6 @@ public class MailService : IMailService
         email.From.Add(new MailboxAddress(_mailSettings.DisplayName, _mailSettings.Mail));
         email.To.Add(MailboxAddress.Parse(mailContent.To));
         email.Subject = mailContent.Subject;
-
 
         var builder = new BodyBuilder();
         builder.HtmlBody = mailContent.Body;
@@ -55,4 +57,3 @@ public class MailService : IMailService
         _logger.LogInformation("send mail to " + mailContent.To);
     }
 }
-

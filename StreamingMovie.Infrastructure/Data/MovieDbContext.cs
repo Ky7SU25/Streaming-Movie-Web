@@ -46,6 +46,9 @@ public class MovieDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<WatchHistory> WatchHistories { get; set; }
 
+    // View entities
+    public DbSet<UnifiedMovie> UnifiedMovies { get; set; }
+
     public MovieDbContext(DbContextOptions<MovieDbContext> options)
         : base(options) { }
 

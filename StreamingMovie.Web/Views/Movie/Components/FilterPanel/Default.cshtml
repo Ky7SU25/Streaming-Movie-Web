@@ -1,0 +1,211 @@
+﻿@using StreamingMovie.Application.DTOs
+@using StreamingMovie.Domain.Enums
+@using StreamingMovie.Web.Views.Movie.ViewModels
+@model FilterPanelViewModel
+@{
+    var categories = Model.Categories;
+    var countries = Model.Countries;
+    var years = Model.Years;
+    var filter = ViewBag.Filter as MovieFilterDTO;
+}
+<style>
+    .filterPanel {
+        background-color: #1f2a43;
+        color: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        display: none;
+    }
+
+        .filterPanel label {
+            color: white;
+            font-weight: bold;
+        }
+
+        .filterPanel .btn {
+            color: #c3c3c5;
+            border: 1px solid #999;
+            background-color: transparent;
+            transition: all 0.2s ease;
+            border-radius: 10px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            padding: 5px 10px;
+        }
+
+            .filterPanel .btn:hover {
+                color: #ffc107;
+            }
+
+    .btn-check {
+        display: none;
+    }
+
+        .btn-check:checked + .btn {
+            border-color: #ffc107;
+            color: #ffc107;
+        }
+</style>
+
+<form id="filterPanel" class="filterPanel ajax-form mb-4" method="get" asp-action="Filter" asp-controller="Movie">
+    <div class="filterOption">
+        <!-- Country -->
+        <div class="mb-2 multiChoiceFilter">
+            <label class="form-label">Country:</label>
+            <div class="d-flex flex-wrap gap-2">
+                <input type="checkbox" class="btn-check" name="countries" value="" id="country_all" autocomplete="off"
+                       @(filter.Countries == null || !filter.Countries.Any() ? "checked" : "") />
+                <label class="btn btn-sm filter-btn" for="country_all">All</label>
+
+                @foreach (var country in countries)
+                {
+                    var id = $"country_{country.Id}";
+                    var isChecked = filter.Countries?.Contains(country.Code) == true;
+
+                    <input type="checkbox" class="btn-check" name="countries" value="@country.Code" id="@id" autocomplete="off" @(isChecked ? "checked" : "") />
+                    <label class="btn btn-sm filter-btn" for="@id">@country.Name</label>
+                }
+            </div>
+        </div>
+
+        <!-- Movie Type -->
+        <div class="mb-2 singleChoiceFilter">
+            <label class="form-label">Movie Type:</label>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (MovieType option in Enum.GetValues(typeof(MovieType)))
+                {
+                    var id = $"movietype_{option}";
+                    var isChecked = filter.Type == option;
+
+                    <input type="radio" class="btn-check" name="type" value="@option" id="@id" autocomplete="off" @(isChecked ? "checked" : "") />
+                    <label class="btn btn-sm filter-btn" for="@id">@option</label>
+                }
+            </div>
+        </div>
+
+        <!-- Category -->
+        <div class="mb-2 multiChoiceFilter">
+            <label class="form-label">Category:</label>
+            <div class="d-flex flex-wrap gap-2">
+                <input type="checkbox" class="btn-check" name="categories" value="" id="category_all" autocomplete="off"
+                       @(filter.Categories == null || !filter.Categories.Any() ? "checked" : "") />
+                <label class="btn btn-sm filter-btn" for="category_all">All</label>
+
+                @foreach (var category in categories)
+                {
+                    var id = $"category_{category.Id}";
+                    var isChecked = filter.Categories?.Contains(category.Slug) == true;
+
+                    <input type="checkbox" class="btn-check" name="categories" value="@category.Slug" id="@id" autocomplete="off" @(isChecked ? "checked" : "") />
+                    <label class="btn btn-sm filter-btn" for="@id">@category.Name</label>
+                }
+            </div>
+        </div>
+
+        <!-- NRelease Year -->
+        <div class="mb-2 multiChoiceFilter">
+            <label class="form-label">Release Year:</label>
+            <div class="d-flex flex-wrap gap-2">
+                <input type="checkbox" class="btn-check" name="years" value="" id="year_all" autocomplete="off" 
+                       @(filter.Years == null || !filter.Years.Any() ? "checked" : "") />
+                <label class="btn btn-sm filter-btn" for="year_all">All</label>
+
+                @foreach (var year in years)
+                {
+                    var id = $"year_{year}";
+                    var isChecked = filter.Years?.Any(y => years.Contains(y)) == true;
+
+                    <input type="checkbox" class="btn-check" name="years" value="@year" id="@id" autocomplete="off" @(isChecked ? "checked" : "") />
+                    <label class="btn btn-sm filter-btn" for="@id">@year</label>
+                }
+            </div>
+        </div>
+
+        @functions {
+            public static string GetSortOptionDisplay(MovieSortOption option)
+            {
+                return option switch
+                {
+                    MovieSortOption.Newest => "Newest",
+                    MovieSortOption.RecentlyUpdated => "Recently Updated",
+                    MovieSortOption.ImdbRating => "Imdb Rating",
+                    MovieSortOption.ViewCount => "View Count",
+                    _ => option.ToString()
+                };
+            }
+        }
+
+        <!-- Order by -->
+        <div class="mb-2 singleChoiceFilter">
+            <label class="form-label">Order by:</label>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (MovieSortOption option in Enum.GetValues(typeof(MovieSortOption)))
+                {
+                    var id = $"sort_{option}";
+                    var isChecked = filter.OrderBy == option;
+
+                    <input type="radio" class="btn-check" name="orderby" value="@option" id="@id" autocomplete="off" @(isChecked ? "checked" : "") />
+                    <label class="btn btn-sm filter-btn" for="@id">@GetSortOptionDisplay(option)</label>
+                }
+            </div>
+        </div>
+    </div>
+    <!-- Submit -->
+    <div class="text-end mt-3">
+        <button type="submit" class="btn btn-warning active px-4">Filter</button>
+    </div>
+</form>
+
+<script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const filterPanel = document.querySelector("#filterPanel");
+
+        if (!filterPanel) return;
+
+        filterPanel.querySelectorAll(".multiChoiceFilter").forEach(group => {
+            const allInput = group.querySelector('input[value=""]');
+
+            if (!allInput) return;
+
+            allInput.addEventListener("change", function () {
+                if (this.checked) {
+                    group.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                        if (cb !== this) cb.checked = false;
+                    });
+                }
+            });
+
+            group.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                if (cb === allInput) return;
+
+                cb.addEventListener("change", function () {
+                    if (this.checked) {
+                        allInput.checked = false;
+                    }
+                });
+            });
+        });
+    });
+
+    //     document.addEventListener("DOMContentLoaded", function () {
+    //     const form = document.getElementById("filterPanel");
+
+    //     form.addEventListener("submit", function (e) {
+    //         e.preventDefault();
+
+    //         Lấy tất cả checkbox đã chọn
+    //         const selected = [...form.querySelectorAll('input[name="CountryIds"]:checked')]
+    //             .map(cb => cb.value);
+
+    //         Gộp thành chuỗi CSV
+    //         const csv = selected.join(',');
+
+    //         Tạo URL mới để redirect
+    //         const baseUrl = '/category/comedy';
+    //         const query = `?countries=${encodeURIComponent(csv)}`;
+
+    //         Gửi form bằng redirect (GET)
+    //         window.location.href = baseUrl + query;
+    //     });
+    // });
+</script>
