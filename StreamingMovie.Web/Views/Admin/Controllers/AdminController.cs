@@ -29,9 +29,14 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
-        public IActionResult Table(string returnUrl = null)
+        //public IActionResult Table(string returnUrl = null)
+        //{
+        //    ViewData["ReturnUrl"] = returnUrl;
+        //    return View();
+        //}
+        public IActionResult Table()
         {
-            ViewData["ReturnUrl"] = returnUrl;
+           // ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
     }
