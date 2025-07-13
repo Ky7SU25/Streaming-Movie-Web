@@ -16,21 +16,19 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
         private readonly UserManager<User> _userManager;
 
         private DetailMovieService _detailMovieService;
-        public MovieController(SignInManager<User> signInManager, UserManager<User> userManager, DetailMovieService detailMovieService)
-        {
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _detailMovieService = detailMovieService;
+        
 
         private readonly IMovieService _movieService;
         private readonly ICategoryService _categoryService;
 
-        public MovieController(SignInManager<User> signInManager, UserManager<User> userManager, IMovieService movieService, ICategoryService categoryService)
+        public MovieController(SignInManager<User> signInManager, UserManager<User> userManager, IMovieService movieService, ICategoryService categoryService, DetailMovieService detailMovieService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _movieService = movieService;
             _categoryService = categoryService;
+            _detailMovieService = detailMovieService;
+
 
         }
 
@@ -48,12 +46,16 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             var movie = await _detailMovieService.GetMovieByIdAsync(id);
             return View(movie);
         }
-        public IActionResult Watching(string returnUrl = null)
+        //public IActionResult Watching(string returnUrl = null)
+        //{
+        //    ViewData["ReturnUrl"] = returnUrl;
+        //    return View();
+        //}
+        public IActionResult Watching()
         {
-            ViewData["ReturnUrl"] = returnUrl;
+           // ViewData["ReturnUrl"] = "";
             return View();
         }
-
         [HttpGet("search")]
         public async Task<IActionResult> Search(string q, string returnUrl = null)
         {
