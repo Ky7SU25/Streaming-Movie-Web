@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+
+using StreamingMovie.Application.Services;
+
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Application.Interfaces;
+
 using StreamingMovie.Domain.Entities;
 
 namespace StreamingMovie.Web.Views.Movie.Controllers
@@ -10,6 +14,14 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
     {
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
+
+        private DetailMovieService _detailMovieService;
+        public MovieController(SignInManager<User> signInManager, UserManager<User> userManager, DetailMovieService detailMovieService)
+        {
+            _signInManager = signInManager;
+            _userManager = userManager;
+            _detailMovieService = detailMovieService;
+
         private readonly IMovieService _movieService;
         private readonly ICategoryService _categoryService;
 
@@ -19,12 +31,22 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             _userManager = userManager;
             _movieService = movieService;
             _categoryService = categoryService;
+
         }
 
-        public IActionResult Details(string returnUrl = null)
+        //public IActionResult Details(string returnUrl = null)
+        //{
+        //    ViewData["ReturnUrl"] = returnUrl;
+        //    return View();
+        //}
+        public async Task<IActionResult> Details(int id)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+            var movie = await _detailMovieService.GetMovieByIdAsync(id);
+            return View(movie);
         }
         public IActionResult Watching(string returnUrl = null)
         {
