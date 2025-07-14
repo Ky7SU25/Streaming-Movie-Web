@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
-namespace StreamingMovie.Application.Coomon.Pagination
+namespace StreamingMovie.Application.Common.Pagination
 {
     public static class PaginationHelper
     {
