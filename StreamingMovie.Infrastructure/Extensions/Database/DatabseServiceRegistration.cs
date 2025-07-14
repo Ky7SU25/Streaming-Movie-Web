@@ -33,6 +33,19 @@ public static class DatabseServiceRegistration
                 options.Password.RequireLowercase = true;
                 options.Password.RequiredLength = 6;
                 options.User.RequireUniqueEmail = true;
+
+                // Lockout configuration
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Locked for 5 minutes
+                options.Lockout.MaxFailedAccessAttempts = 5; // Lock after 5 failed attempts
+                options.Lockout.AllowedForNewUsers = true;
+
+                // User configuration
+                options.User.AllowedUserNameCharacters = 
+                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+
+                // SignIn configuration
+                options.SignIn.RequireConfirmedEmail = true;            // Email must exist
+                options.SignIn.RequireConfirmedPhoneNumber = false;     // 
             })
             .AddEntityFrameworkStores<MovieDbContext>()
             .AddDefaultTokenProviders();

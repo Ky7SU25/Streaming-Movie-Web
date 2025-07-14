@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Domain.Entities;
 using StreamingMovie.Web.Views.Account.ViewModels;
 using StreamingMovie.Web.Views.Home.Controllers;
@@ -10,13 +11,15 @@ namespace StreamingMovie.Web.Views.Account.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly SignInManager<User> _signInManager;
-    private readonly UserManager<User> _userManager;
+    private readonly ILoginService _loginService;
+    private readonly ILogger<AccountController> _logger;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AccountController(SignInManager<User> signInManager, UserManager<User> userManager)
+    public AccountController(ILoginService loginService, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor)
     {
-        _signInManager = signInManager;
-        _userManager = userManager;
+        _loginService = loginService;
+        _logger = logger;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     // GET: /Account/Login
@@ -32,19 +35,37 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
     {
-        ViewData["ReturnUrl"] = returnUrl;
-        if (ModelState.IsValid)
+        returnUrl = returnUrl ?? Url.Content("~/");
+        var isLogin = _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
+        if ( isLogin == true)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
-            if (result.Succeeded)
-            {
-                return RedirectToLocal(returnUrl);
-            }
-            else
-            {
-                return RedirectToAction(nameof(Error));
-            }
+            return RedirectToAction("Index", "Home");
         }
+
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var result = await _loginService.LoginAsync(model.Email, model.Password, model.RememberMe);
+
+        if (result.Succeeded)
+        {
+            _logger.LogInformation("User logged in successfully.");
+            return RedirectToLocal(returnUrl);
+        }
+        if (result.IsLockedOut)
+        {
+            _logger.LogWarning("User account locked out for user {Email}.", model.Email);
+            ModelState.AddModelError(string.Empty, "Your account has been locked out. Please try again later.");
+            return View(model);
+        }
+        else
+        {
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            _logger.LogWarning("Invalid login attempt for user {Email}.", model.Email);
+        }
+
         return View(model);
     }
 
@@ -62,17 +83,17 @@ public class AccountController : Controller
     {
         if (ModelState.IsValid)
         {
-            var user = new User { UserName = model.Email, Email = model.Email };
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (result.Succeeded)
-            {
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return RedirectToAction(nameof(HomeController.Index), "Home");
-            }
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+            //var user = new User { UserName = model.Email, Email = model.Email };
+            //var result = await _userManager.CreateAsync(user, model.Password);
+            //if (result.Succeeded)
+            //{
+            //    await _signInManager.SignInAsync(user, isPersistent: false);
+            //    return RedirectToAction(nameof(HomeController.Index), "Home");
+            //}
+            //foreach (var error in result.Errors)
+            //{
+            //    ModelState.AddModelError(string.Empty, error.Description);
+            //}
         }
         return View(model);
     }
