@@ -1,4 +1,6 @@
+
 ﻿namespace StreamingMovie.Application.Common.Pagination
+
 {
     public class PagedResult<T>
     {

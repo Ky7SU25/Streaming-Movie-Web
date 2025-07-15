@@ -172,6 +172,13 @@ public class AccountController : Controller
         }
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout(string returnUrl = null)
+    {
+        await _loginService.LogoutAsync();
+        return RedirectToAction("Index", "Home");
+    }
     // GET: /Account/Error
     [HttpGet]
     public IActionResult Error()

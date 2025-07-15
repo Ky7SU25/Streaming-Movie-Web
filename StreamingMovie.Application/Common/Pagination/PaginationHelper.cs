@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 
 namespace StreamingMovie.Application.Common.Pagination
+
 {
     public static class PaginationHelper
     {

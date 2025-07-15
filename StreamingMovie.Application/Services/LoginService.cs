@@ -33,8 +33,8 @@ public class LoginService : ILoginService
         return result;
     }
 
-    public Task LogoutAsync()
+    public async Task LogoutAsync()
     {
-        throw new NotImplementedException();
+        await _signInManager.SignOutAsync();
     }
 }
