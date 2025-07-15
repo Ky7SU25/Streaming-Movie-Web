@@ -2092,7 +2092,7 @@ ol {
 		left: 0;
 		top: 60px;
 		width: 100%;
-		background: #ffffff;
+		background: #1d1e39;
 		padding: 15px 30px;
 		z-index: 9;
 	}
@@ -2197,7 +2197,7 @@ ol {
 		left: 0;
 		top: 60px;
 		width: 100%;
-		background: #ffffff;
+		background: #1d1e39;
 		padding: 15px 30px;
 		z-index: 9;
 	}
@@ -2208,7 +2208,7 @@ ol {
 	.slicknav_nav a {
 		padding: 7px 0;
 		margin: 0;
-		color: #111111;
+		color: #fff;
 		font-weight: 600;
 	}
 	.slicknav_btn {
@@ -2415,3 +2415,10 @@ ol {
 .category-card-9 { background-color: #C488AA; }
 
 .category-card-default { background-color: #999; }
+
+img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+/*	object-position: top;*/
+}

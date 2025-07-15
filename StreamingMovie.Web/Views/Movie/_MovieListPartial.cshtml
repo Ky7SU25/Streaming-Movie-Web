@@ -1,4 +1,4 @@
-﻿@using StreamingMovie.Application.Coomon.Pagination
+﻿@using StreamingMovie.Application.Common.Pagination
 @using StreamingMovie.Application.DTOs
 @model PagedResult<UnifiedMovieDTO>
 @{
@@ -11,7 +11,7 @@
         @foreach (var movie in Model.Items)
         {
             <div class="col-lg-4 col-md-6 col-sm-6">
-                <a class="product__item" asp-action="Details" asp-controller="Movie">
+                <a class="product__item" asp-action="Details" asp-controller="Movie" asp-route-id="@movie.Id">
                     <div class="product__item__pic set-bg">
                         <img src="@movie.PosterUrl" alt="@movie.Title" class="w-100 h-100 object-fit-cover" />
                         @* <div class="ep">18 / 18</div>

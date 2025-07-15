@@ -1,4 +1,4 @@
-﻿using StreamingMovie.Application.Coomon.Pagination;
+﻿using StreamingMovie.Application.Common.Pagination;
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Domain.Entities;
 using StreamingMovie.Domain.Interfaces;
