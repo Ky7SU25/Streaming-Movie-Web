@@ -1,0 +1,21 @@
+﻿@model StreamingMovie.Web.Views.Account.ViewModels.ConfirmEmailViewModel
+@{
+    ViewData["Title"] = "Email Confirmation";
+}
+
+<section class="normal-breadcrumb set-bg" data-setbg="@Url.Content("~/img/slider-bg.jpg")">
+    <div class="container text-center py-5 text-white">
+        <h2>@Model.Title</h2>
+        <p>@Model.Message</p>
+        <p>You will be redirected in a few seconds...</p>
+        <a class="btn btn-danger mt-3" href="@Model.RedirectUrl">Redirect now</a>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        setTimeout(function () {
+            window.location.href = "@Model.RedirectUrl";
+        }, 4000);
+    </script>
+}

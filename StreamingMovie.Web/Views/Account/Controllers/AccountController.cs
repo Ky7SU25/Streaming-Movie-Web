@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StreamingMovie.Application.Interfaces;
+using StreamingMovie.Application.Interfaces.ExternalServices.Mail;
 using StreamingMovie.Domain.Entities;
 using StreamingMovie.Web.Views.Account.ViewModels;
 using StreamingMovie.Web.Views.Home.Controllers;
@@ -14,12 +15,16 @@ public class AccountController : Controller
     private readonly ILoginService _loginService;
     private readonly ILogger<AccountController> _logger;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IRegisterService _registerService;
+    private readonly IMailService _mailService;
 
-    public AccountController(ILoginService loginService, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor)
+    public AccountController(ILoginService loginService, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor, IRegisterService registerService, IMailService mailService)
     {
         _loginService = loginService;
         _logger = logger;
         _httpContextAccessor = httpContextAccessor;
+        _registerService = registerService;
+        _mailService = mailService;
     }
 
     // GET: /Account/Login
@@ -27,6 +32,11 @@ public class AccountController : Controller
     public IActionResult Login(string returnUrl = null)
     {
         ViewData["ReturnUrl"] = returnUrl;
+        var isLogin = _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
+        if (isLogin == true)
+        {
+            return RedirectToAction("Index", "Home");
+        }
         return View();
     }
 
@@ -71,31 +81,95 @@ public class AccountController : Controller
 
     // GET: /Account/Register (Tạm thời để tạo user)
     [HttpGet]
-    public IActionResult Register()
+    public IActionResult Register(string returnUrl = null)
     {
+        ViewData["ReturnUrl"] = returnUrl;
         return View();
     }
 
     // POST: /Account/Register
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Register(LoginViewModel model)
+    public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
     {
+        returnUrl ??= Url.Content("~/");
         if (ModelState.IsValid)
         {
-            //var user = new User { UserName = model.Email, Email = model.Email };
-            //var result = await _userManager.CreateAsync(user, model.Password);
-            //if (result.Succeeded)
-            //{
-            //    await _signInManager.SignInAsync(user, isPersistent: false);
-            //    return RedirectToAction(nameof(HomeController.Index), "Home");
-            //}
-            //foreach (var error in result.Errors)
-            //{
-            //    ModelState.AddModelError(string.Empty, error.Description);
-            //}
+            var newUser = new User
+            {
+                FullName = model.UserName,
+                Email = model.Email,
+                UserName = model.Email, // Use email as username
+            };
+            var result = await _registerService.RegisterAsync(newUser, model.Password);
+
+            if (result.Succeeded) 
+            {
+                _logger.LogInformation("User registered successfully.");
+                var token = await _registerService.GenerateEmailConfirmationTokenAsync(newUser);
+                var callbackUrl = Url.Action("ConfirmEmail", "Account", new
+                {
+                    userId = newUser.Id,
+                    code = token,
+                    returnUrl = returnUrl
+                }, protocol: Request.Scheme);
+
+                var mailContent = new MailContent
+                {
+                    To = model.Email,
+                    Subject = "Confirm your email",
+                    Body = $"Please confirm your account by <a href='{(callbackUrl)}'>clicking here</a>."
+                };
+                await _mailService.SendMailAsync(mailContent);
+                TempData["RegisterSuccess"] = "Register successfully, please check your email and click in confirmation link to complete.";
+                return RedirectToAction("Register"); 
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
         }
         return View(model);
+    }
+    // GET: /Account/ConfirmEmail
+    public async Task<IActionResult> ConfirmEmail(string userId, string code, string returnUrl = null)
+    {
+        try
+        {
+            var result = await _registerService.EmailConfirmTokenAsync(userId, code);
+        if (result.Succeeded)
+        {
+            _logger.LogInformation("User email confirmed successfully.");
+            return View("ConfirmEmail", new ConfirmEmailViewModel
+            {
+                Title = "Email confirm successfully",
+                Message = "Your email has been verrified. Redirecting...",
+                RedirectUrl = returnUrl ?? Url.Action("Index", "Home")
+            });
+        }
+        else
+        {
+            _logger.LogWarning("Email confirmation failed for user {UserId}.", userId);
+            return View("ConfirmEmail", new ConfirmEmailViewModel
+            {
+                Title = "Email confirm",
+                Message = "You has not confirmed your email. Contact with Adminitristor if you think this is an error.",
+                RedirectUrl = Url.Action("Index", "Home")
+            });
+        }
+        } catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error confirming email for user {UserId}.", userId);
+            return View("ConfirmEmail", new ConfirmEmailViewModel
+            {
+                Title = "Error",
+                Message = "An error occurred while confirming your email. Please try again later.",
+                RedirectUrl = Url.Action("Index", "Home")
+            });
+        }
     }
 
     // GET: /Account/Error
