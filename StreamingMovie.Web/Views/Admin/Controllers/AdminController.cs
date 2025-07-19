@@ -14,22 +14,32 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
             _signInManager = signInManager;
             _userManager = userManager;
         }
+
         public IActionResult Index(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
+
         public IActionResult Billing(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
+
         public IActionResult Profile(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
+
         public IActionResult Table(string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        public IActionResult MovieUpload(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();

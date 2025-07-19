@@ -33,6 +33,10 @@ namespace StreamingMovie.Domain.Entities
 
         public bool? IsActive { get; set; } = true;
 
+        public string ProcessStatus { get; set; } = "pending";
+
+        public string ErrorMessage { get; set; } = string.Empty;
+
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
 
         // Navigation Properties

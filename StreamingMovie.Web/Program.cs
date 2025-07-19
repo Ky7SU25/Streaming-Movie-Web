@@ -22,30 +22,6 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 var app = builder.Build();
 
-await using (var scope = app.Services.CreateAsyncScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<MovieDbContext>();
-
-    var canConnect = await context.Database.CanConnectAsync();
-
-    if (!canConnect)
-    {
-        throw new HostAbortedException(message: "Cannot connect database.");
-    }
-
-    var seeder = new DatabaseSeeder(
-        context: context,
-        scope.ServiceProvider.GetRequiredService<UserManager<User>>(),
-        scope.ServiceProvider.GetRequiredService<RoleManager<Role>>()
-    );
-    var seedResult = await seeder.SeedAllAsync();
-
-    if (!seedResult)
-    {
-        throw new HostAbortedException(message: "Database seeding is false.");
-    }
-}
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
