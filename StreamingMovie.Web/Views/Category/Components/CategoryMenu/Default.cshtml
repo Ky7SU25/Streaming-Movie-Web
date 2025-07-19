@@ -4,16 +4,21 @@
     .category-item {
         height: 40px;
     }
-        .category-link:hover {
-            background-color: #444;
-            color: #ffc107 !important;
-        }
+
+    .category-link:hover {
+        background-color: #444;
+        color: #ffc107 !important;
+    }
+
+    .category-link {
+        background-color: transparent !important;
+    }
 </style>
 
 <ul class="dropdown row py-2" style="width: 600px;">
     @foreach (var category in Model)
     {
-        <li class="col-3 category-item">
+        <li class="col-12 col-sm-6 col-md-3 category-item">
             <a class="category-link text-white fs-7 d-block px-2"
                asp-controller="Movie"
                asp-action="Category"

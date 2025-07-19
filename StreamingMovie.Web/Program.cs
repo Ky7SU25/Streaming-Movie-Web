@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
+using StreamingMovie.Application.Services;
+
 using StreamingMovie.Domain.Entities;
 using StreamingMovie.Infrastructure.Data;
 using StreamingMovie.Infrastructure.Extensions;
@@ -14,10 +18,19 @@ builder.Services.AddRouting(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddCoreInfrastructure(builder.Configuration);
 
+//add service
+builder.Services.AddScoped<DetailMovieService>();
+
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
     options.AccessDeniedPath = "/Account/AccessDenied";
+
+    options.ExpireTimeSpan = TimeSpan.FromDays(14); 
+    options.SlidingExpiration = true; 
+
+    options.Cookie.IsEssential = true;
 });
 
 var app = builder.Build();

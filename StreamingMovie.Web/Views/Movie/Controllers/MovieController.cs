@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+
+using StreamingMovie.Application.Services;
+
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Application.Interfaces;
+
 using StreamingMovie.Domain.Entities;
 
 namespace StreamingMovie.Web.Views.Movie.Controllers
@@ -10,28 +14,48 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
     {
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
+
+        private DetailMovieService _detailMovieService;
+        
+
         private readonly IMovieService _movieService;
         private readonly ICategoryService _categoryService;
 
-        public MovieController(SignInManager<User> signInManager, UserManager<User> userManager, IMovieService movieService, ICategoryService categoryService)
+        public MovieController(SignInManager<User> signInManager, UserManager<User> userManager, IMovieService movieService, ICategoryService categoryService, DetailMovieService detailMovieService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _movieService = movieService;
             _categoryService = categoryService;
+            _detailMovieService = detailMovieService;
+
+
         }
 
-        public IActionResult Details(string returnUrl = null)
+        //public IActionResult Details(string returnUrl = null)
+        //{
+        //    ViewData["ReturnUrl"] = returnUrl;
+        //    return View();
+        //}
+        public async Task<IActionResult> Details(int id)
         {
-            ViewData["ReturnUrl"] = returnUrl;
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+            var movie = await _detailMovieService.GetMovieByIdAsync(id);
+            return View(movie);
+        }
+        //public IActionResult Watching(string returnUrl = null)
+        //{
+        //    ViewData["ReturnUrl"] = returnUrl;
+        //    return View();
+        //}
+        public IActionResult Watching()
+        {
+           // ViewData["ReturnUrl"] = "";
             return View();
         }
-        public IActionResult Watching(string returnUrl = null)
-        {
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
-        }
-
         [HttpGet("search")]
         public async Task<IActionResult> Search(string q, string returnUrl = null)
         {
