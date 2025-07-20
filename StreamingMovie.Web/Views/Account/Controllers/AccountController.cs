@@ -17,14 +17,16 @@ public class AccountController : Controller
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IRegisterService _registerService;
     private readonly IMailService _mailService;
+    private readonly IResetPasswordService _resetPasswordService;
 
-    public AccountController(ILoginService loginService, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor, IRegisterService registerService, IMailService mailService)
+    public AccountController(ILoginService loginService, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor, IRegisterService registerService, IMailService mailService, IResetPasswordService resetPasswordService)
     {
         _loginService = loginService;
         _logger = logger;
         _httpContextAccessor = httpContextAccessor;
         _registerService = registerService;
         _mailService = mailService;
+        _resetPasswordService = resetPasswordService;
     }
 
     // GET: /Account/Login
@@ -172,8 +174,99 @@ public class AccountController : Controller
         }
     }
 
+    [HttpGet]
+    public IActionResult ForgotPassword(string returnUrl = null)
+    {
+        ViewData["ReturnUrl"] = returnUrl;
+        return View();
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
+
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model, string returnUrl = null)
+    {
+        returnUrl ??= Url.Content("~/");
+        if (ModelState.IsValid)
+        {
+            string token;
+            try
+            {
+                 token = await _resetPasswordService.GenerateResetPasswordTokenAsync(model.Email) ?? "";
+            }
+            catch( Exception e) 
+            {
+                _logger.LogError(e, "Error generating password reset token for email {Email}.", model.Email);
+                ModelState.AddModelError(string.Empty, "Email not found or user hasn't confirmed email yet.");
+                return View(model);
+            }
+
+            var callbackUrl = Url.Action("ResetPassword", "Account", new
+            {
+                email = model.Email,
+                code = token,
+                returnUrl = returnUrl
+            }, protocol: Request.Scheme);
+            var mailContent = new MailContent
+            {
+                To = model.Email,
+                Subject = "Reset Password",
+                Body = $"Please reset your password by <a href='{(callbackUrl)}'>clicking here</a>."
+            };
+            await _mailService.SendMailAsync(mailContent);
+            TempData["ForgotPasswordSuccess"] = "Please check your email to reset your password.";
+            return RedirectToAction("ForgotPassword");
+        }
+        return View(model);
+    }
+
+    // GET: /Account/ResetPassword
+    [HttpGet]
+    public IActionResult ResetPassword(string email, string code, string returnUrl = null)
+    {
+        if (email == null || code == null)
+        {
+            return RedirectToAction("Error");
+        }
+
+        var model = new ResetPasswordViewModel
+        {
+            Email = email,
+            Code = code
+        };
+
+        ViewData["ReturnUrl"] = returnUrl;
+        return View(model);
+    }
+
+    // POST: /Account/ResetPassword
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model, string returnUrl = null)
+    {
+        returnUrl ??= Url.Content("~/");
+
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var result = await _resetPasswordService.ResetPasswordAsync(model.Email, model.Code, model.Password);
+        if (result.Succeeded)
+        {
+            TempData["ResetPasswordSuccess"] = "Password reset successfully. Please login with your new password.";
+            return RedirectToAction("Login");
+        }
+
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+
+        return View(model);
+    }
+
+
     public async Task<IActionResult> Logout(string returnUrl = null)
     {
         await _loginService.LogoutAsync();
