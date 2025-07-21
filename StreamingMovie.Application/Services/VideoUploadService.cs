@@ -247,7 +247,10 @@ namespace StreamingMovie.Application.Services
                         MovieId = updatedMovie.Id.ToString(),
                         MovieVideoId = updatedMovie.Id.ToString(),
                         PathStorage = movieVideoUrl.Substring(
-                            movieVideoUrl.IndexOf('/', movieVideoUrl.IndexOf("//") + 2) + 1
+                            movieVideoUrl.IndexOf(
+                                "/",
+                                movieVideoUrl.IndexOf('/', movieVideoUrl.IndexOf("//") + 2) + 1
+                            ) + 1
                         )
                     }
                 );
