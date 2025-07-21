@@ -1,8 +1,7 @@
-
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using StreamingMovie.Application.Services;
-
+using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Domain.Entities;
 using StreamingMovie.Infrastructure.Data;
 using StreamingMovie.Infrastructure.Extensions;
@@ -18,9 +17,12 @@ builder.Services.AddRouting(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddCoreInfrastructure(builder.Configuration);
 
-//add service
+//add existing services
 builder.Services.AddScoped<DetailMovieService>();
 
+// Add new video upload services
+builder.Services.AddScoped<IVideoUploadService, VideoUploadService>();
+builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
