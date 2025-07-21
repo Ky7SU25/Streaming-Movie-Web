@@ -1119,7 +1119,7 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
         {
             // TODO: Replace with actual MinIO domain configuration
             var minioBaseUrl = _options.Endpoint; // Should come from configuration
-            return $"{minioBaseUrl}/{minioFilePath}";
+            return $"{minioBaseUrl}/{_options.Bucket}/{minioFilePath}";
         }
 
         #endregion
