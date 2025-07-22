@@ -17,8 +17,6 @@ builder.Services.AddRouting(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddCoreInfrastructure(builder.Configuration);
 
-//add existing services
-builder.Services.AddScoped<DetailMovieService>();
 
 // Add new video upload services
 builder.Services.AddScoped<IVideoUploadService, VideoUploadService>();
