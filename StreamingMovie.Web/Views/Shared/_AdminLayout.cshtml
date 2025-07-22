@@ -11,7 +11,13 @@
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <!-- Font Awesome Icons -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-i0XbKH1ffE5CfTsyDDpx6FnLy3Xgu7B+LhR3+O/efUeXcHq0FO9sYrdtL+WaP9N1e2yBzR2rb+jT9eZlHwM8Lw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
     <!-- Nucleo Icons -->
     <link href="~/assets/admincss/nucleo-icons.css" rel="stylesheet" />
     <link href="~/assets/admincss/nucleo-svg.css" rel="stylesheet" />
@@ -57,14 +63,47 @@
                     </a>
                 </li>
 
+
+                <li class="mt-0.5 w-full group">
+                    <a href="javascript:;" onclick="toggleSubmenu('tablesSubMenu', this)"
+                       class="py-2.7 text-sm flex items-center mx-2 px-4 rounded-lg transition-colors text-slate-700 dark:text-white dark:opacity-80 font-semibold">
+                        <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg text-center xl:p-2.5">
+                            <i class="text-orange-500 ni ni-calendar-grid-58"></i>
+                        </div>
+                        <span class="ml-1">Tables</span>
+                        <!-- Mũi tên -->
+                        <i class="ml-auto ni ni-bold-down transform transition-transform duration-300" id="tablesArrowIcon"></i>
+
                 <li class="mt-0.5 w-full">
                     <a class="py-2.7 bg-blue-500/13 dark:text-black dark:opacity-80 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold text-slate-700 transition-colors" href="/Admin/VideoUpload">
                         <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                             <i class="relative top-0 text-sm leading-normal text-orange-500 fas fa-upload"></i>
                         </div>
                         <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Video Upload</span>
+
                     </a>
+
+                    <!-- Submenu -->
+                    <ul id="tablesSubMenu" class="hidden pl-12 mt-2 space-y-2 transition-all">
+                        <li>
+                            <a href="/Admin/Category" class="flex items-center text-sm py-1 text-slate-600 dark:text-white hover:text-blue-500">
+                                <i class="mr-2 text-sm leading-normal text-blue-500 ni ni-bullet-list-67"></i>
+                                Category
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/Admin/Film" class="flex items-center text-sm py-1 text-slate-600 dark:text-white hover:text-blue-500">
+                                <i class="mr-2 text-sm leading-normal text-blue-500 ni ni-button-play"></i> Film
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/Admin/User" class="flex items-center text-sm py-1 text-slate-600 dark:text-white hover:text-blue-500">
+                                <i class="mr-2 text-sm leading-normal text-blue-500 ni ni-circle-08"></i> Users
+                            </a>
+                        </li>
+                    </ul>
                 </li>
+
 
                 <li class="mt-0.5 w-full">
                     <a class="py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors dark:text-black dark:opacity-80" href="/Admin/Table">
@@ -77,6 +116,7 @@
             </ul>
         </div>
 
+
         <div class="mx-4">
             <div class="relative flex flex-col min-w-0 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border" sidenav-card>
                 <img class="w-1/2 mx-auto" src="~/assets/img/illustrations/icon-documentation.svg" alt="sidebar illustrations">
@@ -88,6 +128,7 @@
                 </div>
             </div>
         </div>
+
     </aside>
 
     <main class="relative h-full max-h-screen transition-all duration-200 ease-in-out xl:ml-68 rounded-xl">
@@ -139,7 +180,24 @@
 
     </main>
 </body>
-<!-- Scripts -->
+
+<script>
+    function toggleSubmenu(submenuId, el) {
+        const submenu = document.getElementById(submenuId);
+        const arrowIcon = el.querySelector("i.ni-bold-down");
+
+        if (submenu.classList.contains('hidden')) {
+            submenu.classList.remove('hidden');
+            arrowIcon.classList.add('rotate-180');
+        } else {
+            submenu.classList.add('hidden');
+            arrowIcon.classList.remove('rotate-180');
+        }
+    }
+</script>
+
+<!-- plugin for scrollbar  -->
+
 <script src="~/assets/js/plugins/perfect-scrollbar.min.js" async></script>
 <script src="~/js/video-upload.js" async></script>
 <script src="~/assets/js/argon-dashboard-tailwind.js?v=1.0.1" async></script>
