@@ -1,5 +1,5 @@
 ﻿@using StreamingMovie.Web.Views.Account.ViewModels
-@model LoginViewModel
+@model RegisterViewModel
 @{
     ViewData["Title"] = "Register";
 }
@@ -26,22 +26,35 @@
             <div class="col-lg-6">
                 <div class="login__form">
                     <h3>Sign Up</h3>
+                    @if (TempData["RegisterSuccess"] != null)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @TempData["RegisterSuccess"]
+                        </div>
+                    }
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                     <form asp-action="Register" method="post">
+                        <span asp-validation-for="UserName" class="text-danger position-relative"></span>
+                        <div class="input__item">
+                            <input asp-for="UserName" placeholder="User name" class="form-control" required />
+                            <span class="icon_profile"></span>
+                        </div>
 
                         <span asp-validation-for="Email" class="text-danger position-relative"></span>
                         <div class="input__item">
                             <input asp-for="Email" placeholder="Email address" class="form-control" required />
                             <span class="icon_mail"></span>
                         </div>
-
-                        @* <div class="input__item">
-                            <input type="text" placeholder="Your Name">
-                            <span class="icon_profile"></span>
-                        </div> *@
-
+                        
                         <span asp-validation-for="Password" class="text-danger position-relative"></span>
                         <div class="input__item">
                             <input asp-for="Password" placeholder="Password" class="form-control" required />
+                            <span class="icon_lock"></span>
+                        </div>
+
+                        <span asp-validation-for="ConfirmPassword" class="text-danger position-relative"></span>
+                        <div class="input__item">
+                            <input asp-for="ConfirmPassword" placeholder="Confirm password" class="form-control" required />
                             <span class="icon_lock"></span>
                         </div>
 

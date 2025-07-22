@@ -537,12 +537,20 @@ namespace StreamingMovie.Infrastructure.Migrations
                     b.Property<int>("EpisodeId")
                         .HasColumnType("INT");
 
+                    b.Property<string>("ErrorMessage")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<bool?>("IsActive")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Language")
                         .HasMaxLength(10)
                         .HasColumnType("varchar(10)");
+
+                    b.Property<string>("ProcessStatus")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("SubtitleUrl")
                         .HasMaxLength(500)
@@ -744,6 +752,10 @@ namespace StreamingMovie.Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("ErrorMessage")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<bool?>("IsActive")
                         .HasColumnType("tinyint(1)");
 
@@ -753,6 +765,10 @@ namespace StreamingMovie.Infrastructure.Migrations
 
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ProcessStatus")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("SubtitleUrl")
                         .HasMaxLength(500)
@@ -1099,6 +1115,69 @@ namespace StreamingMovie.Infrastructure.Migrations
                     b.HasIndex("DirectorId");
 
                     b.ToTable("SeriesDirector", (string)null);
+                });
+
+            modelBuilder.Entity("StreamingMovie.Domain.Entities.UnifiedMovie", b =>
+                {
+                    b.Property<string>("BannerUrl")
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("CountryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<float?>("ImdbRating")
+                        .HasColumnType("float");
+
+                    b.Property<bool?>("IsPremium")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsSeries")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("OriginalTitle")
+                        .HasColumnType("longtext");
+
+                    b.Property<float?>("OurRating")
+                        .HasColumnType("float");
+
+                    b.Property<string>("PosterUrl")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("ReleaseDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TrailerUrl")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("ViewCount")
+                        .HasColumnType("int");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("UnifiedMovie", (string)null);
                 });
 
             modelBuilder.Entity("StreamingMovie.Domain.Entities.User", b =>
