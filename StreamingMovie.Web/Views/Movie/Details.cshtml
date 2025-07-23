@@ -76,7 +76,7 @@
                                 </div>
                                 <div class="anime__details__btn h-100 d-flex align-content-end">
                                     <a href="#" class="follow-btn"><i class="fa fa-heart-o"></i> </a>
-                                    <a asp-action="Watching" asp-controller="Movie" class="watch-btn">
+                                    <a asp-action="Watching" asp-controller="Movie" asp-route-id="@Model.Id" class="watch-btn">
                                         <span>Watch Now</span> <i class="fa fa-angle-right"></i>
                                     </a>
                                 </div>
