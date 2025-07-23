@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +50,19 @@ public static class DatabseServiceRegistration
             })
             .AddEntityFrameworkStores<MovieDbContext>()
             .AddDefaultTokenProviders();
+        
+        services.AddAuthentication()
+            .AddGoogle(options =>
+            {
+                options.ClientId = config["Authentication:Google:ClientId"];
+                options.ClientSecret = config["Authentication:Google:ClientSecret"];
+                options.CallbackPath = "/signin-google";
+                // Explicitly request the profile scope
+                options.Scope.Add("profile");
+
+                // Map the picture to a claim
+                options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
+            });
         return services;
     }
 }
