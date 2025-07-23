@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StreamingMovie.Application.Common.Pagination;
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Domain.Entities;
 using StreamingMovie.Domain.UnitOfWorks;
-using System.Security.Claims;
 
 namespace StreamingMovie.Application.Services
 {
@@ -51,12 +49,12 @@ namespace StreamingMovie.Application.Services
                     throw new ArgumentException("EpisodeId required for series.");
 
                 query = _unitOfWork.CommentRepository.Find(c =>
-                    c.MovieId == null && c.EpisodeId == episodeId.Value);
+                    c.MovieId == null && c.EpisodeId == episodeId.Value && c.ParentId == null);
             }
             else
             {
                 query = _unitOfWork.CommentRepository.Find(c =>
-                    c.MovieId == unifiedMovie.Id && c.SeriesId == null);
+                    c.MovieId == unifiedMovie.Id && c.SeriesId == null && c.ParentId == null);
             }
 
             return await query
@@ -83,5 +81,17 @@ namespace StreamingMovie.Application.Services
 
             return await _unitOfWork.CommentRepository.UpdateAsync(comment);
         }
+
+        public async Task<List<CommentResponseDTO>> GetRepliesAsync(int parentCommentId)
+        {
+            var replies = await _unitOfWork.CommentRepository
+                .Find(c => c.ParentId == parentCommentId)
+                .Include(c => c.User)
+                .ProjectTo<CommentResponseDTO>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return replies;
+        }
+
     }
 }

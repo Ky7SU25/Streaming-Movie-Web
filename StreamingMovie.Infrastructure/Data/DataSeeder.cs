@@ -1167,52 +1167,206 @@ namespace StreamingMovie.Infrastructure.Data
             if (!await _context.Ratings.AnyAsync())
             {
                 var user = await _userManager.Users.FirstAsync(u =>
-                    u.Email == "john.doe@example.com"
+                    u.Email == "datnvdz2k4@gmail.com"
                 );
                 var darkKnight = await _context.Movies.FirstAsync(m =>
                     m.Slug == "the-dark-knight-2008"
                 );
+                var series = await _context.Series.FirstAsync();
+
+                var now = DateTime.Now;
 
                 var ratings = new List<Rating>
                 {
+                    // 7 Movie Ratings
                     new Rating
                     {
                         UserId = user.Id,
                         MovieId = darkKnight.Id,
                         RatingValue = 9,
-                        Review = "Amazing movie with great acting and direction!"
+                        Review = "Amazing movie with great acting and direction!",
+                        CreatedAt = now.AddDays(-7)
+                    },
+                    new Rating
+                    {
+                        UserId = user.Id,
+                        MovieId = darkKnight.Id,
+                        RatingValue = 10,
+                        Review = "A masterpiece! Nolan at his best.",
+                        CreatedAt = now.AddDays(-6)
+                    },
+                    new Rating
+                    {
+                        UserId = user.Id,
+                        MovieId = darkKnight.Id,
+                        RatingValue = 8,
+                        Review = "Really enjoyed it, but a bit too long.",
+                        CreatedAt = now.AddDays(-5)
+                    },
+                    new Rating
+                    {
+                        UserId = user.Id,
+                        MovieId = darkKnight.Id,
+                        RatingValue = 9,
+                        Review = "Heath Ledger's Joker is iconic.",
+                        CreatedAt = now.AddDays(-4)
+                    },
+                    new Rating
+                    {
+                        UserId = user.Id,
+                        MovieId = darkKnight.Id,
+                        RatingValue = 9,
+                        Review = "The story and pace were excellent.",
+                        CreatedAt = now.AddDays(-3)
+                    },
+                    new Rating
+                    {
+                        UserId = user.Id,
+                        MovieId = darkKnight.Id,
+                        RatingValue = 10,
+                        Review = "Rewatchable. Cinematic brilliance.",
+                        CreatedAt = now.AddDays(-2)
+                    },
+                    new Rating
+                    {
+                        UserId = user.Id,
+                        MovieId = darkKnight.Id,
+                        RatingValue = 8,
+                        Review = "Great movie, though a bit dark in tone.",
+                        CreatedAt = now.AddDays(-1)
+                    },
+
+                    // 7 Series Ratings
+                    new Rating
+                    {
+                        UserId = user.Id,
+                        SeriesId = series.Id,
+                        RatingValue = 9,
+                        Review = "Fantastic first season, hooked me instantly!",
+                        CreatedAt = now.AddDays(-7)
+                    },
+                    new Rating
+                    {
+                        UserId = user.Id,
+                        SeriesId = series.Id,
+                        RatingValue = 8,
+                        Review = "Solid writing and character arcs.",
+                        CreatedAt = now.AddDays(-6)
+                    },
+                    new Rating
+                    {
+                        UserId = user.Id,
+                        SeriesId = series.Id,
+                        RatingValue = 7,
+                        Review = "A few slow episodes but still enjoyable.",
+                        CreatedAt = now.AddDays(-5)
+                    },
+                    new Rating
+                    {
+                        UserId = user.Id,
+                        SeriesId = series.Id,
+                        RatingValue = 9,
+                        Review = "Binge-worthy and intense!",
+                        CreatedAt = now.AddDays(-4)
+                    },
+                    new Rating
+                    {
+                        UserId = user.Id,
+                        SeriesId = series.Id,
+                        RatingValue = 10,
+                        Review = "Best series I’ve seen this year.",
+                        CreatedAt = now.AddDays(-3)
+                    },
+                    new Rating
+                    {
+                        UserId = user.Id,
+                        SeriesId = series.Id,
+                        RatingValue = 8,
+                        Review = "Good cliffhangers at end of each episode.",
+                        CreatedAt = now.AddDays(-2)
+                    },
+                    new Rating
+                    {
+                        UserId = user.Id,
+                        SeriesId = series.Id,
+                        RatingValue = 9,
+                        Review = "Amazing plot twists, waiting for next season!",
+                        CreatedAt = now.AddDays(-1)
                     }
                 };
 
                 await _context.Ratings.AddRangeAsync(ratings);
+                await _context.SaveChangesAsync();
             }
         }
+
 
         private async Task SeedCommentsAsync()
         {
             if (!await _context.Comments.AnyAsync())
             {
                 var user = await _userManager.Users.FirstAsync(u =>
-                    u.Email == "john.doe@example.com"
+                    u.Email == "datnvdz2k4@gmail.com"
                 );
-                var darkKnight = await _context.Movies.FirstAsync(m =>
+
+                var movie = await _context.Movies.FirstAsync(m =>
                     m.Slug == "the-dark-knight-2008"
                 );
 
-                var comments = new List<Comment>
-                {
-                    new Comment
+                var series = await _context.Series.FirstAsync();
+                var episode = await _context.Episodes.FirstAsync();
+
+                var now = DateTime.Now;
+
+                // 10 bình luận movie
+                var movieComments = Enumerable.Range(1, 10)
+                    .Select(i => new Comment
                     {
                         UserId = user.Id,
-                        MovieId = darkKnight.Id,
-                        Content = "This is one of the best superhero movies ever made!",
-                        LikeCount = 15,
-                        DislikeCount = 2,
-                        IsApproved = true
-                    }
-                };
+                        MovieId = movie.Id,
+                        Content = $"This is movie comment {i}",
+                        CreatedAt = now.AddMinutes(-i * 5),
+                        UpdatedAt = now.AddMinutes(-i * 5)
+                    })
+                    .ToList();
 
-                await _context.Comments.AddRangeAsync(comments);
+                // 5 bình luận con (replies)
+                var replyComments = new List<Comment>
+        {
+            new Comment { UserId = user.Id, MovieId = movie.Id, Content = "Reply to comment 1", ParentId = 1, CreatedAt = now, UpdatedAt = now },
+            new Comment { UserId = user.Id, MovieId = movie.Id, Content = "Reply to comment 3", ParentId = 3, CreatedAt = now, UpdatedAt = now },
+            new Comment { UserId = user.Id, MovieId = movie.Id, Content = "Reply to comment 5", ParentId = 5, CreatedAt = now, UpdatedAt = now },
+            new Comment { UserId = user.Id, MovieId = movie.Id, Content = "Reply to comment 7", ParentId = 7, CreatedAt = now, UpdatedAt = now },
+            new Comment { UserId = user.Id, MovieId = movie.Id, Content = "Reply to comment 10", ParentId = 10, CreatedAt = now, UpdatedAt = now }
+        };
+
+                // 10 bình luận cho series/episode
+                var episodeComments = Enumerable.Range(1, 10)
+                    .Select(i => new Comment
+                    {
+                        UserId = user.Id,
+                        SeriesId = series.Id,
+                        EpisodeId = episode.Id,
+                        Content = $"Episode comment {i}",
+                        CreatedAt = now.AddMinutes(-i),
+                        UpdatedAt = now.AddMinutes(-i)
+                    })
+                    .ToList();
+
+                await _context.Comments.AddRangeAsync(movieComments);
+                await _context.SaveChangesAsync(); // cần save để có Id cho ParentId mapping
+
+                // Gán lại đúng ParentId (sau khi movieComments được lưu và có Id thật)
+                replyComments[0].ParentId = movieComments[0].Id;
+                replyComments[1].ParentId = movieComments[2].Id;
+                replyComments[2].ParentId = movieComments[4].Id;
+                replyComments[3].ParentId = movieComments[6].Id;
+                replyComments[4].ParentId = movieComments[9].Id;
+
+                await _context.Comments.AddRangeAsync(replyComments);
+                await _context.Comments.AddRangeAsync(episodeComments);
+
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -1350,5 +1504,8 @@ namespace StreamingMovie.Infrastructure.Data
                 await _context.WatchHistories.AddRangeAsync(watchHistories);
             }
         }
+
+
+
     }
 }
