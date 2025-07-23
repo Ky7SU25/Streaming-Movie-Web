@@ -9,7 +9,7 @@
         <h5>Reviews</h5>
     </div>
     <div id="commentsList">
-        <!-- Dynamic comments will be appended here -->
+        @await Component.InvokeAsync("Comment", new { slug = "the-dark-knight-2008" })
     </div>
 </div>
 

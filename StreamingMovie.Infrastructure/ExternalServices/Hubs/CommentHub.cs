@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Domain.Entities;
 
 namespace StreamingMovie.Infrastructure.ExternalServices.Hubs;
@@ -9,10 +10,12 @@ public class CommentHub : Hub
 {
     private readonly ILogger<CommentHub> _logger;
     private readonly UserManager<User> _userManager;
-    public CommentHub(ILogger<CommentHub> logger, UserManager<User> userManager)
+    private readonly ICommentService _commentService;
+    public CommentHub(ILogger<CommentHub> logger, UserManager<User> userManager, ICommentService commentService)
     {
         _logger = logger;
         _userManager = userManager;
+        _commentService = commentService;
     }
 
     public override Task OnConnectedAsync()
