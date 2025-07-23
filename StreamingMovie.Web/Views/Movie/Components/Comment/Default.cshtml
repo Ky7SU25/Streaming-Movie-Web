@@ -2,6 +2,25 @@
 @using StreamingMovie.Application.DTOs
 @model PagedResult<CommentResponseDTO>
 
+
+
+
+@functions {
+    public string GetRelativeTime(DateTime createdAt)
+    {
+        var now = DateTime.UtcNow;
+        var diff = now - createdAt.ToUniversalTime();
+
+        if (diff.TotalMinutes < 1)
+            return "Just now";
+        if (diff.TotalMinutes < 60)
+            return $"{(int)diff.TotalMinutes} minute(s) ago";
+        if (diff.TotalHours < 24)
+            return $"{(int)diff.TotalHours} hour(s) ago";
+        return $"{(int)diff.TotalDays} day(s) ago";
+    }
+}
+
 @foreach (var comment in Model.Items)
 {
     <div class="anime__review__item">
@@ -9,7 +28,11 @@
             <img src="@comment.AvatarUrl" alt="">
         </div>
         <div class="anime__review__item__text">
-            <h6>@comment.FullName - <span>1 Hour ago</span></h6>
+            @{
+                var timeAgo = GetRelativeTime(comment.CreatedAt ?? DateTime.UtcNow);
+            }
+            <h6>@comment.FullName - <span>@timeAgo</span></h6>
+            
             <p>
                 @comment.Content
             </p>
