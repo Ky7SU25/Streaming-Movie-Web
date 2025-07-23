@@ -5,5 +5,7 @@ namespace StreamingMovie.Domain.Interfaces
     /// <summary>
     /// Interface for MovieRepository
     /// </summary>
-    public interface IMovieRepository : IGenericRepository<Movie> { }
+    public interface IMovieRepository : IGenericRepository<Movie> 
+    {
+    }
 }

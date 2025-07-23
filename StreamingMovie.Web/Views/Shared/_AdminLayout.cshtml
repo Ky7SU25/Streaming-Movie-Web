@@ -33,6 +33,9 @@
     <link href="~/assets/admincss/nucleo-svg.css" rel="stylesheet" />
     <!-- Main Styling -->
     <link href="~/assets/admincss/argon-dashboard-tailwind.css?v=1.0.1" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Chart js-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body class="m-0 font-sans text-base antialiased font-normal dark:bg-slate-900 leading-default bg-gray-50 text-slate-500">
@@ -370,6 +373,7 @@
         </div>
     </div>
 </body>
+
 <script>
     function toggleSubmenu(submenuId, el) {
         const submenu = document.getElementById(submenuId);
@@ -384,6 +388,8 @@
         }
     }
 </script>
+
+<script src="~/js/ChartJS.js"></script>
 
 <!-- plugin for scrollbar  -->
 <script src="~/assets/js/plugins/perfect-scrollbar.min.js" async></script>
