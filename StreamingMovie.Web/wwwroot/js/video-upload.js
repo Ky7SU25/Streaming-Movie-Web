@@ -702,7 +702,7 @@ class VideoUploadManager {
                 const blob = file.slice(start, end);
 
                 console.log(`📤 Uploading part ${part.PartNumber} (${this.formatFileSize(blob.size)})`);
-
+                console.log(`part.Url: ${part.Url}`)
                 const res = await fetch(part.Url, { 
                     method: "PUT", 
                     body: blob,

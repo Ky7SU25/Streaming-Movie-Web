@@ -50,7 +50,7 @@ namespace StreamingMovie.Infrastructure.ExternalServices.Storage
                     PartNumber = partNumber,
                     Verb = HttpVerb.PUT,
                     Expires = DateTime.UtcNow.AddMinutes(30),
-                    Protocol = Protocol.HTTP
+                    Protocol = Protocol.HTTPS
                 };
                 urls.Add((partNumber, _s3.GetPreSignedURL(req)));
             }
