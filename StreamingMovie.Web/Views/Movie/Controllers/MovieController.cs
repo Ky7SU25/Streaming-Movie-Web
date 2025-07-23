@@ -12,13 +12,21 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IUnifiedMovieService _unifiedMovieService;
         private readonly ICategoryService _categoryService;
+        private readonly IMovieService _movieService;
 
-        public MovieController(SignInManager<User> signInManager, UserManager<User> userManager, IUnifiedMovieService movieService, ICategoryService categoryService)
+        public MovieController(
+            SignInManager<User> signInManager,
+            UserManager<User> userManager,
+            IUnifiedMovieService movieService,
+            ICategoryService categoryService,
+            IMovieService movieService1
+        )
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _unifiedMovieService = movieService;
             _categoryService = categoryService;
+            _movieService = movieService1;
         }
 
         public async Task<IActionResult> Details(string slug)
@@ -27,22 +35,33 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             return View(response);
         }
 
-        public IActionResult Watching()
+        public async Task<IActionResult> Watching(int id)
         {
-            return View();
+            try
+            {
+                var movie = await _movieService.GetMovieVideoAsync(id);
+                if (movie == null)
+                {
+                    return NotFound("Movie not found");
+                }
+                return View(movie);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Movie or video not found");
+            }
+            catch (Exception ex)
+            {
+                // Log the error in a real application
+                return BadRequest($"Error loading movie: {ex.Message}");
+            }
         }
 
         [HttpGet("search")]
         public async Task<IActionResult> Search(string q, string returnUrl = null)
         {
-            var filter = new MovieFilterDTO
-            {
-                Keyword = q,
-                Page = 1,
-            };
-            var sectionTitle = string.IsNullOrEmpty(q)
-                ? "Search"
-                : $"Search results for '{q}'";
+            var filter = new MovieFilterDTO { Keyword = q, Page = 1, };
+            var sectionTitle = string.IsNullOrEmpty(q) ? "Search" : $"Search results for '{q}'";
 
             return await RenderMovieList(filter, sectionTitle, returnUrl);
         }
@@ -73,7 +92,11 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             return await RenderMovieList(filter, sectionTitle, returnUrl);
         }
 
-        private async Task<IActionResult> RenderMovieList(MovieFilterDTO filter, string? sectionTitle, string returnUrl)
+        private async Task<IActionResult> RenderMovieList(
+            MovieFilterDTO filter,
+            string? sectionTitle,
+            string returnUrl
+        )
         {
             var result = await _unifiedMovieService.GetFilteredPagedMovies(filter);
 
@@ -85,13 +108,18 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
 
         // This action is used for AJAX requests to filter movies based on the provided criteria.
         [HttpGet("filter")]
-        public async Task<IActionResult> Filter([FromQuery] MovieFilterDTO filter, string? returnUrl = null, string? sectionTitle = "Browse")
+        public async Task<IActionResult> Filter(
+            [FromQuery] MovieFilterDTO filter,
+            string? returnUrl = null,
+            string? sectionTitle = "Browse"
+        )
         {
             var result = await _unifiedMovieService.GetFilteredPagedMovies(filter);
 
             ViewBag.Filter = filter;
             ViewBag.SectionTitle = sectionTitle;
             ViewData["ReturnUrl"] = returnUrl;
+            
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {

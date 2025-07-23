@@ -19,6 +19,8 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
         private readonly IVideoUploadService _videoUploadService;
         private readonly IFileUploadService _fileUploadService;
         private readonly ICategoryService _categoryService;
+        private readonly IMovieCategoryService _movieCategoryService;
+        private readonly IMovieService _movieService;
         private readonly ICountryService _countryService;
         private readonly IStorageHandler _storage;
         private readonly MinioOptions _options;
@@ -52,6 +54,8 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
             IFileUploadService fileUploadService,
             ICategoryService categoryService,
             ICountryService countryService,
+            IMovieService movieService,
+            IMovieCategoryService movieCategoryService,
             IStorageHandler storage,
             IOptions<MinioOptions> options
         )
@@ -65,6 +69,8 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
             _countryService = countryService;
             _storage = storage;
             _options = options.Value;
+            _movieService = movieService;
+            _movieCategoryService = movieCategoryService;
         }
 
         #region Admin Pages
@@ -73,6 +79,17 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();
+        }
+
+        [HttpPost]
+        public JsonResult TotalViewCategory()
+        {
+            var result = _movieCategoryService.GetViewsByMovieCategoryAsync().Result;
+            var labels = result.Select(x => x.CategoryName).ToList();
+            var data = result.Select(x => x.TotalViews).ToList();
+
+
+            return Json(new { labels, data });
         }
 
         public IActionResult Billing(string returnUrl = null)

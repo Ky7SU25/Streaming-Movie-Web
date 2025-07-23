@@ -831,6 +831,37 @@ namespace StreamingMovie.Infrastructure.Migrations
                     b.ToTable("Notification", (string)null);
                 });
 
+            modelBuilder.Entity("StreamingMovie.Domain.Entities.Payment", b =>
+                {
+                    b.Property<int>("PaymentID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(10, 2)");
+
+                    b.Property<DateTime>("PaymentCreateDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("PaymentExpDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)")
+                        .HasColumnName("Status");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PaymentID");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("StreamingMovie.Domain.Entities.Playlist", b =>
                 {
                     b.Property<int>("Id")
@@ -1712,6 +1743,17 @@ namespace StreamingMovie.Infrastructure.Migrations
                 {
                     b.HasOne("StreamingMovie.Domain.Entities.User", "User")
                         .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("StreamingMovie.Domain.Entities.Payment", b =>
+                {
+                    b.HasOne("StreamingMovie.Domain.Entities.User", "User")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

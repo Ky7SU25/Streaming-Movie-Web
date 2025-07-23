@@ -120,11 +120,20 @@ public class AccountController : Controller
                     returnUrl = returnUrl
                 }, protocol: Request.Scheme);
 
+                var root = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+                var templatePath = Path.Combine(root, "StreamingMovie.Domain", "Common", "Templates", "ConfirmEmailTemplate.html");
+
+                string htmlTemplate = await System.IO.File.ReadAllTextAsync(templatePath);
+
+                string emailBody = htmlTemplate
+                .Replace("{{ .ConfirmationURL }}", callbackUrl)
+                .Replace("{{ .Email }}", model.Email);
+
                 var mailContent = new MailContent
                 {
                     To = model.Email,
-                    Subject = "Confirm your email",
-                    Body = $"Please confirm your account by <a href='{(callbackUrl)}'>clicking here</a>."
+                    Subject = "Confirm Email CineStream",
+                    Body = emailBody
                 };
                 await _mailService.SendMailAsync(mailContent);
                 TempData["RegisterSuccess"] = "Register successfully, please check your email and click in confirmation link to complete.";
@@ -211,11 +220,22 @@ public class AccountController : Controller
                 code = token,
                 returnUrl = returnUrl
             }, protocol: Request.Scheme);
+
+
+            var root = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+            var templatePath = Path.Combine(root, "StreamingMovie.Domain", "Common", "Templates", "ResetPasswordTemplate.html");
+
+            string htmlTemplate = await System.IO.File.ReadAllTextAsync(templatePath);
+
+            string emailBody = htmlTemplate
+                .Replace("{{ .ResetPasswordUrl }}", callbackUrl)
+                .Replace("{{ .Email }}", model.Email);
+
             var mailContent = new MailContent
             {
                 To = model.Email,
-                Subject = "Reset Password",
-                Body = $"Please reset your password by <a href='{(callbackUrl)}'>clicking here</a>."
+                Subject = "Reset Password CineStream",
+                Body = emailBody
             };
             await _mailService.SendMailAsync(mailContent);
             TempData["ForgotPasswordSuccess"] = "Please check your email to reset your password.";

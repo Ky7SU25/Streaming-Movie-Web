@@ -42,6 +42,7 @@ namespace StreamingMovie.Infrastructure.UnitOfWork
         private IVideoServerRepository _getVideoServerRepository;
         private IWatchHistoryRepository _getWatchHistoryRepository;
         private IUnifiedMovieRepository _getUnifiedMovieRepository;
+        private IPaymentRepository _getPaymentRepository;
 
         public MySQLUnitOfWork(MovieDbContext context)
         {
@@ -320,6 +321,15 @@ namespace StreamingMovie.Infrastructure.UnitOfWork
             {
                 return _getUnifiedMovieRepository
                     ?? (_getUnifiedMovieRepository = new UnifiedMovieRepository(_context));
+            }
+        }
+
+        public IPaymentRepository PaymentRepository 
+        {
+            get
+            {
+                return _getPaymentRepository 
+                    ?? (_getPaymentRepository = new PaymentRepository(_context));
             }
         }
     }

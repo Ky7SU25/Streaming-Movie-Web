@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +25,6 @@ public static class DatabseServiceRegistration
             );
 
         services.AddDbContext<MovieDbContext>(options => options.UseMySQL(connectionString));
-
         // Cấu hình Identity
         services
             .AddIdentity<User, Role>(options =>
@@ -40,12 +40,12 @@ public static class DatabseServiceRegistration
                 options.Lockout.AllowedForNewUsers = true;
 
                 // User configuration
-                options.User.AllowedUserNameCharacters = 
+                options.User.AllowedUserNameCharacters =
                     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
 
                 // SignIn configuration
-                options.SignIn.RequireConfirmedEmail = true;            // Email must exist
-                options.SignIn.RequireConfirmedPhoneNumber = false;     // 
+                options.SignIn.RequireConfirmedEmail = true; // Email must exist
+                options.SignIn.RequireConfirmedPhoneNumber = false; //
             })
             .AddEntityFrameworkStores<MovieDbContext>()
             .AddDefaultTokenProviders();
