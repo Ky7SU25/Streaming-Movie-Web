@@ -76,7 +76,7 @@
                     <!-- Submenu -->
                     <ul id="tablesSubMenu" class="hidden pl-12 mt-2 space-y-2 transition-all">
                         <li>
-                            <a href="/Admin/Category" class="flex items-center text-sm py-1 text-slate-600 dark:text-white hover:text-blue-500">
+                            <a asp-action="CategoryList" asp-controller="ActorAdmin" class="flex items-center text-sm py-1 text-slate-600 dark:text-white hover:text-blue-500">
                                 <i class="mr-2 text-sm leading-normal text-blue-500 ni ni-bullet-list-67"></i>
                                 Category
                             </a>
@@ -89,6 +89,11 @@
                         <li>
                             <a asp-action="ActorList" asp-controller="ActorAdmin" class="flex items-center text-sm py-1 text-slate-600 dark:text-white hover:text-blue-500">
                                 <i class="mr-2 text-sm leading-normal text-blue-500 ni ni-circle-08"></i> Actors
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-action="DirectorList" asp-controller="ActorAdmin" class="flex items-center text-sm py-1 text-slate-600 dark:text-white hover:text-blue-500">
+                                <i class="mr-2 text-sm leading-normal text-blue-500 ni ni-circle-08"></i> Directors
                             </a>
                         </li>
                         <li>
