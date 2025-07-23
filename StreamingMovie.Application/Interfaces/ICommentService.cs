@@ -10,5 +10,6 @@ namespace StreamingMovie.Application.Interfaces
         Task<PagedResult<CommentResponseDTO>> PaginateBySlugAsync(string slug, int? episodeId, int page = 1, int pageSize = 5);
         Task<Comment> AddAsync(CommentRequestDTO request);
         Task<Comment> UpdateAsync(int commentId, string content);
+        Task<List<CommentResponseDTO>> GetRepliesAsync(int parentCommentId);
     }
 }
