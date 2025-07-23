@@ -1,0 +1,330 @@
+﻿@{
+	Layout = null;
+}
+@using StreamingMovie.Web.Views.Payment.ViewModels;
+@model PaymentViewModel;
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nâng cấp gói của bạn - Anime</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #dc2626;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --success-green: #10b981;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .pricing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .pricing-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, var(--text-primary), var(--primary-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .plan-toggle {
+            display: inline-flex;
+            background: var(--card-bg);
+            border-radius: 50px;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .toggle-btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 40px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+            .toggle-btn.active {
+                background: var(--primary-red);
+                color: white;
+                box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+            }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pricing-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .pricing-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            }
+
+            .pricing-card.featured {
+                border-color: var(--success-green);
+                background: linear-gradient(135deg, var(--card-bg) 0%, rgba(16, 185, 129, 0.1) 100%);
+            }
+
+                .pricing-card.featured::before {
+                    content: 'PHỔ BIẾN';
+                    position: absolute;
+                    top: 1rem;
+                    right: -2rem;
+                    background: var(--success-green);
+                    color: white;
+                    padding: 0.5rem 3rem;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    transform: rotate(45deg);
+                }
+
+        .plan-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .plan-price {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 1rem;
+        }
+
+        .price-symbol {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .price-amount {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 0 0.5rem;
+        }
+
+        .price-period {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .plan-description {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .plan-button {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .btn-free {
+            background: var(--border-color);
+            color: var(--text-secondary);
+        }
+
+            .btn-free:hover {
+                background: #475569;
+                color: white;
+            }
+
+        .btn-plus {
+            background: var(--success-green);
+            color: white;
+        }
+
+            .btn-plus:hover {
+                background: #059669;
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            }
+
+        .btn-pro {
+            background: white;
+            color: var(--dark-bg);
+        }
+
+            .btn-pro:hover {
+                background: #f1f5f9;
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+            }
+
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+
+            .features-list li {
+                display: flex;
+                align-items: flex-start;
+                margin-bottom: 1rem;
+                padding-left: 0;
+            }
+
+                .features-list li::before {
+                    content: '✓';
+                    color: var(--success-green);
+                    font-weight: bold;
+                    margin-right: 1rem;
+                    font-size: 1.2rem;
+                    flex-shrink: 0;
+                }
+
+        .feature-text {
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+            .close-btn:hover {
+                color: var(--primary-red);
+            }
+
+        
+    </style>
+</head>
+<body>
+    <div class="pricing-container">
+        <a class="close-btn" asp-action="Index" asp-controller="Home">
+            <i class="fas fa-times"></i>
+        </a>
+
+        <div class="pricing-header">
+            <h1 class="pricing-title">Nâng cấp gói của bạn</h1>
+
+        </div>
+
+        <div class="pricing-cards">
+            <!-- Free Plan -->
+            <div class="pricing-card">
+                <div class="plan-name">Free</div>
+                <div class="plan-price">
+                    <span class="price-symbol">$</span>
+                    <span class="price-amount">0</span>
+                    <div class="price-period">
+                        <span>USD/</span><br>
+                        <span>tháng</span>
+                    </div>
+                </div>
+                <p class="plan-description">
+                    Cùng khám phá sự hỗ trợ của AI trong các công việc hàng ngày của bạn
+                </p>
+                @if (DateTime.Now > Model.ExpDate)
+                {
+                    <button class="plan-button btn-free">Gói hiện tại của bạn</button>
+                }
+                @if (DateTime.Now <= Model.ExpDate)
+                {
+                    <button class="plan-button btn-free">Bạn hiện đang sử dụng gói Premium</button>
+                }
+                <ul class="features-list">
+                    <li><span class="feature-text">Truy cập các bộ phim tiêu chuẩn</span></li>
+                    <li><span class="feature-text">Chế độ thoại tiêu chuẩn</span></li>
+                    <li><span class="feature-text">Dữ liệu thời gian thực từ web qua tính năng tìm kiếm</span></li>
+                    <li><span class="feature-text">Truy cập giới hạn vào một số tính năng</span></li>
+                    <li><span class="feature-text">Hạn chế quyền truy cập vào các bộ phim hot</span></li>
+                    @* <li><span class="feature-text">Sử dụng GPT tùy chỉnh</span></li> *@
+                </ul>
+            </div>
+
+            <!-- Plus Plan -->
+            <div class="pricing-card featured">
+                <div class="plan-name">Premium</div>
+                <div class="plan-price">
+                    <span class="price-symbol">VND</span>
+                    <span class="price-amount">50,000</span>
+                    <div class="price-period">
+                        <span>VND/</span><br>
+                        <span>tháng</span>
+                    </div>
+                </div>
+                <p class="plan-description">
+                    Nâng cao kho phim và chất lượng khi xem
+                </p>
+                @if( DateTime.Now > Model.ExpDate)
+                {
+                    <form asp-action="PaymentConfirmation" asp-controller="Payment" method="post" class="dropdown-item m-0 p-0">
+                        
+                        <button type="submit" class="plan-button btn-plus">Chuyển sang Plus</button>
+
+                    </form>
+
+                }
+                @if( DateTime.Now <= Model.ExpDate)
+                {
+                    <button class="plan-button btn-plus" disabled>Gói plus vẫn còn hạn sử dụng</button>
+                    @Model.ExpDate;
+                }
+
+
+                <ul class="features-list">
+                    <li><span class="feature-text">Mọi tính năng trong gói Free</span></li>
+                    <li><span class="feature-text">Mở rộng quyền truy cập vào các bộ phim hay, mới ra rạp</span></li>
+                    <li><span class="feature-text">Chế độ thoại tiêu chuẩn và nâng cao</span></li>
+                    <li><span class="feature-text">Xem phim với trải nghiệm chất lượng cao</span></li>
+                    @* <li><span class="feature-text">Tạo và sử dụng các nhiệm vụ, dự án cũng như GPT tùy chỉnh</span></li> *@
+                </ul>
+            </div>
+
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -49,6 +49,8 @@ public class MovieDbContext : IdentityDbContext<User, Role, int>
     // View entities
     public DbSet<UnifiedMovie> UnifiedMovies { get; set; }
 
+    public DbSet<Payment> Payments { get; set; }
+
     public MovieDbContext(DbContextOptions<MovieDbContext> options)
         : base(options) { }
 

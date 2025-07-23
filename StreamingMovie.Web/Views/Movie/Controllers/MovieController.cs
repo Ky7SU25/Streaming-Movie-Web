@@ -92,6 +92,7 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             ViewBag.Filter = filter;
             ViewBag.SectionTitle = sectionTitle;
             ViewData["ReturnUrl"] = returnUrl;
+            
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
