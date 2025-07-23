@@ -40,11 +40,9 @@
                                 </div>
                                 <div class="anime__details__rating">
                                     <div class="rating">
-                                        <a href="#"><i class="fa fa-star"></i></a>
-                                        <a href="#"><i class="fa fa-star"></i></a>
-                                        <a href="#"><i class="fa fa-star"></i></a>
-                                        <a href="#"><i class="fa fa-star"></i></a>
-                                        <a href="#"><i class="fa fa-star-half-o"></i></a>
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#ratingModal">
+                                            <i class="fa fa-star"> @Model.OurRating</i>
+                                        </a>
                                     </div>
                                     <span>1.029 Votes</span>
                                 </div>
@@ -75,8 +73,41 @@
                                     </div>
                                 </div>
                                 <div class="anime__details__btn h-100 d-flex align-content-end">
-                                    <a href="#" class="follow-btn"><i class="fa fa-heart-o"></i> </a>
-                                    <a asp-action="Watching" asp-controller="Movie" class="watch-btn">
+
+                                    <a href="#" class="follow-btn">
+                                        <i class="fa fa-heart-o"></i>
+                                    </a>
+
+                                    <script>
+                                        window.addEventListener('DOMContentLoaded', () => {
+                                            const urlParams = new URLSearchParams(window.location.search);
+                                            const liked = urlParams.get('liked') === 'true';
+                                            const icon = document.querySelector('.follow-btn i');
+
+                                            if (liked) {
+                                                icon.classList.remove('fa-heart-o');
+                                                icon.classList.add('fa-heart', 'text-danger');
+                                            }
+
+                                            const btn = document.querySelector('.follow-btn');
+                                            btn.addEventListener('click', (e) => {
+                                                e.preventDefault(); // Ngăn reload
+
+                                                const params = new URLSearchParams(window.location.search);
+                                                const currentLiked = params.get('liked') === 'true';
+                                                const newLiked = !currentLiked;
+
+                                                params.set('liked', newLiked);
+                                                params.set('slug', '@Model.Slug'); // giữ nguyên slug
+
+                                                const newUrl = `${window.location.pathname}?${params.toString()}`;
+                                                window.location.href = newUrl; // redirect trang với liked mới
+                                            });
+                                        });
+                                    </script>
+                                  
+                                    <a asp-action="Watching" asp-controller="Movie" asp-route-id="@Model.Id" class="watch-btn">
+
                                         <span>Watch Now</span> <i class="fa fa-angle-right"></i>
                                     </a>
                                 </div>
@@ -91,75 +122,7 @@
                         <div class="section-title">
                             <h5>Reviews</h5>
                         </div>
-                        <div class="anime__review__item">
-                            <div class="anime__review__item__pic">
-                                <img src="~/img/anime/review-1.jpg" alt="">
-                            </div>
-                            <div class="anime__review__item__text">
-                                <h6>Chris Curry - <span>1 Hour ago</span></h6>
-                                <p>
-                                    whachikan Just noticed that someone categorized this as belonging to the genre
-                                    "demons" LOL
-                                </p>
-                            </div>
-                        </div>
-                        <div class="anime__review__item">
-                            <div class="anime__review__item__pic">
-                                <img src="~/img/anime/review-2.jpg" alt="">
-                            </div>
-                            <div class="anime__review__item__text">
-                                <h6>Lewis Mann - <span>5 Hour ago</span></h6>
-                                <p>Finally it came out ages ago</p>
-                            </div>
-                        </div>
-                        <div class="anime__review__item">
-                            <div class="anime__review__item__pic">
-                                <img src="~/img/anime/review-3.jpg" alt="">
-                            </div>
-                            <div class="anime__review__item__text">
-                                <h6>Louis Tyler - <span>20 Hour ago</span></h6>
-                                <p>Where is the episode 15 ? Slow update! Tch</p>
-                            </div>
-                        </div>
-                        <div class="anime__review__item">
-                            <div class="anime__review__item__pic">
-                                <img src="~/img/anime/review-4.jpg" alt="">
-                            </div>
-                            <div class="anime__review__item__text">
-                                <h6>Chris Curry - <span>1 Hour ago</span></h6>
-                                <p>
-                                    whachikan Just noticed that someone categorized this as belonging to the genre
-                                    "demons" LOL
-                                </p>
-                            </div>
-                        </div>
-                        <div class="anime__review__item">
-                            <div class="anime__review__item__pic">
-                                <img src="~/img/anime/review-5.jpg" alt="">
-                            </div>
-                            <div class="anime__review__item__text">
-                                <h6>Lewis Mann - <span>5 Hour ago</span></h6>
-                                <p>Finally it came out ages ago</p>
-                            </div>
-                        </div>
-                        <div class="anime__review__item">
-                            <div class="anime__review__item__pic">
-                                <img src="~/img/anime/review-6.jpg" alt="">
-                            </div>
-                            <div class="anime__review__item__text">
-                                <h6>Louis Tyler - <span>20 Hour ago</span></h6>
-                                <p>Where is the episode 15 ? Slow update! Tch</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="anime__details__form">
-                        <div class="section-title">
-                            <h5>Your Comment</h5>
-                        </div>
-                        <form action="#">
-                            <textarea placeholder="Your Comment"></textarea>
-                            <button type="submit"><i class="fa fa-location-arrow"></i> Review</button>
-                        </form>
+                        @await Component.InvokeAsync("Rating", new { slug = Model.Slug })
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-4">
@@ -194,3 +157,79 @@
     </section>
     <!-- Anime Section End -->
 </div>
+
+<!-- Rating Modal -->
+<div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4" style="background-color: #0b122a; border-radius: 16px;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-white" id="ratingModalLabel">⭐ Rate This Movie</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="Create" asp-controller="Rating" method="post">
+                <div class="modal-body text-white">
+                    <div class="mb-3">
+                        <label class="form-label">Your Rating</label>
+                        <div id="starRating" class="star-rating d-flex gap-1 fs-5 flex-wrap">
+                            @for (int i = 1; i <= 10; i++)
+                            {
+                                <i class="fa fa-star-o star mr-2" data-value="@i" style="cursor: pointer;"></i>
+                            }
+                            <input type="hidden" name="RatingValue" id="ratingValue" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ReviewContent" class="form-label">Review</label>
+                        <textarea class="form-control" id="ReviewContent" name="Review" rows="3" placeholder="Write your review here..."></textarea>
+                    </div>
+                    <input type="hidden" name="Slug" value="@Model.Slug" />
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="submit" class="site-btn">Submit Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .star-rating .fa {
+        color: #ccc;
+        transition: color 0.3s;
+    }
+
+        .star-rating .fa.active {
+            color: #ffc107;
+        }
+
+    .modal-content {
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".star-rating").forEach(starContainer => {
+            const stars = starContainer.querySelectorAll(".star");
+            const input = starContainer.querySelector('input[name="RatingValue"]');
+
+            stars.forEach(star => {
+                star.addEventListener("click", () => {
+                    const value = star.getAttribute("data-value");
+                    input.value = value;
+
+                    stars.forEach(s => {
+                        const sValue = s.getAttribute("data-value");
+                        if (parseInt(sValue) <= parseInt(value)) {
+                            s.classList.add("active", "fa-star");
+                            s.classList.remove("fa-star-o");
+                        } else {
+                            s.classList.remove("active", "fa-star");
+                            s.classList.add("fa-star-o");
+                        }
+                    });
+                });
+            });
+        });
+    });
+</script>

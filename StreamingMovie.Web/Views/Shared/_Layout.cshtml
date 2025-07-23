@@ -133,6 +133,7 @@
                             <ul class="dropdown-menu dropdown-menu-end">
                                 @if (User.Identity.IsAuthenticated)
                                 {
+                                    <li><a class="dropdown-item" asp-action="UserProfile" asp-controller="UserProfile">Profile</a></li>
                                     <li>
                                         <form asp-action="Logout" asp-controller="Account" method="post" class="dropdown-item m-0 p-0">
                                             <button type="submit" class="btn w-100 text-start">Logout</button>
