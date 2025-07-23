@@ -1,5 +1,4 @@
 ﻿using StreamingMovie.Domain.Enums;
-using System.Text.Json.Serialization;
 
 namespace StreamingMovie.Application.DTOs
 {
