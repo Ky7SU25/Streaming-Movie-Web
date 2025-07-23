@@ -8,6 +8,7 @@ namespace StreamingMovie.Domain.Interfaces
     /// </summary>
     public interface ICountryRepository : IGenericRepository<Country> 
     {
-       Task<IEnumerable<int>> GetCountryIdsByCodesAsync(IEnumerable<string> codes);
+       Task<IEnumerable<int>> GetIdsByCodesAsync(IEnumerable<string> codes);
+       Task<string> GetNameByIdAsync(int? countryId);
     }
 }

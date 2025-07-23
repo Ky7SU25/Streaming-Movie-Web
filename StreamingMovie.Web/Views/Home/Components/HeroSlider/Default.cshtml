@@ -1,0 +1,22 @@
+﻿@using StreamingMovie.Application.DTOs
+@model IEnumerable<UnifiedMovieDTO>
+
+<div class="hero__slider owl-carousel">
+    @foreach (var movie in Model)
+    {
+        <div class="hero__items set-bg" style="height: 60vh;" data-setbg="@Url.Content(movie.BannerUrl)">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="hero__text">
+                        <h2>@movie.Title</h2>
+                        <p class="truncate">@movie.Description</p>
+                        <a asp-action="Details" asp-controller="Movie" 
+                           asp-route-slug="@movie.Slug">
+                           <span>Watch Now</span> <i class="fa fa-angle-right"></i>
+                       </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

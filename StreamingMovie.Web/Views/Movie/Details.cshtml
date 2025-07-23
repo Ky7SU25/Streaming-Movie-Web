@@ -1,4 +1,5 @@
-﻿@model StreamingMovie.Domain.Entities.Movie;
+﻿@using StreamingMovie.Application.DTOs
+@model MovieDetailDTO;
 @{
     ViewData["Title"] = "Movie Details";
 }
@@ -25,9 +26,9 @@
         <div class="anime__details__content">
             <div class="row">
                 <div class="col-lg-3">
-                    <div class="anime__details__pic set-bg" data-setbg="@Url.Content("~/img/anime/details-pic.jpg")">
-                        <div class="comment"><i class="fa fa-comments"></i> 11</div>
-                        <div class="view"><i class="fa fa-eye"></i> 9141</div>
+                    <div class="anime__details__pic set-bg" data-setbg="@Url.Content(Model.PosterUrl)">
+                        @* <div class="comment"><i class="fa fa-comments"></i> 11</div>
+                        <div class="view"><i class="fa fa-eye"></i> 9141</div> *@
                     </div>
                 </div>
                 <div class="col-lg-9">
@@ -71,8 +72,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="anime__details__btn">
-                            <a href="#" class="follow-btn"><i class="fa fa-heart-o"></i> Follow</a>
+                        <div class="anime__details__btn h-100 d-flex align-content-end">
+                            <a href="#" class="follow-btn"><i class="fa fa-heart-o"></i> </a>
                             <a asp-action="Watching" asp-controller="Movie" class="watch-btn">
                                 <span>Watch Now</span> <i class="fa fa-angle-right"></i>
                             </a>

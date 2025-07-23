@@ -50,5 +50,9 @@ namespace StreamingMovie.Infrastructure.Repositories
             }
             return query;
         }
+        public virtual async Task<UnifiedMovie> FindOneAsync(Expression<Func<UnifiedMovie, bool>> predicate)
+        {
+            return await _dbSet.FirstOrDefaultAsync(predicate);
+        }
     }
 }

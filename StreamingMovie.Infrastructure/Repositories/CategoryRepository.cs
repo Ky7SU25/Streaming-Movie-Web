@@ -14,11 +14,6 @@ namespace StreamingMovie.Infrastructure.Repositories
         public CategoryRepository(MovieDbContext context)
             : base(context) { }
 
-        public virtual async Task<Category?> GetBySlugAsync(string slug)
-        {
-            return await _dbSet.FirstOrDefaultAsync(c => c.Slug == slug);
-        }
-
         public virtual async Task<IEnumerable<int>> GetCategoryIdsBySlugsAsync(IEnumerable<string> slugs)
         {
             return await _dbSet
@@ -26,6 +21,5 @@ namespace StreamingMovie.Infrastructure.Repositories
                 .Select(c => c.Id)
                 .ToListAsync();
         }
-
     }
 }
