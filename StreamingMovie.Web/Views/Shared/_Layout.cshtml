@@ -111,6 +111,13 @@
                                 <li class="@IsCurrentActionr("Contact", "Contact")">
                                     <a asp-action="Contact" asp-controller="Contact">Contacts</a>
                                 </li>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <li>
+                                        <a asp-action="PaymentChoice" asp-controller="Payment">Upgrade</a>
+                                    </li>
+                                }
+                                
                             </ul>
                         </nav>
                     </div>

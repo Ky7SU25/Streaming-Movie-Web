@@ -38,5 +38,6 @@ namespace StreamingMovie.Domain.UnitOfWorks
         IVideoServerRepository VideoServerRepository { get; }
         IWatchHistoryRepository WatchHistoryRepository { get; }
         IUnifiedMovieRepository UnifiedMovieRepository { get; }
+        IPaymentRepository PaymentRepository { get; }
     }
 }
