@@ -127,18 +127,13 @@ namespace StreamingMovie.Application.Services
         
             var detailDto = _mapper.Map<MovieDetailDTO>(unifiedMovie);
 
-            if (unifiedMovie.IsSeries)
-            {
-                detailDto.Genres = await _unitOfWork.SeriesCategoryRepository.GetNameBySeriesIdAsync(unifiedMovie.Id);
-                detailDto.Language = await _unitOfWork.CountryRepository.GetNameByIdAsync(unifiedMovie.CountryId);
-                return detailDto;
-            }
-            else
-            {
-                detailDto.Genres = await _unitOfWork.MovieCategoryRepository.GetNamesByMovieIdAsync(unifiedMovie.Id);
-                detailDto.Language = await _unitOfWork.CountryRepository.GetNameByIdAsync(unifiedMovie.CountryId);
-                return detailDto;
-            }
+            detailDto.Language = await _unitOfWork.CountryRepository.GetNameByIdAsync(unifiedMovie.CountryId);
+
+            detailDto.Genres = unifiedMovie.IsSeries
+                ? await _unitOfWork.SeriesCategoryRepository.GetNameBySeriesIdAsync(unifiedMovie.Id)
+                : await _unitOfWork.MovieCategoryRepository.GetNamesByMovieIdAsync(unifiedMovie.Id);
+
+            return detailDto;
         }
     }
 }
