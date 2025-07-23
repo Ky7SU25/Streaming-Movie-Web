@@ -1,0 +1,439 @@
+﻿@{
+    Layout = "_AdminLayout";
+}
+<!-- Page content -->
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex flex-wrap -mx-3">
+        <div class="flex items-center w-full max-w-full px-3 mx-auto text-center shrink-0 md:flex-0 md:w-8/12 lg:w-6/12 xl:w-6/12">
+            <h1 class="mb-0 font-bold text-white">Movie Upload Dashboard</h1>
+        </div>
+    </div>
+
+    <!-- Upload Form Card -->
+    <div class="flex flex-wrap -mx-3 mt-6">
+        <div class="w-full max-w-full px-3 mx-auto md:w-8/12 lg:w-12/12 xl:w-12/12">
+            <div class="relative flex flex-col min-w-0 break-words bg-white border-0 dark:bg-slate-850 shadow-xl rounded-2xl bg-clip-border">
+                <div class="border-black/12.5 rounded-t-2xl border-b-0 border-solid p-6 text-center">
+                    <h5 class="font-bold text-slate-700 dark:text-white">Upload New Movie</h5>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Fill in the movie details below</p>
+                </div>
+                <div class="flex-auto p-6 pt-0">
+                    <form asp-controller="Admin" asp-action="Upload" method="post" enctype="multipart/form-data" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Movie Title -->
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Movie Title *</label>
+                                <input type="text"
+                                       class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                                       placeholder="Enter movie title" />
+                            </div>
+
+                            <!-- Description -->
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Description</label>
+                                <textarea rows="4"
+                                          class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                                          placeholder="Enter movie description"></textarea>
+                            </div>
+
+                            <!-- Genre -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Genre *</label>
+                                <select class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                    <option value="">Select Genre</option>
+                                    <option value="action">Action</option>
+                                    <option value="comedy">Comedy</option>
+                                    <option value="drama">Drama</option>
+                                    <option value="horror">Horror</option>
+                                    <option value="romance">Romance</option>
+                                    <option value="thriller">Thriller</option>
+                                    <option value="sci-fi">Sci-Fi</option>
+                                    <option value="documentary">Documentary</option>
+                                </select>
+                            </div>
+
+                            <!-- Genre -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Genre *</label>
+                                <select class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                    <option value="">Select Genre</option>
+                                    <option value="action">Action</option>
+                                    <option value="comedy">Comedy</option>
+                                    <option value="drama">Drama</option>
+                                    <option value="horror">Horror</option>
+                                    <option value="romance">Romance</option>
+                                    <option value="thriller">Thriller</option>
+                                    <option value="sci-fi">Sci-Fi</option>
+                                    <option value="documentary">Documentary</option>
+                                </select>
+                            </div>
+
+                            <!-- Country -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Country *</label>
+                                <select class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                    <option value="1">Vietnam</option>
+                                    <option value="2">USA</option>
+                                </select>
+                            </div>
+
+                            <!-- Release Year -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Release Year *</label>
+                                <input type="number"
+                                       min="1900"
+                                       max="2025"
+                                       class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                                       placeholder="2024" />
+                            </div>
+
+                            <!-- Duration -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Duration (minutes) *</label>
+                                <input type="number"
+                                       min="1"
+                                       class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                                       placeholder="120" />
+                            </div>
+
+                            <!-- Directors -->
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Directors</label>
+                                <select name="DirectorIds" multiple
+                                        class="dark:bg-slate-850 text-sm w-full rounded-lg border p-3">
+                                    <option value="1">Director 1</option>
+                                    <option value="2">Director 2</option>
+                                </select>
+                            </div>
+
+                            <!-- Actors -->
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Actors</label>
+                                <select name="ActorIds" multiple
+                                        class="dark:bg-slate-850 text-sm w-full rounded-lg border p-3">
+                                    <option value="1">Actor 1</option>
+                                    <option value="2">Actor 2</option>
+                                </select>
+                            </div>
+
+                            <!-- Rating -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Rating</label>
+                                <select class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                    <option value="">Select Rating</option>
+                                    <option value="G">G - General</option>
+                                    <option value="PG">PG - Parental Guidance</option>
+                                    <option value="PG-13">PG-13 - Parents Strongly Cautioned</option>
+                                    <option value="R">R - Restricted</option>
+                                    <option value="NC-17">NC-17 - Adults Only</option>
+                                </select>
+                            </div>
+
+                            <!-- Director -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Director</label>
+                                <input type="text"
+                                       class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                                       placeholder="Enter director name" />
+                            </div>
+
+                            <!-- Cast -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Main Cast</label>
+                                <input type="text"
+                                       class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                                       placeholder="Actor 1, Actor 2, Actor 3" />
+                            </div>
+
+                            <!-- Movie Poster -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Movie Poster</label>
+                                <div class="flex items-center justify-center w-full">
+                                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
+                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <i class="fa fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">Click to upload poster</p>
+                                        </div>
+                                        <input type="file" class="hidden" accept="image/*" />
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Movie File -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Movie File *</label>
+                                <div class="flex items-center justify-center w-full">
+                                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
+                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <i class="fa fa-film text-3xl text-gray-400 mb-2"></i>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">Click to upload movie file</p>
+                                        </div>
+                                        <input type="file" class="hidden" accept="video/*" />
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Quality -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Quality *</label>
+                                <select class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                    <option value="">Select Quality</option>
+                                    <option value="480p">480p</option>
+                                    <option value="720p">720p (HD)</option>
+                                    <option value="1080p">1080p (Full HD)</option>
+                                    <option value="4K">4K (Ultra HD)</option>
+                                </select>
+                            </div>
+
+                            <!-- Language -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Language</label>
+                                <select class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                    <option value="">Select Language</option>
+                                    <option value="vi">Vietnamese</option>
+                                    <option value="en">English</option>
+                                    <option value="ko">Korean</option>
+                                    <option value="ja">Japanese</option>
+                                    <option value="zh">Chinese</option>
+                                    <option value="th">Thai</option>
+                                </select>
+                            </div>
+
+                            <!-- Subtitle -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Subtitle File</label>
+                                <div class="flex items-center justify-center w-full">
+                                    <label class="flex flex-col items-center justify-center w-full h-20 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
+                                        <div class="flex flex-col items-center justify-center pt-2 pb-3">
+                                            <i class="fa fa-file-text text-xl text-gray-400 mb-1"></i>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Upload subtitle (.srt)</p>
+                                        </div>
+                                        <input type="file" class="hidden" accept=".srt" />
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Trailer URL -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Trailer URL</label>
+                                <input type="url"
+                                       class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                                       placeholder="https://youtube.com/watch?v=..." />
+                            </div>
+
+                            <!-- Status -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Status</label>
+                                <select class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                    <option value="draft">Draft</option>
+                                    <option value="published">Published</option>
+                                    <option value="private">Private</option>
+                                </select>
+                            </div>
+
+                            <!-- Featured -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-2">Featured Movie</label>
+                                <div class="flex items-center">
+                                    <input type="checkbox"
+                                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                    <label class="ml-2 text-sm text-gray-700 dark:text-gray-300">Mark as featured</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="flex justify-end space-x-3 mt-8">
+                            <button type="button"
+                                    class="inline-block px-6 py-2 font-bold text-center text-slate-700 uppercase align-middle transition-all bg-transparent border border-slate-700 rounded-lg cursor-pointer active:opacity-85 hover:scale-102 hover:shadow-xs leading-normal text-sm ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:bg-transparent active:bg-slate-700 active:text-white">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="inline-block px-6 py-2 font-bold text-center text-white uppercase align-middle transition-all bg-blue-500 border-0 rounded-lg cursor-pointer active:opacity-85 hover:scale-102 hover:shadow-xs leading-normal text-sm ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:bg-gradient-to-tl hover:from-blue-600 hover:to-blue-400">
+                                <i class="fa fa-upload mr-2"></i>
+                                Upload Movie
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Movies List -->
+    <div class="flex flex-wrap -mx-3 mt-6">
+        <div class="w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 break-words bg-white border-0 dark:bg-slate-850 shadow-xl rounded-2xl bg-clip-border">
+                <div class="rounded-t-2xl border-b-0 border-solid p-6">
+                    <div class="flex items-center justify-between">
+                        <h6 class="font-bold text-slate-700 dark:text-white">Movies Management</h6>
+                        <div class="flex items-center space-x-3">
+                            <input type="text"
+                                   class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-64 rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                                   placeholder="Search movies..." />
+                            <select class="focus:shadow-primary-outline dark:bg-slate-850 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-32 rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                <option value="">All</option>
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                                <option value="private">Private</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-auto p-6 pt-0">
+                    <div class="overflow-x-auto">
+                        <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
+                            <thead class="align-bottom">
+                                <tr>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Movie</th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Genre</th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Year</th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Quality</th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Status</th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Views</th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Upload Date</th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <div class="flex px-2 py-1">
+                                            <div class="flex-shrink-0 w-12 h-16 bg-gray-200 rounded-lg mr-3">
+                                                <img src="https://via.placeholder.com/48x64/374151/ffffff?text=Movie" alt="poster" class="w-full h-full object-cover rounded-lg" />
+                                            </div>
+                                            <div class="flex flex-col justify-center">
+                                                <h6 class="mb-0 text-sm leading-normal dark:text-white">Avengers: Endgame</h6>
+                                                <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white/80">Action, Adventure, Drama</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">Action</p>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">2019</p>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="bg-gradient-to-tl from-green-600 to-lime-400 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">1080p</span>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="bg-gradient-to-tl from-blue-600 to-cyan-400 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">Published</span>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">1.2M</p>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">2024-01-15</p>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <div class="flex items-center space-x-2">
+                                            <button class="text-blue-500 hover:text-blue-700 text-sm" title="Edit">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button class="text-green-500 hover:text-green-700 text-sm" title="View">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                            <button class="text-red-500 hover:text-red-700 text-sm" title="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <div class="flex px-2 py-1">
+                                            <div class="flex-shrink-0 w-12 h-16 bg-gray-200 rounded-lg mr-3">
+                                                <img src="https://via.placeholder.com/48x64/374151/ffffff?text=Movie" alt="poster" class="w-full h-full object-cover rounded-lg" />
+                                            </div>
+                                            <div class="flex flex-col justify-center">
+                                                <h6 class="mb-0 text-sm leading-normal dark:text-white">Parasite</h6>
+                                                <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white/80">Comedy, Drama, Thriller</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">Drama</p>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">2019</p>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="bg-gradient-to-tl from-orange-500 to-yellow-500 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">720p</span>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="bg-gradient-to-tl from-slate-600 to-slate-300 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">Draft</span>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">856K</p>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">2024-01-12</p>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <div class="flex items-center space-x-2">
+                                            <button class="text-blue-500 hover:text-blue-700 text-sm" title="Edit">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button class="text-green-500 hover:text-green-700 text-sm" title="View">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                            <button class="text-red-500 hover:text-red-700 text-sm" title="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <div class="flex px-2 py-1">
+                                            <div class="flex-shrink-0 w-12 h-16 bg-gray-200 rounded-lg mr-3">
+                                                <img src="https://via.placeholder.com/48x64/374151/ffffff?text=Movie" alt="poster" class="w-full h-full object-cover rounded-lg" />
+                                            </div>
+                                            <div class="flex flex-col justify-center">
+                                                <h6 class="mb-0 text-sm leading-normal dark:text-white">Interstellar</h6>
+                                                <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white/80">Adventure, Drama, Sci-Fi</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">Sci-Fi</p>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">2014</p>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="bg-gradient-to-tl from-purple-600 to-pink-400 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">4K</span>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="bg-gradient-to-tl from-green-600 to-emerald-400 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">Published</span>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">2.3M</p>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">2024-01-10</p>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <div class="flex items-center space-x-2">
+                                            <button class="text-blue-500 hover:text-blue-700 text-sm" title="Edit">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button class="text-green-500 hover:text-green-700 text-sm" title="View">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                            <button class="text-red-500 hover:text-red-700 text-sm" title="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end of .w-full -->
