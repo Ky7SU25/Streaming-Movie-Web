@@ -15,21 +15,21 @@ public static class GoogleAuthServiceRegistration
         IConfiguration config
     )
     {
-        var googleAuthSettings = new GoogleAuthSettings();
-        config.GetSection("Authentication:Google").Bind(googleAuthSettings);
+        //var googleAuthSettings = new GoogleAuthSettings();
+        //config.GetSection("Authentication:Google").Bind(googleAuthSettings);
 
-        services.AddAuthentication(
-            options =>
-            {
-                options.DefaultScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-            })       
-            .AddGoogle(options =>
-            {
-                options.ClientId = googleAuthSettings.ClientId;
-                options.ClientSecret = googleAuthSettings.ClientSecret;
-                options.CallbackPath = "/signin-google";
-            });
+        //services.AddAuthentication(
+        //    options =>
+        //    {
+        //        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        //        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+        //    })       
+        //    .AddGoogle(options =>
+        //    {
+        //        options.ClientId = googleAuthSettings.ClientId;
+        //        options.ClientSecret = googleAuthSettings.ClientSecret;
+        //        options.CallbackPath = "/signin-google";
+        //    });
 
 
 

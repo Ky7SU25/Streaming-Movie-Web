@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MySqlX.XDevAPI.Common;
 using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Application.Interfaces.ExternalServices.Google;
 using StreamingMovie.Application.Interfaces.ExternalServices.Mail;
@@ -9,6 +10,7 @@ using StreamingMovie.Web.Views.Account.ViewModels;
 using StreamingMovie.Web.Views.Home.Controllers;
 using StreamingMovie.Web.Views.Shared.ViewModels;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace StreamingMovie.Web.Views.Account.Controllers;
 
@@ -21,8 +23,10 @@ public class AccountController : Controller
     private readonly IMailService _mailService;
     private readonly IResetPasswordService _resetPasswordService;
     private readonly IGoogleAuthService _googleAuthService;
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
 
-    public AccountController(ILoginService loginService, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor, IRegisterService registerService, IMailService mailService, IResetPasswordService resetPasswordService, IGoogleAuthService googleAuthService)
+    public AccountController(ILoginService loginService, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor, IRegisterService registerService, IMailService mailService, IResetPasswordService resetPasswordService, IGoogleAuthService googleAuthService, UserManager<User> userManager, SignInManager<User> signInManager)
     {
         _loginService = loginService;
         _logger = logger;
@@ -31,6 +35,8 @@ public class AccountController : Controller
         _mailService = mailService;
         _resetPasswordService = resetPasswordService;
         _googleAuthService = googleAuthService;
+        _userManager = userManager;
+        _signInManager = signInManager;
     }
 
     // GET: /Account/Login
@@ -311,8 +317,8 @@ public class AccountController : Controller
             return RedirectToAction(nameof(Login));
         }
 
-        var externalResult = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
-        if (!externalResult.Succeeded)
+        var result = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
+        if (!result.Succeeded)
         {
             _logger.LogWarning("External auth cookie not found.");
         }
@@ -321,33 +327,56 @@ public class AccountController : Controller
             _logger.LogInformation("External auth cookie found.");
         }
 
-        var info = await _googleAuthService.GetExternalLoginInfoAsync();
-        if (info == null)
+        if (result.Principal != null)
         {
-            _logger.LogWarning("Error loading external login info.");
-            return RedirectToAction(nameof(Login));
+            var claims = result.Principal.Identities.FirstOrDefault()?.Claims;
+            if (claims != null)
+            {
+                var emailClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+                var firstNameClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName);
+                var lastNameClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname);
+                var pictureClaim = claims.FirstOrDefault(c => c.Type == "urn:google:picture");
+
+                if (emailClaim != null)
+                {
+                    var email = emailClaim.Value;
+                    var existingUser = await _userManager.FindByEmailAsync(email);
+                    if (existingUser == null)
+                    {
+                        var user = new User
+                        {
+                            UserName = email,
+                            Email = email,
+                            FullName = $"{firstNameClaim?.Value} {lastNameClaim?.Value}",
+                            AvatarUrl = pictureClaim?.Value
+                        };
+                        var createResult = await _userManager.CreateAsync(user);
+                        if (createResult.Succeeded)
+                        {
+                            _logger.LogInformation("User created successfully: {Email}", email);
+                            await _userManager.AddToRoleAsync(user,"User");
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            return RedirectToLocal(returnUrl);
+                        }
+                        else
+                        {
+                            foreach (var error in createResult.Errors)
+                            {
+                                ModelState.AddModelError(string.Empty, error.Description);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        await _signInManager.SignInAsync(existingUser, isPersistent: false);
+                        var roles = await _userManager.GetRolesAsync(existingUser);
+                        await _userManager.AddClaimsAsync(existingUser, claims);
+                        RedirectToLocal(returnUrl);
+                    }
+                }
+            }
         }
-
-        var signInResult = await _googleAuthService.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey);
-
-        if (signInResult.Succeeded)
-        {
-            _logger.LogInformation("User logged in with {Name} provider.", info.LoginProvider);
             return RedirectToLocal(returnUrl);
-        }
-
-        // Tự động tạo tài khoản nếu chưa có
-        var user = await _googleAuthService.AutoProvisionUserAsync(info);
-        if (user == null)
-        {
-            _logger.LogWarning("Could not create user from external provider.");
-            return RedirectToAction(nameof(Login));
-        }
-
-        await _googleAuthService.AddLoginAsync(user, info);
-        await _googleAuthService.SignInAsync(user);
-        _logger.LogInformation("User auto-provisioned and signed in with Google.");
-        return RedirectToLocal(returnUrl);
     }
 
 

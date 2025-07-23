@@ -76,13 +76,13 @@
                                 </a>
                             </li>
                             <li>
-                                <form asp-action="ExternalLogin" asp-controller="Account" method="post">
+                                <form id="googleLoginForm" asp-action="ExternalLogin" asp-controller="Account" method="post" style="display:none;">
                                     <input type="hidden" name="provider" value="Google" />
                                     <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
-                                    <button type="submit" class="google">
-                                        <i class="fa fa-google"></i> Sign in With Google
-                                    </button>
                                 </form>
+                                <a href="javascript:void(0);" class="google" onclick="document.getElementById('googleLoginForm').submit();">
+                                    <i class="fa fa-google"></i> Sign in With Google
+                                </a>
                             </li>
                         </ul>
                     </div>
