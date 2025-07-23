@@ -429,33 +429,6 @@
                     </div>
                     @await Component.InvokeAsync("Comment", new { slug = "breaking-bad", episodeId = 1 })
                 </div>
-
-              
-                @await Html.PartialAsync("_CommentSection", ("movie", Model.Id))
-            </div>
-        </div>
-    </div>
-                        <textarea placeholder="Your Comment"></textarea>
-                        <button type="submit"><i class="fa fa-location-arrow"></i> Review</button>
-                    </form>
-                </div>
-                @await Html.PartialAsync("_CommentSection", ("movie", 1))
-            </div>
-        </div>
-    </div>
-                        <textarea placeholder="Your Comment"></textarea>
-                        <button type="submit"><i class="fa fa-location-arrow"></i> Review</button>
-                    </form>
-                </div>
-                @await Html.PartialAsync("_CommentSection", ("movie", 1))
-            </div>
-        </div>
-    </div>
-                        <textarea placeholder="Your Comment"></textarea>
-                        <button type="submit"><i class="fa fa-location-arrow"></i> Review</button>
-                    </form>
-                </div>
-                @await Html.PartialAsync("_CommentSection", ("movie", 1))
             </div>
         </div>
     </div>
