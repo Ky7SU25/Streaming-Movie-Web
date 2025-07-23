@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xác nhận tài khoản - CineStream</title>
+    <title>Account Confirmation - CineStream</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #0a0a0a;
             color: #ffffff;
             line-height: 1.6;
         }
-        
+
         .email-container {
             max-width: 600px;
             margin: 0 auto;
@@ -26,14 +26,14 @@
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(220, 38, 38, 0.2);
         }
-        
+
         .header {
             background: linear-gradient(90deg, #dc2626 0%, #991b1b 100%);
             padding: 30px 20px;
             text-align: center;
             position: relative;
         }
-        
+
         .header::before {
             content: '';
             position: absolute;
@@ -44,7 +44,7 @@
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
             opacity: 0.3;
         }
-        
+
         .logo {
             font-size: 32px;
             font-weight: bold;
@@ -53,31 +53,31 @@
             position: relative;
             z-index: 1;
         }
-        
+
         .logo::before {
             content: '🎬';
             margin-right: 10px;
         }
-        
+
         .content {
             padding: 40px 30px;
             text-align: center;
         }
-        
+
         .welcome-text {
             font-size: 24px;
             color: #ffffff;
             margin-bottom: 15px;
             font-weight: 600;
         }
-        
+
         .description {
             font-size: 16px;
             color: #cccccc;
             margin-bottom: 30px;
             line-height: 1.8;
         }
-        
+
         .confirm-button {
             display: inline-block;
             background: linear-gradient(45deg, #dc2626, #ef4444);
@@ -93,13 +93,13 @@
             box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
             border: 2px solid transparent;
         }
-        
+
         .confirm-button:hover {
             background: linear-gradient(45deg, #ef4444, #dc2626);
             transform: translateY(-2px);
             box-shadow: 0 12px 35px rgba(220, 38, 38, 0.6);
         }
-        
+
         .alternative-text {
             margin-top: 30px;
             padding: 20px;
@@ -107,13 +107,13 @@
             border-radius: 8px;
             border-left: 4px solid #dc2626;
         }
-        
+
         .alternative-text p {
             font-size: 14px;
             color: #cccccc;
             margin-bottom: 10px;
         }
-        
+
         .token-code {
             font-family: 'Courier New', monospace;
             font-size: 24px;
@@ -125,24 +125,24 @@
             display: inline-block;
             letter-spacing: 3px;
         }
-        
+
         .footer {
             background: #111111;
             padding: 30px;
             text-align: center;
             border-top: 1px solid #333333;
         }
-        
+
         .footer-text {
             font-size: 14px;
             color: #888888;
             margin-bottom: 15px;
         }
-        
+
         .social-links {
             margin: 20px 0;
         }
-        
+
         .social-links a {
             display: inline-block;
             margin: 0 10px;
@@ -150,13 +150,13 @@
             text-decoration: none;
             font-size: 18px;
         }
-        
+
         .divider {
             height: 2px;
             background: linear-gradient(90deg, transparent, #dc2626, transparent);
             margin: 30px 0;
         }
-        
+
         .movie-icons {
             position: absolute;
             top: 20px;
@@ -164,21 +164,21 @@
             opacity: 0.1;
             font-size: 40px;
         }
-        
+
         @media (max-width: 600px) {
             .email-container {
                 margin: 10px;
                 border-radius: 8px;
             }
-            
+
             .content {
                 padding: 30px 20px;
             }
-            
+
             .welcome-text {
                 font-size: 20px;
             }
-            
+
             .confirm-button {
                 padding: 14px 30px;
                 font-size: 16px;
@@ -193,44 +193,43 @@
             <div class="movie-icons">🎭🍿</div>
             <div class="logo">CineStream</div>
         </div>
-        
+
         <!-- Main Content -->
         <div class="content">
-            <h1 class="welcome-text">Chào mừng đến với CineStream!</h1>
-            
+            <h1 class="welcome-text">Welcome to CineStream!</h1>
+
             <p class="description">
-                Cảm ơn bạn đã đăng ký tài khoản. Để bắt đầu trải nghiệm hàng ngàn bộ phim và series đỉnh cao, 
-                vui lòng xác nhận địa chỉ email của bạn bằng cách nhấn vào nút bên dưới.
+                Thank you for signing up. To start enjoying thousands of top movies and series, 
+                please confirm your email address by clicking the button below.
             </p>
-            
+
             <div class="divider"></div>
-            
+
             <!-- Confirmation Button -->
             <a href="{{ .ConfirmationURL }}" class="confirm-button">
-                ✨ Xác Nhận Tài Khoản
+                ✨ Confirm Account
             </a>
-           
         </div>
-        
+
         <!-- Footer -->
         <div class="footer">
             <p class="footer-text">
-                Email này được gửi đến: <strong style="color: #dc2626;">{{ .Email }}</strong>
+                This email was sent to: <strong style="color: #dc2626;">{{ .Email }}</strong>
             </p>
-            
+
             <div class="social-links">
                 <a href="#">📱 App</a>
                 <a href="#">🌐 Website</a>
-                <a href="#">📧 Hỗ trợ</a>
+                <a href="#">📧 Support</a>
             </div>
-            
+
             <p class="footer-text">
-                © 2024 CineStream. Tất cả quyền được bảo lưu.<br>
-                Nếu bạn không tạo tài khoản này, vui lòng bỏ qua email này.
+                © 2024 CineStream. All rights reserved.<br>
+                If you did not create this account, please ignore this email.
             </p>
-            
+
             <p style="font-size: 12px; color: #666; margin-top: 20px;">
-                🎬 Trải nghiệm điện ảnh đỉnh cao - Mọi lúc, mọi nơi
+                🎬 Premium cinematic experience — Anytime, Anywhere
             </p>
         </div>
     </div>
