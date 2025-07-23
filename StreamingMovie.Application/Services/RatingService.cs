@@ -38,6 +38,7 @@ namespace StreamingRating.Application.Services
             return await query
                 .Include(r => r.User)
                 .ProjectTo<RatingResponseDTO>(_mapper.ConfigurationProvider)
+                .OrderByDescending(r => r.CreatedAt)
                 .ToPagedResultAsync(page, pageSize);
         }
 
