@@ -10,24 +10,7 @@
     {
         @foreach (var movie in Model.Items)
         {
-            <div class="col-lg-4 col-md-6 col-sm-6">
-                <a class="product__item" asp-action="Details" asp-controller="Movie" asp-route-id="@movie.Id">
-                    <div class="product__item__pic set-bg">
-                        <img src="@movie.PosterUrl" alt="@movie.Title" class="w-100 h-100 object-fit-cover" />
-                        @* <div class="ep">18 / 18</div>
-                                        <div class="comment"><i class="fa fa-comments"></i> 11</div> *@
-                        <div class="view"><i class="fa fa-eye"></i> @movie.ViewCount</div>
-
-                    </div>
-                    <div class="product__item__text">
-                        <ul>
-                            <li>@movie.Status</li>
-                            <li>@(movie.IsSeries == true ? "Series" : "Movie")</li>
-                        </ul>
-                        <h5><a href="#">@movie.Title</a></h5>
-                    </div>
-                </a>
-            </div>
+            @await Html.PartialAsync("ViewPartials/_MovieCardPartial", movie)
         }
     }
     else

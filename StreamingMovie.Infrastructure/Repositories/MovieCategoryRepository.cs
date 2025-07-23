@@ -29,5 +29,29 @@ namespace StreamingMovie.Infrastructure.Repositories
                 .Distinct()
                 .ToListAsync();
         }
+        public virtual async Task<IEnumerable<string>> GetNamesByMovieIdAsync(int movieId)
+        {
+            return await _dbSet
+                .Where(sc => sc.MovieId == movieId)
+                .Include(sc => sc.Category)
+                .Select(sc => sc.Category.Name)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<CategoryViewCountDto>> GetViewsByMovieCategoryAsync()
+        {
+            var result = await _dbSet
+            .Include(mc => mc.Movie)
+            .Include(mc => mc.Category)
+            .GroupBy(mc => mc.Category.Name)
+            .Select(g => new CategoryViewCountDto
+            {
+                CategoryName = g.Key,
+                TotalViews = g.Sum(mc => mc.Movie.ViewCount ?? 0)
+            })
+            .ToListAsync();
+
+            return result;
+        }
     }
 }

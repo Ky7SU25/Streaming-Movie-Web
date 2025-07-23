@@ -1,0 +1,21 @@
+﻿@using StreamingMovie.Application.Common.Pagination
+@using StreamingMovie.Application.DTOs
+@model IEnumerable<CommentResponseDTO>
+
+@foreach (var comment in Model)
+{
+    <div class="anime__review__item">
+        <div class="anime__review__item__pic">
+            <img src="@comment.AvatarUrl" alt="">
+        </div>
+        <div class="anime__review__item__text">
+            <h6>@comment.FullName - <span>1 Hour ago</span></h6>
+            <p>
+                @comment.Content
+            </p>
+        </div>
+    </div>
+    <div style="width: 90%; margin-left: auto;">
+        @await Component.InvokeAsync("ChildComment", new { parentId = comment.Id })
+    </div>
+}

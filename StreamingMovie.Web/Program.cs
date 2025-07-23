@@ -1,10 +1,7 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using StreamingMovie.Application.Services;
 using StreamingMovie.Application.Interfaces;
-using StreamingMovie.Domain.Entities;
-using StreamingMovie.Infrastructure.Data;
 using StreamingMovie.Infrastructure.Extensions;
+using StreamingMovie.Infrastructure.ExternalServices.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,12 +10,9 @@ builder.Services.AddRouting(options =>
     options.LowercaseUrls = true;
     options.AppendTrailingSlash = false;
 });
-
+builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
 builder.Services.AddCoreInfrastructure(builder.Configuration);
-
-//add existing services
-builder.Services.AddScoped<DetailMovieService>();
 
 // Add new video upload services
 builder.Services.AddScoped<IVideoUploadService, VideoUploadService>();
@@ -53,6 +47,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapHub<CommentHub>("/commentHub");
 app.UseStatusCodePagesWithReExecute("/Home/Error404");
 
 app.Run();

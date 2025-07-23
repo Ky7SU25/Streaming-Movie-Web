@@ -1,5 +1,4 @@
-﻿
-using StreamingMovie.Domain.Interfaces;
+﻿using StreamingMovie.Domain.Interfaces;
 using System.Linq.Expressions;
 
 namespace StreamingMovie.Application.Services;
@@ -27,6 +26,9 @@ public class GenericService<T> : IGenericService<T> where T : class
 
     public virtual async Task<IEnumerable<T>> FindAsync(params Expression<Func<T, bool>>[] predicates)
         => await _repo.FindAsync(predicates);
+
+    public virtual async Task<T?> FindOneAsync(Expression<Func<T, bool>> predicate)
+        => await _repo.FindOneAsync(predicate);
 
     #region CUD Operations
     public virtual async Task<T> AddAsync(T entity)

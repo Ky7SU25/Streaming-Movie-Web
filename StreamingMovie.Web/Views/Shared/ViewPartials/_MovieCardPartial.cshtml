@@ -1,0 +1,22 @@
+﻿@using StreamingMovie.Application.DTOs
+@model UnifiedMovieDTO
+
+<div class="col-lg-4 col-md-6 col-sm-6">
+    <a class="product__item" asp-action="Details" asp-controller="Movie" asp-route-slug="@Model.Slug">
+        <div class="product__item__pic set-bg">
+            <img src="@Model.PosterUrl" alt="@Model.Title" class="w-100 h-100 object-fit-cover" />
+            @* <div class="ep">18 / 18</div>
+                                        <div class="comment"><i class="fa fa-comments"></i> 11</div> *@
+            <div class="view"><i class="fa fa-eye"></i> @Model.ViewCount</div>
+        </div>
+        <div class="product__item__text">
+            <ul>
+                <li>@Model.Status</li>
+                <li>@(Model.IsSeries ? "Series" : "Movie")</li>
+            </ul>
+            <h5><a href="#">@Model.Title</a></h5>
+            <h6 class="text-white-50 mt-1">@Model.OriginalTitle</h6>
+        </div>
+    </a>
+</div>
+ 

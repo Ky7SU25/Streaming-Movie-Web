@@ -5,5 +5,8 @@ namespace StreamingMovie.Domain.Interfaces
     /// <summary>
     /// Interface for SeriesActorRepository
     /// </summary>
-    public interface ISeriesActorRepository : IGenericRepository<SeriesActor> { }
+    public interface ISeriesActorRepository : IGenericRepository<SeriesActor> 
+    {
+        Task<List<Actor>> GetBySeriesIdAsync(int seriesId);
+    }
 }

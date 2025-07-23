@@ -9,5 +9,6 @@ namespace StreamingMovie.Domain.Interfaces
     {
         Task<IEnumerable<int>> GetSeriesIdsByCategoryIdAsync(int categoryId);
         Task<IEnumerable<int>> GetSeriesIdsByCategoryIdsAsync(IEnumerable<int> categoryIds);
+        Task<IEnumerable<string>> GetNameBySeriesIdAsync(int seriesId);
     }
 }

@@ -3,5 +3,5 @@ using StreamingMovie.Domain.Interfaces;
 
 namespace StreamingMovie.Application.Interfaces
 {
-    public interface ICountryService : IGenericService<Country>{ }
+    public interface ICountryService : IGenericService<Country> { }
 }

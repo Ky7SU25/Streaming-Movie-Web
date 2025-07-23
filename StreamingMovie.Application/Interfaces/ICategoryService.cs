@@ -3,8 +3,5 @@ using StreamingMovie.Domain.Interfaces;
 
 namespace StreamingMovie.Application.Interfaces
 {
-    public interface ICategoryService : IGenericService<Category> 
-    {
-        Task<Category?> GetBySlugAsync(string slug);
-    }
+    public interface ICategoryService : IGenericService<Category> { }
 }

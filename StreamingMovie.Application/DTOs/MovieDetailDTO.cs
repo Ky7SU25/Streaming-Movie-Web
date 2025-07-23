@@ -1,0 +1,10 @@
+﻿using StreamingMovie.Domain.Entities;
+
+namespace StreamingMovie.Application.DTOs
+{
+    public class MovieDetailDTO : UnifiedMovieDTO
+    {
+        public string? Language { get; set; }
+        public IEnumerable<string>? Genres { get; set; }
+    }
+}
