@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StreamingMovie.Application.Interfaces;
+using StreamingMovie.Application.Interfaces.ExternalServices.Google;
 using StreamingMovie.Application.Interfaces.ExternalServices.Mail;
 using StreamingMovie.Domain.Entities;
 using StreamingMovie.Web.Views.Account.ViewModels;
@@ -18,8 +20,9 @@ public class AccountController : Controller
     private readonly IRegisterService _registerService;
     private readonly IMailService _mailService;
     private readonly IResetPasswordService _resetPasswordService;
+    private readonly IGoogleAuthService _googleAuthService;
 
-    public AccountController(ILoginService loginService, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor, IRegisterService registerService, IMailService mailService, IResetPasswordService resetPasswordService)
+    public AccountController(ILoginService loginService, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor, IRegisterService registerService, IMailService mailService, IResetPasswordService resetPasswordService, IGoogleAuthService googleAuthService)
     {
         _loginService = loginService;
         _logger = logger;
@@ -27,6 +30,7 @@ public class AccountController : Controller
         _registerService = registerService;
         _mailService = mailService;
         _resetPasswordService = resetPasswordService;
+        _googleAuthService = googleAuthService;
     }
 
     // GET: /Account/Login
@@ -264,6 +268,66 @@ public class AccountController : Controller
         }
 
         return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public   IActionResult ExternalLogin(string provider, string returnUrl = null)
+    {
+        var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { returnUrl });
+        var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+        return Challenge(properties, provider); // provider = "Google"
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+    {
+        returnUrl ??= Url.Content("~/");
+
+        if (remoteError != null)
+        {
+            _logger.LogError("Google login error: {Error}", remoteError);
+            TempData["LoginError"] = $"Error from external provider: {remoteError}";
+            return RedirectToAction(nameof(Login));
+        }
+
+        var externalResult = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
+        if (!externalResult.Succeeded)
+        {
+            _logger.LogWarning("External auth cookie not found.");
+        }
+        else
+        {
+            _logger.LogInformation("External auth cookie found.");
+        }
+
+        var info = await _googleAuthService.GetExternalLoginInfoAsync();
+        if (info == null)
+        {
+            _logger.LogWarning("Error loading external login info.");
+            return RedirectToAction(nameof(Login));
+        }
+
+        var signInResult = await _googleAuthService.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey);
+
+        if (signInResult.Succeeded)
+        {
+            _logger.LogInformation("User logged in with {Name} provider.", info.LoginProvider);
+            return RedirectToLocal(returnUrl);
+        }
+
+        // Tự động tạo tài khoản nếu chưa có
+        var user = await _googleAuthService.AutoProvisionUserAsync(info);
+        if (user == null)
+        {
+            _logger.LogWarning("Could not create user from external provider.");
+            return RedirectToAction(nameof(Login));
+        }
+
+        await _googleAuthService.AddLoginAsync(user, info);
+        await _googleAuthService.SignInAsync(user);
+        _logger.LogInformation("User auto-provisioned and signed in with Google.");
+        return RedirectToLocal(returnUrl);
     }
 
 

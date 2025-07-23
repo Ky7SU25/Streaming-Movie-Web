@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Domain.UnitOfWorks;
 using StreamingMovie.Infrastructure.Extensions.Database;
+using StreamingMovie.Infrastructure.Extensions.GoogleAuth;
 using StreamingMovie.Infrastructure.Extensions.Mail;
 using StreamingMovie.Infrastructure.Extensions.Messages;
 using StreamingMovie.Infrastructure.Extensions.Storage;
@@ -23,6 +24,7 @@ public static class CoreServiceRegistration
     {
         services.AddDatabase(config);
         services.AddMailService(config);
+        services.AddGoogleAuthService(config);
         services.AddStorageService(config);
         services.AddRabbitMq(config);
 
