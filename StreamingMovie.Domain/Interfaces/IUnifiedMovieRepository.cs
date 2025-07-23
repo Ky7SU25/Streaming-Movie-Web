@@ -9,5 +9,7 @@ namespace StreamingMovie.Domain.Interfaces
         IQueryable<UnifiedMovie> Query(params Expression<Func<UnifiedMovie, object>>[] includes);
         // Predicate 
         IQueryable<UnifiedMovie> Find(params Expression<Func<UnifiedMovie, bool>>[] predicates);
+        // Find One
+        Task<UnifiedMovie> FindOneAsync(Expression<Func<UnifiedMovie, bool>> predicate);
     }
 }

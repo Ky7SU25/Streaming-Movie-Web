@@ -29,5 +29,13 @@ namespace StreamingMovie.Infrastructure.Repositories
                 .Distinct()
                 .ToListAsync();
         }
+        public virtual async Task<IEnumerable<string>> GetNamesByMovieIdAsync(int movieId)
+        {
+            return await _dbSet
+                .Where(sc => sc.MovieId == movieId)
+                .Include(sc => sc.Category)
+                .Select(sc => sc.Category.Name)
+                .ToListAsync();
+        }
     }
 }

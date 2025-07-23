@@ -13,6 +13,6 @@ namespace StreamingMovie.Application.DTOs
         public string? Status { get; set; }
         public MovieSortOption? OrderBy { get; set; } = MovieSortOption.Newest;
         public int Page { get; set; } = 1;
-        public int PageSize { get; set; }
+        public int PageSize { get; set; } = 12;
     }
 }

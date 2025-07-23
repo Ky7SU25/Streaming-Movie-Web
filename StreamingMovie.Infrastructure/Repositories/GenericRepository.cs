@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using StreamingMovie.Domain.Entities;
 using StreamingMovie.Domain.Interfaces;
 using StreamingMovie.Infrastructure.Data;
+using System.Linq.Expressions;
 
 namespace StreamingMovie.Infrastructure.Repositories;
 
@@ -133,6 +130,11 @@ public class GenericRepository<T> : IGenericRepository<T>
         return await query.ToListAsync();
     }
 
+    public virtual async Task<T> FindOneAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _dbSet.FirstOrDefaultAsync(predicate);
+    }
+
     public virtual async Task<IEnumerable<T>> GetAllAsync()
     {
         return await _dbSet.ToListAsync(); // => params => redundant
@@ -151,5 +153,28 @@ public class GenericRepository<T> : IGenericRepository<T>
             }
         }
         return await query.ToListAsync();
+    }
+
+    public virtual IQueryable<T> Query(params Expression<Func<T, object>>[] includes)
+    {
+        IQueryable<T> query = _dbSet;
+        if (includes != null)
+        {
+            foreach (var eagerEntity in includes)
+            {
+                query = query.Include(eagerEntity);
+            }
+        }
+        return query;
+    }
+
+    public virtual IQueryable<T> Find(params Expression<Func<T, bool>>[] predicates)
+    {
+        IQueryable<T> query = _dbSet;
+        foreach (var prep in predicates)
+        {
+            query = query.Where(prep);
+        }
+        return query;
     }
 }

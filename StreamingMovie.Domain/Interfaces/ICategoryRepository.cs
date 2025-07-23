@@ -7,7 +7,6 @@ namespace StreamingMovie.Domain.Interfaces
     /// </summary>
     public interface ICategoryRepository : IGenericRepository<Category> 
     {
-        Task<Category?> GetBySlugAsync(string slug);
         Task<IEnumerable<int>> GetCategoryIdsBySlugsAsync(IEnumerable<string> slugs);
     }
 }

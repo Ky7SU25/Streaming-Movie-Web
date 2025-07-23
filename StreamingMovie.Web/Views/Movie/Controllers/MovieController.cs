@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-
-using StreamingMovie.Application.Services;
-
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Application.Interfaces;
-
 using StreamingMovie.Domain.Entities;
 
 namespace StreamingMovie.Web.Views.Movie.Controllers
@@ -14,48 +10,28 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
     {
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
-
-        private DetailMovieService _detailMovieService;
-        
-
-        private readonly IMovieService _movieService;
+        private readonly IUnifiedMovieService _unifiedMovieService;
         private readonly ICategoryService _categoryService;
 
-        public MovieController(SignInManager<User> signInManager, UserManager<User> userManager, IMovieService movieService, ICategoryService categoryService, DetailMovieService detailMovieService)
+        public MovieController(SignInManager<User> signInManager, UserManager<User> userManager, IUnifiedMovieService movieService, ICategoryService categoryService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
-            _movieService = movieService;
+            _unifiedMovieService = movieService;
             _categoryService = categoryService;
-            _detailMovieService = detailMovieService;
-
-
         }
 
-        //public IActionResult Details(string returnUrl = null)
-        //{
-        //    ViewData["ReturnUrl"] = returnUrl;
-        //    return View();
-        //}
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(string slug)
         {
-            if (id <= 0)
-            {
-                return NotFound();
-            }
-            var movie = await _detailMovieService.GetMovieByIdAsync(id);
-            return View(movie);
+            var response = await _unifiedMovieService.GetMovieDetails(slug);
+            return View(response);
         }
-        //public IActionResult Watching(string returnUrl = null)
-        //{
-        //    ViewData["ReturnUrl"] = returnUrl;
-        //    return View();
-        //}
+
         public IActionResult Watching()
         {
-           // ViewData["ReturnUrl"] = "";
             return View();
         }
+
         [HttpGet("search")]
         public async Task<IActionResult> Search(string q, string returnUrl = null)
         {
@@ -63,7 +39,6 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             {
                 Keyword = q,
                 Page = 1,
-                PageSize = 3
             };
             var sectionTitle = string.IsNullOrEmpty(q)
                 ? "Search"
@@ -82,7 +57,7 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             }
             else
             {
-                var category = await _categoryService.GetBySlugAsync(slug);
+                var category = await _categoryService.FindOneAsync(c => c.Slug == slug);
                 if (category == null)
                     return RedirectToAction("Error404", "Home");
 
@@ -93,7 +68,6 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             {
                 Categories = string.IsNullOrEmpty(slug) ? null : new List<string> { slug },
                 Page = 1,
-                PageSize = 3
             };
 
             return await RenderMovieList(filter, sectionTitle, returnUrl);
@@ -101,7 +75,7 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
 
         private async Task<IActionResult> RenderMovieList(MovieFilterDTO filter, string? sectionTitle, string returnUrl)
         {
-            var result = await _movieService.GetPaginatedMovies(filter);
+            var result = await _unifiedMovieService.GetFilteredPagedMovies(filter);
 
             ViewBag.Filter = filter;
             ViewBag.SectionTitle = sectionTitle;
@@ -113,9 +87,7 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
         [HttpGet("filter")]
         public async Task<IActionResult> Filter([FromQuery] MovieFilterDTO filter, string? returnUrl = null, string? sectionTitle = "Browse")
         {
-            filter.PageSize = 3;
-
-            var result = await _movieService.GetPaginatedMovies(filter);
+            var result = await _unifiedMovieService.GetFilteredPagedMovies(filter);
 
             ViewBag.Filter = filter;
             ViewBag.SectionTitle = sectionTitle;
