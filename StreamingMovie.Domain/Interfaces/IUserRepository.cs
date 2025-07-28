@@ -5,5 +5,8 @@ namespace StreamingMovie.Domain.Interfaces
     /// <summary>
     /// Interface for UserRepository
     /// </summary>
-    public interface IUserRepository : IGenericRepository<User> { }
+    public interface IUserRepository : IGenericRepository<User> 
+    {
+        Task<IEnumerable<User>> GetPremiumUsersAsync();
+    }
 }

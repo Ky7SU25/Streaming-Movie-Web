@@ -1,5 +1,6 @@
-using StreamingMovie.Application.Services;
 using StreamingMovie.Application.Interfaces;
+using StreamingMovie.Application.Services;
+using StreamingMovie.Application.Services.BackgroundServices;
 using StreamingMovie.Infrastructure.Extensions;
 using StreamingMovie.Infrastructure.ExternalServices.Hubs;
 
@@ -13,6 +14,10 @@ builder.Services.AddRouting(options =>
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
 builder.Services.AddCoreInfrastructure(builder.Configuration);
+
+//background service
+builder.Services.AddHostedService<SubscriptionCheckService>();
+
 
 // Add new video upload services
 builder.Services.AddScoped<IVideoUploadService, VideoUploadService>();

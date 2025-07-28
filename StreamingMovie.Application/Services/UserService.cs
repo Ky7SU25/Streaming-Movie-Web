@@ -19,5 +19,10 @@ namespace StreamingMovie.Application.Services
         {
             _unitOfWork = unitOfWork;
         }
+
+        public async Task<IEnumerable<User>> GetPremiumUsersAsync()
+        {
+            return await _unitOfWork.UserRepository.GetPremiumUsersAsync();
+        }
     }
 }

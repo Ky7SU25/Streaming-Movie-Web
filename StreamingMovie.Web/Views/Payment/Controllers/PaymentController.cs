@@ -40,13 +40,20 @@ namespace StreamingMovie.Web.Views.Payment.Controllers
             {
                 return NotFound();
             }
-
-            var paymentViewModel = new PaymentViewModel
+            var paymentViewModel = new PaymentViewModel();
+            if (user.SubscriptionType == "Premium" && user.SubscriptionEndDate > DateTime.Now)
             {
-                UserID = userId,
-                UserFullName = user.FullName,
-                ExpDate = user.SubscriptionEndDate ?? DateTime.Now.AddDays(-1)
-            };
+                paymentViewModel.ExpDate = user.SubscriptionEndDate;
+                paymentViewModel.UserID = userId;
+                paymentViewModel.UserFullName = user.FullName;
+            }else
+            {
+                paymentViewModel.UserID = userId;
+                paymentViewModel.UserFullName = user.FullName;
+                paymentViewModel.ExpDate = null;
+
+            }
+
 
             return View(paymentViewModel);
         }
