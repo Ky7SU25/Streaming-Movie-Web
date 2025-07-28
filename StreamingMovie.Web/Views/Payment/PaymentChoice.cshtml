@@ -263,13 +263,15 @@
                 <p class="plan-description">
                     Cùng khám phá sự hỗ trợ của AI trong các công việc hàng ngày của bạn
                 </p>
-                @if (DateTime.Now > Model.ExpDate)
+                @if (Model.ExpDate != null)
                 {
-                    <button class="plan-button btn-free">Gói hiện tại của bạn</button>
-                }
-                @if (DateTime.Now <= Model.ExpDate)
-                {
-                    <button class="plan-button btn-free">Bạn hiện đang sử dụng gói Premium</button>
+
+
+                    <button class="plan-button btn-free" disabled>Bạn hiện đang sử dụng gói Premium</button>
+                    
+                }else {
+                <button class="plan-button btn-free" disabled>Gói hiện tại của bạn</button>
+
                 }
                 <ul class="features-list">
                     <li><span class="feature-text">Truy cập các bộ phim tiêu chuẩn</span></li>
@@ -295,22 +297,22 @@
                 <p class="plan-description">
                     Nâng cao kho phim và chất lượng khi xem
                 </p>
-                @if( DateTime.Now > Model.ExpDate)
+                 @if (Model.ExpDate != null)
+                {
+                
+                
+                    <button class="plan-button btn-plus" disabled>Gói plus vẫn còn hạn sử dụng</button>
+                
+                }
+                else 
                 {
                     <form asp-action="PaymentConfirmation" asp-controller="Payment" method="post" class="dropdown-item m-0 p-0">
-                        
+
                         <button type="submit" class="plan-button btn-plus">Chuyển sang Plus</button>
 
                     </form>
 
                 }
-                @if( DateTime.Now <= Model.ExpDate)
-                {
-                    <button class="plan-button btn-plus" disabled>Gói plus vẫn còn hạn sử dụng</button>
-                    @Model.ExpDate;
-                }
-
-
                 <ul class="features-list">
                     <li><span class="feature-text">Mọi tính năng trong gói Free</span></li>
                     <li><span class="feature-text">Mở rộng quyền truy cập vào các bộ phim hay, mới ra rạp</span></li>
