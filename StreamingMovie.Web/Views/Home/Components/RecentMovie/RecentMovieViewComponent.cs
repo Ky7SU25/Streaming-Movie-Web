@@ -29,7 +29,8 @@ namespace StreamingMovie.Web.Views.Home.Components.RecentMovie
 
             if (!_cache.TryGetValue(cacheKey, out IEnumerable<UnifiedMovieDTO> movieDTOs))
             {
-                var movies = await _unifiedMovieService.Query()
+                var movies = await _unifiedMovieService
+                    .Find(p => !string.Equals(p.Status, "unactive", StringComparison.OrdinalIgnoreCase))
                     .OrderByDescending(m => m.CreatedAt)
                     .Take(6)
                     .ToListAsync();

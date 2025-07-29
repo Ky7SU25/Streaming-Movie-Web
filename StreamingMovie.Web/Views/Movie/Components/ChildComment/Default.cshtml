@@ -7,6 +7,11 @@
     var parentId = ViewBag.ParentId;
 }
 
+<style>
+    .anime__details__form{
+        display: none;
+    }
+</style>
 @functions {
     public string GetRelativeTime(DateTime createdAt)
     {
@@ -23,9 +28,11 @@
     }
 }
 <div class="anime__details__form mb-5" id="commentForm-@parentId">
-    <form id="childCommentForm-@parentId" action="javascript:void(0);">
-        <textarea id="messageInput-@parentId" placeholder="Your Comment"></textarea>
-        <button type="submit"><i class="fa fa-location-arrow"></i> Review</button>
+    @* <form id="childCommentForm-@parentId" action="javascript:void(0);"> *@
+    <form id="childCommentForm-@parentId" asp-action="Create" asp-controller="Comment">
+        <textarea id="messageInput-@parentId" name="Content" placeholder="Your Reply Comment"></textarea>
+        <input type="hidden" name="parentId" value="@parentId"/>
+        <button type="submit"><i class="fa fa-location-arrow"></i> Reply</button>
     </form>
 </div>
 
@@ -74,14 +81,13 @@
                     @comment.Content
                 </p>
             </div>
-                <button class="text-white small btn btn-link mt-1" style="margin-left: 90px;"  onclick="toggleComponent('commentForm-@comment.Id')">
+                <button class="text-white small btn btn-link" style="margin-left: 80px;"  onclick="toggleComponent('commentForm-@comment.Id')">
                     <i class="bi bi-reply-fill"></i> Reply
                 </button>
         </div>
         <div style="width: 90%; margin-left: auto;">
               @await Component.InvokeAsync("ChildComment", new { parentId = comment.Id, targetType = targetType, targetId = targetId })
         </div>
-
 
         <!-- Edit Comment Modal -->
         <div class="modal fade" id="editModal-@comment.Id" tabindex="-1" aria-labelledby="editCommentModalLabel-@comment.Id" aria-hidden="true">
@@ -146,7 +152,7 @@
     }
     </div>
 
- @section Scripts{
+@*  @section Scripts{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 <script>
     console.log("Initializing comment section...");
@@ -279,4 +285,4 @@
         return `${diffDays} day(s) ago`;
     }
 </script>
-}
+} *@

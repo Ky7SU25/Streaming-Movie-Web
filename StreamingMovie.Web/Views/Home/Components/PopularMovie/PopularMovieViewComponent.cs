@@ -27,7 +27,8 @@ public class PopularMovieViewComponent : ViewComponent
 
         if (!_cache.TryGetValue(cacheKey, out IEnumerable<UnifiedMovieDTO> movieDTOs))
         {
-            var movies = await _unifiedMovieService.Query()
+            var movies = await _unifiedMovieService
+                .Find(p => !string.Equals(p.Status, "unactive", StringComparison.OrdinalIgnoreCase))
                 .OrderByDescending(m => m.ViewCount)
                 .Take(6)
                 .ToListAsync();
