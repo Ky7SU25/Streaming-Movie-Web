@@ -5,6 +5,7 @@ using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Domain.UnitOfWorks;
 using StreamingMovie.Infrastructure.Extensions.Database;
 using StreamingMovie.Infrastructure.Extensions.GoogleAuth;
+using StreamingMovie.Infrastructure.Extensions.Huggingface;
 using StreamingMovie.Infrastructure.Extensions.Mail;
 using StreamingMovie.Infrastructure.Extensions.Messages;
 using StreamingMovie.Infrastructure.Extensions.Payment;
@@ -29,6 +30,7 @@ public static class CoreServiceRegistration
         services.AddStorageService(config);
         services.AddRabbitMq(config);
         services.AddPayment(config);
+        services.AddHuggingfaceService();
 
 
         services.AddScoped<IUnitOfWork, MySQLUnitOfWork>();

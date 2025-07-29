@@ -1,8 +1,10 @@
-using StreamingMovie.Application.Interfaces;
+﻿using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Application.Services;
 using StreamingMovie.Application.Services.BackgroundServices;
+using StreamingMovie.Infrastructure.Data;
 using StreamingMovie.Infrastructure.Extensions;
 using StreamingMovie.Infrastructure.ExternalServices.Hubs;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,8 +36,18 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.IsEssential = true;
 });
 
+
 var app = builder.Build();
 
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    var context = services.GetRequiredService<MovieDbContext>();
+//    var httpClientFactory = services.GetRequiredService<IHttpClientFactory>();
+
+//    var seeder = new MovieSeeder(context, httpClientFactory.CreateClient());
+//    await seeder.SeedAsync(); // Seeder sẽ gọi Flask và lưu EmbeddingJson
+//}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
