@@ -99,6 +99,8 @@ namespace StreamingMovie.Application.Services
                 predicates.Add(x => x.Status == filter.Status);
             }
 
+            predicates.Add(p => !string.Equals(p.Status, "unactive", StringComparison.OrdinalIgnoreCase));
+
             // Query
             var query = _unitOfWork.UnifiedMovieRepository.Find(predicates.ToArray());
 

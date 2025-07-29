@@ -65,6 +65,7 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
         public async Task<IActionResult> Watching(string slug)
         {
             var unifiedMovie = await _unifiedMovieService.Find(x => x.Slug == slug).FirstOrDefaultAsync();
+            var user = await _userManager.GetUserAsync(HttpContext.User);
 
             if (unifiedMovie == null)
             {
@@ -80,9 +81,22 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
                     {
                         return NotFound("Movie not found");
                     }
+
                     var movieUpdate = await _movieService.FindOneAsync(m => m.Id == unifiedMovie.Id);
+
                     if (movieUpdate != null)
                     {
+                        if(string.Equals(movieUpdate.Status, "unactive", StringComparison.OrdinalIgnoreCase))
+                        {
+                            TempData["info"] = "This movie is inactive.";
+                            return RedirectToAction("Details", "Movie", new {slug = slug});
+                        }
+                        if (movieUpdate.IsPremium == true && !string.Equals(user.SubscriptionType, "Premium", StringComparison.OrdinalIgnoreCase))
+                        {
+                            TempData["info"] = "Please subscribe premium to watch this movie.";
+                            return RedirectToAction("PaymentChoice", "Payment");
+                        }
+
                         movieUpdate.ViewCount += 1;
                         await _movieService.UpdateAsync(movieUpdate);
                     }
@@ -130,7 +144,7 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
         [HttpGet]
         public async Task<IActionResult> AISearch(string q)
         {
-           var result = await _unifiedMovieService.GetAISearchPagedMovies(q);
+            var result = await _unifiedMovieService.GetAISearchPagedMovies(q);
             var filter = new MovieFilterDTO
             {
                 Keyword = q,

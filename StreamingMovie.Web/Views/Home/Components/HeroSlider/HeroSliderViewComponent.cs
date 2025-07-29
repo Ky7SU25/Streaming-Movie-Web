@@ -27,7 +27,8 @@ public class HeroSliderViewComponent : ViewComponent
 
         if (!_cache.TryGetValue(cacheKey, out IEnumerable<UnifiedMovieDTO> movieDTOs))
         {
-            var movies = await _unifiedMovieService.Query()
+            var movies = await _unifiedMovieService
+                .Find(p => !string.Equals(p.Status, "unactive", StringComparison.OrdinalIgnoreCase))
                 .OrderByDescending(m => m.ImdbRating)
                 .Take(3)
                 .ToListAsync();

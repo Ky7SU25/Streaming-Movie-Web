@@ -52,14 +52,15 @@
                                     </div>
                                     <span>@Model.Ratings?.TotalItems.ToString("#,0") Votes</span>
                                 </div>
-                                <p>
+                                <p style="max-height: 125px; overflow-y: auto;">
                                     @Model.Description
                                 </p>
                                 <div class="anime__details__widget">
                                     <div class="row">
                                         <div class="col-lg-6 col-md-6">
                                             <ul>
-                                                <li><span>Type:</span> @(Model.IsSeries == true ? "TV Series" : "Movie")</li>
+                                                <li><span>Type:</span> @(Model.IsSeries == true ? "TV Series" : "Movie") - @(Model.IsPremium == true ? "Premium" : "Free")
+                                                </li>
                                                 <li><span>Release Date:</span> @Model.ReleaseDate.Value.ToString("dd - MM - yyyy")</li>
                                                 <li><span>Status:</span> @Model.Status</li>
                                                 <li>
@@ -71,7 +72,7 @@
                                         <div class="col-lg-6 col-md-6">
                                             <ul>
                                                 <li><span>Imdb rating:</span> @Model.ImdbRating</li>
-                                                <li><span>Duration:</span> 24 min/ep</li>
+                                                @* <li><span>Duration:</span> 120</li> *@
                                                 <li><span>Quality:</span> Full HD</li>
                                                 <li><span>Views:</span> @Model.ViewCount</li>
                                             </ul>
@@ -166,10 +167,6 @@
                             <h5><a asp-action="Details" asp-controller="Movie" asp-route-slug="@item.Slug">@item.Title</a></h5>
                         </div>
                         }
-
-
-                        @await Component.InvokeAsync("SidebarMovie", new { period = "day" })
-
                     </div>
                 </div>
             </div>

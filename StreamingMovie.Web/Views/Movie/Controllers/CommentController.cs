@@ -47,10 +47,17 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             var userId = GetUserId();
             if (userId == null)
                 return RedirectToAction("Login", "Account");
-
             model.UserId = userId.Value;
 
-            await _commentService.AddAsync(model);
+            var result = await _commentService.AddAsync(model);
+            if (result == null)
+            {
+                TempData["error"] = "Failed to create comment.";
+            }
+            else
+            {
+                TempData["success"] = "Comment created.";
+            }
             return Redirect(Request.Headers["Referer"].ToString());
         }
 
