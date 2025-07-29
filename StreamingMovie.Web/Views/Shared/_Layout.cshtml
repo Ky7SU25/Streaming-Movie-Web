@@ -96,26 +96,31 @@
                             </li>
                         </ul>
 
-                        <div class="dropdown d-inline-block">
-                            <a class="dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="icon_profile"></span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                @if (User.Identity.IsAuthenticated)
-                                {
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div class="dropdown d-inline-block">
+                                <a class="dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @await Component.InvokeAsync("UserAvatar")
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
                                     <li><a class="dropdown-item" asp-action="UserProfile" asp-controller="UserProfile">Profile</a></li>
                                     <li>
                                         <form asp-action="Logout" asp-controller="Account" method="post" class="dropdown-item m-0 p-0">
                                             <button type="submit" class="btn w-100 text-start">Logout</button>
                                         </form>
                                     </li>
-                                }
-                                else
-                                {
-                                    <li><a class="dropdown-item" asp-action="Login" asp-controller="Account">Login</a></li>
-                                }
-                            </ul>
-                        </div>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="dropdown d-inline-block">
+                                <a class="dropdown-toggle text-white" asp-action="Login" asp-controller="Account">
+                                    <span class="icon_profile"></span>
+                                </a>
+                            </div>
+                        }
+
 
                     </div>
                 </div>
