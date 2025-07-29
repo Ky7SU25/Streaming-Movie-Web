@@ -22,7 +22,7 @@ namespace StreamingRating.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<PagedResult<RatingResponseDTO>> PaginateBySlugAsync(string slug, int currentUserId, int page = 1, int pageSize = 7)
+        public async Task<PagedResult<RatingResponseDTO>> PaginateBySlugAsync(string slug, int? currentUserId, int page = 1, int pageSize = 7)
         {
             if (string.IsNullOrWhiteSpace(slug))
             {
@@ -51,6 +51,7 @@ namespace StreamingRating.Application.Services
                 var correspondingRating = ratings.First(r => r.Id == dto.Id);
                 dto.IsCurrentUserReview = correspondingRating.UserId == currentUserId;
             }
+
             return new PagedResult<RatingResponseDTO>
             {
                 Items = mappedRatings,
@@ -108,7 +109,7 @@ namespace StreamingRating.Application.Services
             return Math.Round(ratings.Average(r => r.RatingValue), 1, MidpointRounding.AwayFromZero);
         }
 
-        public async Task<RatingResponseDTO?> GetUserReview(int userId, string slug) 
+        public async Task<RatingResponseDTO?> GetUserReview(int userId, string slug)
         {
             var unifiedMovie = await _unitOfWork.UnifiedMovieRepository
                 .FindOneAsync(x => x.Slug == slug);
