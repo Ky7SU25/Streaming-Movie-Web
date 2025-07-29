@@ -23,8 +23,15 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
         [HttpGet]
         public async Task<IActionResult> LoadRatings(string slug, int page = 1)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var pagedRating = await _ratingService.PaginateBySlugAsync(slug, userId, page);
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int? userId = null;
+
+            if (int.TryParse(userIdClaim, out int parsedUserId))
+            {
+                userId = parsedUserId;
+            }
+
+            var pagedRating = await _ratingService.PaginateBySlugAsync(slug, parsedUserId, page);
             var model = Tuple.Create(pagedRating, slug);
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")

@@ -38,13 +38,19 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             var response = await _unifiedMovieService.GetMovieDetails(slug);
             if (response != null)
             {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int? userId = null;
 
-                var pagedRating = await _ratingService.PaginateBySlugAsync(slug, userId, page ?? 1);
+                if (int.TryParse(userIdClaim, out int parsedUserId))
+                {
+                    userId = parsedUserId;
+                }
+
+                var pagedRating = await _ratingService.PaginateBySlugAsync(slug, parsedUserId, page ?? 1);
                 response.Ratings = pagedRating;
 
                 if (userId != null)
-                    response.UserReview = await _ratingService.GetUserReview(userId,slug);
+                    response.UserReview = await _ratingService.GetUserReview(parsedUserId, slug);
             }
             return View(response);
         }
