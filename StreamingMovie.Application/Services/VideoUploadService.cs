@@ -55,7 +55,8 @@ namespace StreamingMovie.Application.Services
                     Slug = slug ?? GenerateSlug(title),
                     Status = "draft",
                     CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    UpdatedAt = DateTime.UtcNow,
+                    EmbeddingJson = string.Empty
                 };
 
                 var createdMovie = await _movieRepository.AddAsync(movie);
