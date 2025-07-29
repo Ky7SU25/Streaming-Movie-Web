@@ -73,6 +73,12 @@ public class AccountController : Controller
 
         if (result.Succeeded)
         {
+            var isAdmin = _httpContextAccessor.HttpContext?.User?.IsInRole("Admin") ?? false;
+
+            if (isAdmin)
+            {
+                return RedirectToAction("Index", "Admin");
+            }
             _logger.LogInformation("User logged in successfully.");
             return RedirectToLocal(returnUrl);
         }
@@ -87,7 +93,7 @@ public class AccountController : Controller
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             _logger.LogWarning("Invalid login attempt for user {Email}.", model.Email);
         }
-
+        
         return View(model);
     }
 
