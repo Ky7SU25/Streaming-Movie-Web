@@ -59,7 +59,7 @@ public class AccountController : Controller
     {
         returnUrl = returnUrl ?? Url.Content("~/");
         var isLogin = _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
-        if ( isLogin == true)
+        if (isLogin == true)
         {
             return RedirectToAction("Index", "Home");
         }
@@ -115,7 +115,7 @@ public class AccountController : Controller
             };
             var result = await _registerService.RegisterAsync(newUser, model.Password);
 
-            if (result.Succeeded) 
+            if (result.Succeeded)
             {
                 _logger.LogInformation("User registered successfully.");
                 var token = await _registerService.GenerateEmailConfirmationTokenAsync(newUser);
@@ -143,7 +143,7 @@ public class AccountController : Controller
                 };
                 await _mailService.SendMailAsync(mailContent);
                 TempData["RegisterSuccess"] = "Register successfully, please check your email and click in confirmation link to complete.";
-                return RedirectToAction("Register"); 
+                return RedirectToAction("Register");
             }
             else
             {
@@ -161,27 +161,28 @@ public class AccountController : Controller
         try
         {
             var result = await _registerService.EmailConfirmTokenAsync(userId, code);
-        if (result.Succeeded)
-        {
-            _logger.LogInformation("User email confirmed successfully.");
-            return View("ConfirmEmail", new ConfirmEmailViewModel
+            if (result.Succeeded)
             {
-                Title = "Email confirm successfully",
-                Message = "Your email has been verrified. Redirecting...",
-                RedirectUrl = returnUrl ?? Url.Action("Index", "Home")
-            });
-        }
-        else
-        {
-            _logger.LogWarning("Email confirmation failed for user {UserId}.", userId);
-            return View("ConfirmEmail", new ConfirmEmailViewModel
+                _logger.LogInformation("User email confirmed successfully.");
+                return View("ConfirmEmail", new ConfirmEmailViewModel
+                {
+                    Title = "Email confirm successfully",
+                    Message = "Your email has been verrified. Redirecting...",
+                    RedirectUrl = returnUrl ?? Url.Action("Index", "Home")
+                });
+            }
+            else
             {
-                Title = "Email confirm",
-                Message = "You has not confirmed your email. Contact with Adminitristor if you think this is an error.",
-                RedirectUrl = Url.Action("Index", "Home")
-            });
+                _logger.LogWarning("Email confirmation failed for user {UserId}.", userId);
+                return View("ConfirmEmail", new ConfirmEmailViewModel
+                {
+                    Title = "Email confirm",
+                    Message = "You has not confirmed your email. Contact with Adminitristor if you think this is an error.",
+                    RedirectUrl = Url.Action("Index", "Home")
+                });
+            }
         }
-        } catch (Exception ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Error confirming email for user {UserId}.", userId);
             return View("ConfirmEmail", new ConfirmEmailViewModel
@@ -211,9 +212,9 @@ public class AccountController : Controller
             string token;
             try
             {
-                 token = await _resetPasswordService.GenerateResetPasswordTokenAsync(model.Email) ?? "";
+                token = await _resetPasswordService.GenerateResetPasswordTokenAsync(model.Email) ?? "";
             }
-            catch( Exception e) 
+            catch (Exception e)
             {
                 _logger.LogError(e, "Error generating password reset token for email {Email}.", model.Email);
                 ModelState.AddModelError(string.Empty, "Email not found or user hasn't confirmed email yet.");
@@ -298,7 +299,7 @@ public class AccountController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public   IActionResult ExternalLogin(string provider, string returnUrl = null)
+    public IActionResult ExternalLogin(string provider, string returnUrl = null)
     {
         var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { returnUrl });
         var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
@@ -354,7 +355,7 @@ public class AccountController : Controller
                         if (createResult.Succeeded)
                         {
                             _logger.LogInformation("User created successfully: {Email}", email);
-                            await _userManager.AddToRoleAsync(user,"User");
+                            await _userManager.AddToRoleAsync(user, "User");
                             await _signInManager.SignInAsync(user, isPersistent: false);
                             return RedirectToLocal(returnUrl);
                         }
@@ -376,7 +377,7 @@ public class AccountController : Controller
                 }
             }
         }
-            return RedirectToLocal(returnUrl);
+        return RedirectToLocal(returnUrl);
     }
 
 

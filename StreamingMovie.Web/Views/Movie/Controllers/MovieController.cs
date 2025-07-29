@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Domain.Entities;
@@ -55,26 +56,51 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             return View(response);
         }
 
-        public async Task<IActionResult> Watching(int id)
+        public async Task<IActionResult> Watching(string slug)
         {
-            try
+            var unifiedMovie = await _unifiedMovieService.Find(x => x.Slug == slug).FirstOrDefaultAsync();
+
+            if (unifiedMovie == null)
             {
-                var movie = await _movieService.GetMovieVideoAsync(id);
-                if (movie == null)
+                return NotFound("Movie not found");
+            }
+
+            if (!unifiedMovie.IsSeries)
+            {
+                try
                 {
-                    return NotFound("Movie not found");
+                    var movie = await _movieService.GetMovieVideoAsync(unifiedMovie.Id);
+                    if (movie == null)
+                    {
+                        return NotFound("Movie not found");
+                    }
+                    var movieUpdate = await _movieService.FindOneAsync(m => m.Id == unifiedMovie.Id);
+                    if (movieUpdate != null)
+                    {
+                        movieUpdate.ViewCount += 1;
+                        await _movieService.UpdateAsync(movieUpdate);
+                    }
+
+                    return View(movie);
                 }
-                return View(movie);
+                catch (KeyNotFoundException)
+                {
+                    return NotFound("Movie or video not found");
+                }
+                catch (Exception ex)
+                {
+                    // Log the error in a real application
+                    return BadRequest($"Error loading movie: {ex.Message}");
+                }
             }
-            catch (KeyNotFoundException)
+            else
             {
-                return NotFound("Movie or video not found");
+                return RedirectToAction("Details", "Movie", new
+                {
+                    slug = unifiedMovie.Slug
+                });
             }
-            catch (Exception ex)
-            {
-                // Log the error in a real application
-                return BadRequest($"Error loading movie: {ex.Message}");
-            }
+
         }
 
         [HttpGet("search")]
