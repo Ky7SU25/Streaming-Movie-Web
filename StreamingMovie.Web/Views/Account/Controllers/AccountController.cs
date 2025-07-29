@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Diagnostics;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MySqlX.XDevAPI.Common;
@@ -9,8 +12,6 @@ using StreamingMovie.Domain.Entities;
 using StreamingMovie.Web.Views.Account.ViewModels;
 using StreamingMovie.Web.Views.Home.Controllers;
 using StreamingMovie.Web.Views.Shared.ViewModels;
-using System.Diagnostics;
-using System.Security.Claims;
 
 namespace StreamingMovie.Web.Views.Account.Controllers;
 
@@ -26,7 +27,17 @@ public class AccountController : Controller
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
 
-    public AccountController(ILoginService loginService, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor, IRegisterService registerService, IMailService mailService, IResetPasswordService resetPasswordService, IGoogleAuthService googleAuthService, UserManager<User> userManager, SignInManager<User> signInManager)
+    public AccountController(
+        ILoginService loginService,
+        ILogger<AccountController> logger,
+        IHttpContextAccessor httpContextAccessor,
+        IRegisterService registerService,
+        IMailService mailService,
+        IResetPasswordService resetPasswordService,
+        IGoogleAuthService googleAuthService,
+        UserManager<User> userManager,
+        SignInManager<User> signInManager
+    )
     {
         _loginService = loginService;
         _logger = logger;
@@ -54,7 +65,7 @@ public class AccountController : Controller
 
     // POST: /Account/Login
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [AllowAnonymous]
     public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
     {
         returnUrl = returnUrl ?? Url.Content("~/");
@@ -85,7 +96,10 @@ public class AccountController : Controller
         if (result.IsLockedOut)
         {
             _logger.LogWarning("User account locked out for user {Email}.", model.Email);
-            ModelState.AddModelError(string.Empty, "Your account has been locked out. Please try again later.");
+            ModelState.AddModelError(
+                string.Empty,
+                "Your account has been locked out. Please try again later."
+            );
             return View(model);
         }
         else
@@ -93,7 +107,7 @@ public class AccountController : Controller
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             _logger.LogWarning("Invalid login attempt for user {Email}.", model.Email);
         }
-        
+
         return View(model);
     }
 
@@ -125,21 +139,32 @@ public class AccountController : Controller
             {
                 _logger.LogInformation("User registered successfully.");
                 var token = await _registerService.GenerateEmailConfirmationTokenAsync(newUser);
-                var callbackUrl = Url.Action("ConfirmEmail", "Account", new
-                {
-                    userId = newUser.Id,
-                    code = token,
-                    returnUrl = returnUrl
-                }, protocol: Request.Scheme);
+                var callbackUrl = Url.Action(
+                    "ConfirmEmail",
+                    "Account",
+                    new
+                    {
+                        userId = newUser.Id,
+                        code = token,
+                        returnUrl = returnUrl
+                    },
+                    protocol: Request.Scheme
+                );
 
                 var root = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
-                var templatePath = Path.Combine(root, "StreamingMovie.Domain", "Common", "Templates", "ConfirmEmailTemplate.html");
+                var templatePath = Path.Combine(
+                    root,
+                    "StreamingMovie.Domain",
+                    "Common",
+                    "Templates",
+                    "ConfirmEmailTemplate.html"
+                );
 
                 string htmlTemplate = await System.IO.File.ReadAllTextAsync(templatePath);
 
                 string emailBody = htmlTemplate
-                .Replace("{{ .ConfirmationURL }}", callbackUrl)
-                .Replace("{{ .Email }}", model.Email);
+                    .Replace("{{ .ConfirmationURL }}", callbackUrl)
+                    .Replace("{{ .Email }}", model.Email);
 
                 var mailContent = new MailContent
                 {
@@ -148,7 +173,8 @@ public class AccountController : Controller
                     Body = emailBody
                 };
                 await _mailService.SendMailAsync(mailContent);
-                TempData["RegisterSuccess"] = "Register successfully, please check your email and click in confirmation link to complete.";
+                TempData["RegisterSuccess"] =
+                    "Register successfully, please check your email and click in confirmation link to complete.";
                 return RedirectToAction("Register");
             }
             else
@@ -161,8 +187,13 @@ public class AccountController : Controller
         }
         return View(model);
     }
+
     // GET: /Account/ConfirmEmail
-    public async Task<IActionResult> ConfirmEmail(string userId, string code, string returnUrl = null)
+    public async Task<IActionResult> ConfirmEmail(
+        string userId,
+        string code,
+        string returnUrl = null
+    )
     {
         try
         {
@@ -170,33 +201,44 @@ public class AccountController : Controller
             if (result.Succeeded)
             {
                 _logger.LogInformation("User email confirmed successfully.");
-                return View("ConfirmEmail", new ConfirmEmailViewModel
-                {
-                    Title = "Email confirm successfully",
-                    Message = "Your email has been verrified. Redirecting...",
-                    RedirectUrl = returnUrl ?? Url.Action("Index", "Home")
-                });
+                return View(
+                    "ConfirmEmail",
+                    new ConfirmEmailViewModel
+                    {
+                        Title = "Email confirm successfully",
+                        Message = "Your email has been verrified. Redirecting...",
+                        RedirectUrl = returnUrl ?? Url.Action("Index", "Home")
+                    }
+                );
             }
             else
             {
                 _logger.LogWarning("Email confirmation failed for user {UserId}.", userId);
-                return View("ConfirmEmail", new ConfirmEmailViewModel
-                {
-                    Title = "Email confirm",
-                    Message = "You has not confirmed your email. Contact with Adminitristor if you think this is an error.",
-                    RedirectUrl = Url.Action("Index", "Home")
-                });
+                return View(
+                    "ConfirmEmail",
+                    new ConfirmEmailViewModel
+                    {
+                        Title = "Email confirm",
+                        Message =
+                            "You has not confirmed your email. Contact with Adminitristor if you think this is an error.",
+                        RedirectUrl = Url.Action("Index", "Home")
+                    }
+                );
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error confirming email for user {UserId}.", userId);
-            return View("ConfirmEmail", new ConfirmEmailViewModel
-            {
-                Title = "Error",
-                Message = "An error occurred while confirming your email. Please try again later.",
-                RedirectUrl = Url.Action("Index", "Home")
-            });
+            return View(
+                "ConfirmEmail",
+                new ConfirmEmailViewModel
+                {
+                    Title = "Error",
+                    Message =
+                        "An error occurred while confirming your email. Please try again later.",
+                    RedirectUrl = Url.Action("Index", "Home")
+                }
+            );
         }
     }
 
@@ -209,8 +251,10 @@ public class AccountController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-
-    public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model, string returnUrl = null)
+    public async Task<IActionResult> ForgotPassword(
+        ForgotPasswordViewModel model,
+        string returnUrl = null
+    )
     {
         returnUrl ??= Url.Content("~/");
         if (ModelState.IsValid)
@@ -218,25 +262,43 @@ public class AccountController : Controller
             string token;
             try
             {
-                token = await _resetPasswordService.GenerateResetPasswordTokenAsync(model.Email) ?? "";
+                token =
+                    await _resetPasswordService.GenerateResetPasswordTokenAsync(model.Email) ?? "";
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error generating password reset token for email {Email}.", model.Email);
-                ModelState.AddModelError(string.Empty, "Email not found or user hasn't confirmed email yet.");
+                _logger.LogError(
+                    e,
+                    "Error generating password reset token for email {Email}.",
+                    model.Email
+                );
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Email not found or user hasn't confirmed email yet."
+                );
                 return View(model);
             }
 
-            var callbackUrl = Url.Action("ResetPassword", "Account", new
-            {
-                email = model.Email,
-                code = token,
-                returnUrl = returnUrl
-            }, protocol: Request.Scheme);
-
+            var callbackUrl = Url.Action(
+                "ResetPassword",
+                "Account",
+                new
+                {
+                    email = model.Email,
+                    code = token,
+                    returnUrl = returnUrl
+                },
+                protocol: Request.Scheme
+            );
 
             var root = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
-            var templatePath = Path.Combine(root, "StreamingMovie.Domain", "Common", "Templates", "ResetPasswordTemplate.html");
+            var templatePath = Path.Combine(
+                root,
+                "StreamingMovie.Domain",
+                "Common",
+                "Templates",
+                "ResetPasswordTemplate.html"
+            );
 
             string htmlTemplate = await System.IO.File.ReadAllTextAsync(templatePath);
 
@@ -266,11 +328,7 @@ public class AccountController : Controller
             return RedirectToAction("Error");
         }
 
-        var model = new ResetPasswordViewModel
-        {
-            Email = email,
-            Code = code
-        };
+        var model = new ResetPasswordViewModel { Email = email, Code = code };
 
         ViewData["ReturnUrl"] = returnUrl;
         return View(model);
@@ -279,7 +337,10 @@ public class AccountController : Controller
     // POST: /Account/ResetPassword
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model, string returnUrl = null)
+    public async Task<IActionResult> ResetPassword(
+        ResetPasswordViewModel model,
+        string returnUrl = null
+    )
     {
         returnUrl ??= Url.Content("~/");
 
@@ -288,10 +349,15 @@ public class AccountController : Controller
             return View(model);
         }
 
-        var result = await _resetPasswordService.ResetPasswordAsync(model.Email, model.Code, model.Password);
+        var result = await _resetPasswordService.ResetPasswordAsync(
+            model.Email,
+            model.Code,
+            model.Password
+        );
         if (result.Succeeded)
         {
-            TempData["ResetPasswordSuccess"] = "Password reset successfully. Please login with your new password.";
+            TempData["ResetPasswordSuccess"] =
+                "Password reset successfully. Please login with your new password.";
             return RedirectToAction("Login");
         }
 
@@ -313,7 +379,10 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+    public async Task<IActionResult> ExternalLoginCallback(
+        string returnUrl = null,
+        string remoteError = null
+    )
     {
         returnUrl ??= Url.Content("~/");
 
@@ -386,20 +455,19 @@ public class AccountController : Controller
         return RedirectToLocal(returnUrl);
     }
 
-
     public async Task<IActionResult> Logout(string returnUrl = null)
     {
         await _loginService.LogoutAsync();
         return RedirectToAction("Index", "Home");
     }
+
     // GET: /Account/Error
     [HttpGet]
     public IActionResult Error()
     {
-        return View(new ErrorViewModel
-        {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
-        });
+        return View(
+            new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier }
+        );
     }
 
     private IActionResult RedirectToLocal(string returnUrl)
