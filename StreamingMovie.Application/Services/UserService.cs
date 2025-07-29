@@ -24,5 +24,9 @@ namespace StreamingMovie.Application.Services
         {
             return await _unitOfWork.UserRepository.GetPremiumUsersAsync();
         }
+        public async Task<int> GettotalUsersCountAsync()
+        {
+            return await _unitOfWork.UserRepository.GetTotalUsersCountAsync();
+        }
     }
 }

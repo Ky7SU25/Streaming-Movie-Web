@@ -29,6 +29,8 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
         private readonly IStorageHandler _storage;
         private readonly MinioOptions _options;
         private readonly IPaymentService _paymentservice;
+        private readonly IUserService _userservice;
+
 
         // MinIO File Naming Convention Rules
         private static readonly Dictionary<string, string> FilePathRules =
@@ -63,7 +65,8 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
             IMovieCategoryService movieCategoryService,
             IStorageHandler storage,
             IOptions<MinioOptions> options,
-            IPaymentService paymentservice
+            IPaymentService paymentservice,
+            IUserService userservice
         )
         {
             _signInManager = signInManager;
@@ -78,6 +81,7 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
             _movieService = movieService;
             _movieCategoryService = movieCategoryService;
             _paymentservice = paymentservice;
+            _userservice = userservice;
         }
 
         #region Admin Pages
@@ -85,7 +89,16 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
         public IActionResult Index(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            var totalRevenue = _paymentservice.GetTotalRevenueAsync().Result;
+            var totalUsers = _userservice.GettotalUsersCountAsync().Result;
+            var totalMovies = _movieService.GetTotalMoviesAsync().Result;
+            var model = new AdminDTO
+            {
+                TotalRevenue = totalRevenue,
+                TotalUser = totalUsers,
+                TotalMovie = totalMovies
+            };
+            return View(model);
         }
 
         [HttpPost]

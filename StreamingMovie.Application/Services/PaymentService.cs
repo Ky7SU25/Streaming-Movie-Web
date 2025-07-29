@@ -22,17 +22,22 @@ namespace StreamingMovie.Application.Services
 
         public async Task<(string[] Labels, decimal[] Data)> GetMonthlyChartDataAsync(int year)
         {
-            var labels = Enumerable.Range(1, 12)
+            int monthnow = DateTime.Now.Month;
+            var labels = Enumerable.Range(1, monthnow)
             .Select(m => new DateTime(year, m, 1).ToString("MMM"))
             .ToArray();
 
             var monthlyTotals = await _unitOfWork.PaymentRepository.GetMonthlyTotalsAsync(year);
 
-            var data = Enumerable.Range(1, 12)
+            var data = Enumerable.Range(1, monthnow)
                 .Select(m => monthlyTotals.ContainsKey(m) ? monthlyTotals[m] : 0)
                 .ToArray();
 
             return (labels, data);
+        }
+        public async Task<float> GetTotalRevenueAsync()
+        {
+            return await _unitOfWork.PaymentRepository.GetTotalRevenueAsync();
         }
     }
 }

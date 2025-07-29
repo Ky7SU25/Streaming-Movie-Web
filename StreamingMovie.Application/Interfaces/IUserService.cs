@@ -11,5 +11,6 @@ namespace StreamingMovie.Application.Interfaces
     public interface IUserService : IGenericService<User>
     {
         Task<IEnumerable<User>> GetPremiumUsersAsync();
+        Task<int> GettotalUsersCountAsync();
     }
 }
