@@ -61,6 +61,12 @@ public class AccountController : Controller
         var isLogin = _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
         if (isLogin == true)
         {
+            var isAdmin = _httpContextAccessor.HttpContext?.User?.IsInRole("Admin") ?? false;
+
+            if (isAdmin)
+            {
+                return RedirectToAction("Index", "Admin");
+            }
             return RedirectToAction("Index", "Home");
         }
 
