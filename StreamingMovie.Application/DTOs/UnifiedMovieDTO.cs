@@ -26,6 +26,7 @@
         public string Title { get; set; } = string.Empty;
         public string Slug { get; set; } = string.Empty;
         public string? PosterUrl { get; set; }
+        public string? BannerUrl { get; set; }
         public int? ViewCount { get; set; }
         public int? Duration { get; set; }
         public int? TotalEpisodes { get; set; }
