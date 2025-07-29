@@ -15,7 +15,7 @@ public class UserAvatar : ViewComponent
 
     public async Task<IViewComponentResult> InvokeAsync()
     {
-        string avatarUrl = "/uploads/avatars/default.jpg";
+        string avatarUrl = "/img/anime/review-1.jpg";
 
         if (User.Identity.IsAuthenticated)
         {
