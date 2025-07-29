@@ -67,10 +67,7 @@ namespace StreamingMovie.Web.Views.Payment.Controllers
             {
                 return NotFound();
             }
-            
-                
-
-            
+                      
                 var vnPayModel = new VnPaymentRequestModel
                 {
                     Amount = 50000,
@@ -92,7 +89,7 @@ namespace StreamingMovie.Web.Views.Payment.Controllers
             if (response == null || response.VnPayResponseCode != "00")
             {
                 TempData["error"] = $"Lỗi thanh toán VN Pay: {response.VnPayResponseCode}";
-                return RedirectToAction("Error404", "Home");
+                return RedirectToAction("PaymentChoice", "Payment");
             }
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int userId = int.Parse(userIdString); // hoặc dùng TryParse như trên
@@ -102,8 +99,6 @@ namespace StreamingMovie.Web.Views.Payment.Controllers
             {
                 return NotFound();
             }
-
-
             var payment = new StreamingMovie.Domain.Entities.Payment
                 {
                     UserId = userId,
@@ -119,8 +114,6 @@ namespace StreamingMovie.Web.Views.Payment.Controllers
             user.SubscriptionStartDate = DateTime.Now;
             user.SubscriptionEndDate = DateTime.Now.AddDays(30);
             await _userManager.UpdateAsync(user);
-
-
 
             return RedirectToAction("Index", "Home");
 

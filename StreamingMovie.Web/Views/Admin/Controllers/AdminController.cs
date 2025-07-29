@@ -1,16 +1,19 @@
 ﻿using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Application.Interfaces.ExternalServices.Storage;
+using StreamingMovie.Application.Services;
 using StreamingMovie.Domain.Entities;
 using StreamingMovie.Infrastructure.ExternalServices.Storage;
 using StreamingMovie.Web.Views.Admin.ViewModels;
 
 namespace StreamingMovie.Web.Views.Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly SignInManager<User> _signInManager;
@@ -24,6 +27,7 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
         private readonly ICountryService _countryService;
         private readonly IStorageHandler _storage;
         private readonly MinioOptions _options;
+        private readonly IPaymentService _paymentservice;
 
         // MinIO File Naming Convention Rules
         private static readonly Dictionary<string, string> FilePathRules =
@@ -57,7 +61,8 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
             IMovieService movieService,
             IMovieCategoryService movieCategoryService,
             IStorageHandler storage,
-            IOptions<MinioOptions> options
+            IOptions<MinioOptions> options,
+            IPaymentService paymentservice
         )
         {
             _signInManager = signInManager;
@@ -71,6 +76,7 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
             _options = options.Value;
             _movieService = movieService;
             _movieCategoryService = movieCategoryService;
+            _paymentservice = paymentservice;
         }
 
         #region Admin Pages
@@ -91,6 +97,17 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
 
             return Json(new { labels, data });
         }
+
+        [HttpPost]
+        public async Task<JsonResult> MonthlyViews()
+        {
+            int year = DateTime.Now.Year;
+        var (labels, data) = await _paymentservice.GetMonthlyChartDataAsync(year);
+
+        return Json(new { labels, data });
+
+        }
+
 
         public IActionResult Billing(string returnUrl = null)
         {
