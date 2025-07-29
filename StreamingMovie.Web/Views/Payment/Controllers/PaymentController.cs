@@ -9,6 +9,7 @@ using StreamingMovie.Web.Views.Payment.ViewModels;
 
 namespace StreamingMovie.Web.Views.Payment.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class PaymentController : Controller
     {
         private readonly IVnPayService _vnPayservice;
