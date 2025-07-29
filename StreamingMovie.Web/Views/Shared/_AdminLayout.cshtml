@@ -1,18 +1,4 @@
-﻿<!--
-
-=========================================================
-* Argon Dashboard 2 Tailwind - v1.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-tailwind
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-* Coded by www.creative-tim.com
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
--->
+﻿
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,14 +11,16 @@
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-i0XbKH1ffE5CfTsyDDpx6FnLy3Xgu7B+LhR3+O/efUeXcHq0FO9sYrdtL+WaP9N1e2yBzR2rb+jT9eZlHwM8Lw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-hFj0mJ6jv1qemN5J7d8zV4Cu6hZjHqODQwKqMlZoFth97X3QZl5h9f1MX7KxB1s4xEwN4nEzpJYlRrw5hE2cKw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+
     <!-- Nucleo Icons -->
     <link href="~/assets/admincss/nucleo-icons.css" rel="stylesheet" />
     <link href="~/assets/admincss/nucleo-svg.css" rel="stylesheet" />
     <!-- Main Styling -->
-    <link href="~/assets/admincss/argon-dashboard-tailwind.css?v=1.0.1" rel="stylesheet" />
+    <link href="~/assets/admincss/argon-dashboard-tailwind.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Chart js-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -57,7 +45,9 @@
             <ul class="flex flex-col pl-0 mb-0">
 
                 <li class="mt-0.5 w-full">
-                    <a class="py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors dark:text-white dark:opacity-80" href="../pages/dashboard.html">
+
+                    <a class="py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors dark:text-black dark:opacity-80" asp-action="Index" asp-controller="Admin">
+
                         <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                             <i class="relative top-0 text-sm leading-normal text-blue-500 ni ni-tv-2"></i>
                         </div>

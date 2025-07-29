@@ -153,7 +153,23 @@
                 </div>
                 <div class="col-lg-4 col-md-4">
                     <div class="anime__details__sidebar">
+
+                        <div class="section-title">
+                            <h5>you might like...</h5>
+                        </div>
+                        @foreach (var item in Model.Movies)
+                        {
+                            
+                        <div class="product__sidebar__view__item set-bg" data-setbg="@Url.Content(item.BannerUrl)">
+                            <div class="ep">@item.ImdbRating</div>
+                            <div class="view"><i class="fa fa-eye"></i> @item.ViewCount</div>
+                            <h5><a asp-action="Details" asp-controller="Movie" asp-route-slug="@item.Slug">@item.Title</a></h5>
+                        </div>
+                        }
+
+
                         @await Component.InvokeAsync("SidebarMovie", new { period = "day" })
+
                     </div>
                 </div>
             </div>
