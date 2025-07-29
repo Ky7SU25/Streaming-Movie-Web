@@ -109,17 +109,26 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
 
         }
 
-        //[HttpGet("search")]
-        //public async Task<IActionResult> Search(string q, string returnUrl = null)
-        //{
-        //    var filter = new MovieFilterDTO { Keyword = q, Page = 1, };
-        //    var sectionTitle = string.IsNullOrEmpty(q) ? "Search" : $"Search results for '{q}'";
+        [HttpGet]
+        public IActionResult Search(string q, string type)
+        {
+            if (type.Equals("ai"))
+                return RedirectToAction("AISearch", "Movie", new { q = q });
+            else
+                return RedirectToAction("NomarlSearch", "Movie", new { q = q });
+        }
 
-        //    return await RenderMovieList(filter, sectionTitle, returnUrl);
-        //}
+        [HttpGet]
+        public async Task<IActionResult> NomarlSearch(string q, string returnUrl = null)
+        {
+            var filter = new MovieFilterDTO { Keyword = q, Page = 1, };
+            var sectionTitle = string.IsNullOrEmpty(q) ? "Search" : $"Search results for '{q}'";
 
-        [HttpGet("search")]
-        public async Task<IActionResult> Search(string q)
+            return await RenderMovieList(filter, sectionTitle, returnUrl);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AISearch(string q)
         {
            var result = await _unifiedMovieService.GetAISearchPagedMovies(q);
             var filter = new MovieFilterDTO
