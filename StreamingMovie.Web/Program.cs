@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Net;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Options;
 using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Application.Services;
 using StreamingMovie.Application.Services.BackgroundServices;
@@ -37,8 +39,13 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
-
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownProxies.Add(IPAddress.Parse("127.0.0.1"));
+});
 var app = builder.Build();
+app.UseForwardedHeaders();
 
 //using (var scope = app.Services.CreateScope())
 //{
@@ -55,12 +62,14 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-app.UseForwardedHeaders(
-    new ForwardedHeadersOptions
+app.Use(
+    async (context, next) =>
     {
-        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+        Console.WriteLine("SCHEME: " + context.Request.Scheme);
+        await next();
     }
 );
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
