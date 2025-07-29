@@ -1,0 +1,82 @@
+﻿@model StreamingMovie.Application.Common.Pagination.PaginatedList<StreamingMovie.Domain.Entities.Movie>
+@{
+    ViewData["Title"] = "Film List";
+    Layout = "_AdminLayout"; // nếu bạn dùng layout custom thì đổi path tương ứng
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <div class="flex flex-wrap -mx-3">
+        <div class="w-full max-w-full px-3 mb-6 mx-auto">
+            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-slate-850 w-full mb-6 shadow-lg rounded-xl border border-solid border-gray-200 dark:border-white/5">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <h6 class="text-gray-700 dark:text-white text-xl font-semibold">Film List</h6>
+                </div>
+                <div class="flex-auto px-0 pt-0 pb-2">
+                    <div class="p-0 overflow-x-auto">
+                        <table class="items-center w-full mb-0 align-top border-collapse text-slate-500 dark:text-white">
+                            <thead class="align-bottom">
+                                <tr>
+                                    <th class="px-6 py-3 text-start bg-transparent border-b border-gray-200 dark:border-white/5 uppercase text-xs font-bold">ID</th>
+                                    <th class="px-6 py-3 text-start bg-transparent border-b border-gray-200 dark:border-white/5 uppercase text-xs font-bold">Title</th>
+                                    <th class="px-6 py-3 text-start bg-transparent border-b border-gray-200 dark:border-white/5 uppercase text-xs font-bold">Poster</th>
+                                    <th class="px-6 py-3 text-start bg-transparent border-b border-gray-200 dark:border-white/5 uppercase text-xs font-bold">Description</th>
+                                    <th class="px-6 py-3 text-start bg-transparent border-b border-gray-200 dark:border-white/5 uppercase text-xs font-bold">Release Date</th>
+                                    <th class="px-6 py-3 text-start bg-transparent border-b border-gray-200 dark:border-white/5 uppercase text-xs font-bold">Status</th>
+                                    <th class="px-6 py-3 text-start bg-transparent border-b border-gray-200 dark:border-white/5 uppercase text-xs font-bold">Views</th>
+                                    <th class="px-6 py-3 text-start bg-transparent border-b border-gray-200 dark:border-white/5 uppercase text-xs font-bold">Our Rating</th>
+                                    <th class="px-6 py-3 text-start bg-transparent border-b border-gray-200 dark:border-white/5 uppercase text-xs font-bold">IMDb Rating</th>
+                                    <th class="px-6 py-3 text-start bg-transparent border-b border-gray-200 dark:border-white/5 uppercase text-xs font-bold">Set Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var movie in Model)
+                            {
+                                <tr>
+                                    <td class="px-6 py-3 text-sm">@movie.Id</td>
+                                    <td class="px-6 py-3 text-sm">@movie.Title</td>
+                                    <td class="px-6 py-3 text-sm">
+                                        <img src="@movie.PosterUrl" alt="@movie.Title Poster" class="w-16 h-auto rounded" />
+                                    </td>
+                                    <td class="px-6 py-3 text-sm">@movie.Description</td>
+                                    <td class="px-6 py-3 text-sm">@movie.ReleaseDate?.ToString("yyyy-MM-dd")</td>
+                                    <td class="px-6 py-3 text-sm">@movie.Status</td>
+                                    <td class="px-6 py-3 text-sm">@movie.ViewCount</td>
+                                    <td class="px-6 py-3 text-sm">@movie.OurRating</td>
+                                    <td class="px-6 py-3 text-sm">@movie.ImdbRating</td>
+                                    <td class="px-6 py-3 text-sm">
+                                        <form asp-action="SetStatus" method="post">
+                                            <input type="hidden" name="id" value="@movie.Id" />
+                                            <select name="newStatus" class="border border-gray-300 rounded px-2 py-1 text-sm" onchange="this.form.submit()">
+                                                <option value="Active" selected="@(movie.Status != "Unactive" ? "selected" : null)">Active</option>
+                                                <option value="Unactive" selected="@(movie.Status == "Unactive" ? "selected" : null)">Unactive</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                        <div class="mt-4 flex justify-center gap-2">
+                            @if (Model.HasPreviousPage)
+                            {
+                                <a class="px-3 py-1 border rounded bg-gray-200 hover:bg-gray-300 text-sm" asp-action="Film" asp-route-page="@(Model.PageIndex - 1)">Previous</a>
+                            }
+
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <a class="px-3 py-1 border rounded text-sm @(i == Model.PageIndex ? "bg-blue-500 text-white" : "bg-gray-100 hover:bg-gray-300")"
+                                   asp-action="Film" asp-route-page="@i">@i</a>
+                            }
+
+                            @if (Model.HasNextPage)
+                            {
+                                <a class="px-3 py-1 border rounded bg-gray-200 hover:bg-gray-300 text-sm" asp-action="Film" asp-route-page="@(Model.PageIndex + 1)">Next</a>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

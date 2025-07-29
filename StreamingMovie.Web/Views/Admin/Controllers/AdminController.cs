@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using StreamingMovie.Application.Common.Pagination;
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Application.Interfaces.ExternalServices.Storage;
@@ -116,6 +117,31 @@ namespace StreamingMovie.Web.Views.Admin.Controllers
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();
+        }
+
+        public async Task<IActionResult> Film(int page = 1, int pageSize = 10)
+        {
+            var allMovies = await _movieService.GetAllAsync();
+            var paginatedMovies = PaginatedList<Domain.Entities.Movie>.Create(allMovies, page, pageSize);
+            return View(paginatedMovies);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> SetStatus(int id, string newStatus)
+        {
+            var movie = await _movieService.GetByIdAsync(id);
+            if (movie == null)
+            {
+                return NotFound();
+            }
+
+            // Nếu newStatus là "Unactive" thì gán đúng, còn lại gán "Active"
+            movie.Status = newStatus == "Unactive" ? "Unactive" : "Active";
+
+            await _movieService.UpdateAsync(movie);
+
+            return RedirectToAction("Film"); // Quay lại trang danh sách
         }
 
         #endregion
