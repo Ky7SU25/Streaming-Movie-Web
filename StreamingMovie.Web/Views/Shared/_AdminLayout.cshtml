@@ -22,6 +22,7 @@
     <!-- Main Styling -->
     <link href="~/assets/admincss/argon-dashboard-tailwind.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <!-- Chart js-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -291,7 +292,7 @@
             </div>
         </nav>
         @RenderBody()
-
+        @RenderSection("Styles1", required: false)
     </main>
     <div fixed-plugin>
         <a fixed-plugin-button class="fixed px-4 py-2 text-xl bg-white shadow-lg cursor-pointer bottom-8 right-8 z-990 rounded-circle text-slate-700">
