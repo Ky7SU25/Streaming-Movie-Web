@@ -462,9 +462,9 @@ public class AccountController : Controller
     }
 
     public async Task<IActionResult> Logout(string returnUrl = null)
-    {
+    {   
         await _loginService.LogoutAsync();
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Login", "Account");
     }
 
     // GET: /Account/Error

@@ -19,6 +19,10 @@ public class HomeController : Controller
         {
             ViewData["WelcomeMessage"] = $"Welcome {User.Identity.Name}!";
         }
+
+        if (User.IsInRole("Admin"))
+            return RedirectToAction("Index", "Admin");
+
         return View();
     }
 
