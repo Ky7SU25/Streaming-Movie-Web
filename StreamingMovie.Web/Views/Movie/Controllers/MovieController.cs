@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Domain.Entities;
+using System.Security.Claims;
 
 namespace StreamingMovie.Web.Views.Movie.Controllers
 {
@@ -13,25 +14,38 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
         private readonly IUnifiedMovieService _unifiedMovieService;
         private readonly ICategoryService _categoryService;
         private readonly IMovieService _movieService;
+        private readonly IRatingService _ratingService;
 
         public MovieController(
             SignInManager<User> signInManager,
             UserManager<User> userManager,
-            IUnifiedMovieService movieService,
+            IUnifiedMovieService unifiedMovieService,
             ICategoryService categoryService,
-            IMovieService movieService1
+            IMovieService movieService,
+            IRatingService ratingService
         )
         {
             _signInManager = signInManager;
             _userManager = userManager;
-            _unifiedMovieService = movieService;
+            _unifiedMovieService = unifiedMovieService;
             _categoryService = categoryService;
-            _movieService = movieService1;
+            _movieService = movieService;
+            _ratingService = ratingService;
         }
 
-        public async Task<IActionResult> Details(string slug)
+        public async Task<IActionResult> Details(string slug, int? page = 1)
         {
             var response = await _unifiedMovieService.GetMovieDetails(slug);
+            if (response != null)
+            {
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                var pagedRating = await _ratingService.PaginateBySlugAsync(slug, userId, page ?? 1);
+                response.Ratings = pagedRating;
+
+                if (userId != null)
+                    response.UserReview = await _ratingService.GetUserReview(userId,slug);
+            }
             return View(response);
         }
 
@@ -119,7 +133,7 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             ViewBag.Filter = filter;
             ViewBag.SectionTitle = sectionTitle;
             ViewData["ReturnUrl"] = returnUrl;
-            
+
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {

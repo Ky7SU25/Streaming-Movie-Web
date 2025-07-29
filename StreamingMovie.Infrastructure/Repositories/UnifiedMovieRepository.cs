@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StreamingMovie.Domain.Entities;
+using StreamingMovie.Domain.Enums;
 using StreamingMovie.Domain.Interfaces;
 using StreamingMovie.Infrastructure.Data;
 using System;

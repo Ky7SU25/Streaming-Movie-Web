@@ -120,3 +120,32 @@ window.toggleComponent = function (id) {
     var isHidden = window.getComputedStyle(el).display === "none";
     el.style.display = isHidden ? "block" : "none";
 };
+
+// Ajax no url
+function setupAjaxPagination(triggerClass, renderTargetId) {
+    let isLoading = false;
+
+    $(document).on('click', triggerClass, function (e) {
+        e.preventDefault();
+
+        if (isLoading) return;
+
+        const url = $(this).attr('href');
+        isLoading = true;
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            success: function (response) {
+                $(renderTargetId).html(response);
+            },
+            complete: function () {
+                isLoading = false;
+            },
+            error: function () {
+                alert("Failed to load content.");
+            }
+        });
+    });
+}
