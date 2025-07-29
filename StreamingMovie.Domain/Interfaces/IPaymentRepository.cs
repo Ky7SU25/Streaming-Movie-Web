@@ -11,6 +11,7 @@ namespace StreamingMovie.Domain.Interfaces
     {
         Task<IEnumerable<Payment>> GetPaymentsInMonthAsync(int year, int month);
         Task<Dictionary<int, decimal>> GetMonthlyTotalsAsync(int year);
+        Task<float> GetTotalRevenueAsync();
     }
     
 }

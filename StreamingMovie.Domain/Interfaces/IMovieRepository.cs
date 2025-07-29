@@ -7,5 +7,6 @@ namespace StreamingMovie.Domain.Interfaces
     /// </summary>
     public interface IMovieRepository : IGenericRepository<Movie> 
     {
+        Task<int> GetTotalMovieAsync();
     }
 }

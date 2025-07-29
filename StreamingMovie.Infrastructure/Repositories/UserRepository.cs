@@ -23,5 +23,10 @@ namespace StreamingMovie.Infrastructure.Repositories
                 .ToListAsync();
 
         }
+
+        public Task<int> GetTotalUsersCountAsync()
+        {
+            return _dbSet.CountAsync();
+        }
     }
 }

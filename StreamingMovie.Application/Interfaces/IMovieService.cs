@@ -11,5 +11,6 @@ namespace StreamingMovie.Application.Interfaces
         Task<MovieVideoDTO> GetHighViewMovieVideoAsync();
 
         Task<List<TopViewMovieDTO>> GetTopViewMoviesAsync(string period = "day", int take = 4);
+        Task<int> GetTotalMoviesAsync();
     }
 }

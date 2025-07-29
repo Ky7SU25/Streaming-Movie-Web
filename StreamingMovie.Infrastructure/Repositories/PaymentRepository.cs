@@ -36,5 +36,10 @@ namespace StreamingMovie.Infrastructure.Repositories
             .ToListAsync();
         }
 
+        public Task<float> GetTotalRevenueAsync()
+        {
+            return _dbSet.Where(p => p.Status == "Success")
+                .SumAsync(p => (float)p.Amount);
+        }
     }
 }
