@@ -5,12 +5,22 @@
     var @ratings = Model.Item1;
     var slug = Model.Item2;
 }
-<style>
-    .dropdown-menu {
-        width: auto !important;
-        min-width: unset !important;
+
+@functions {
+    public string GetRelativeTime(DateTime createdAt)
+    {
+        var now = DateTime.UtcNow;
+        var diff = now - createdAt.ToUniversalTime();
+
+        if (diff.TotalMinutes < 1)
+            return "Just now";
+        if (diff.TotalMinutes < 60)
+            return $"{(int)diff.TotalMinutes} minute(s) ago";
+        if (diff.TotalHours < 24)
+            return $"{(int)diff.TotalHours} hour(s) ago";
+        return $"{(int)diff.TotalDays} day(s) ago";
     }
-</style>
+}
 
 <div class="section-title d-flex justify-content-between align-items-center">
     <h5 class="mb-0">Reviews</h5>
@@ -36,39 +46,16 @@
 
 @foreach (var rating in ratings.Items)
 {
-    var createdAt = rating.CreatedAt ?? DateTime.MinValue;
-    var now = DateTime.Now;
-    var timeSpan = now - createdAt;
-    string displayTime;
-
-    if (createdAt.Date == now.Date)
-    {
-        if (timeSpan.TotalMinutes < 1)
-        {
-            displayTime = "Just now";
-        }
-        else if (timeSpan.TotalMinutes < 60)
-        {
-            displayTime = $"{(int)timeSpan.TotalMinutes} minutes ago";
-        }
-        else
-        {
-            displayTime = $"{(int)timeSpan.TotalHours} hours ago";
-        }
-    }
-    else
-    {
-        displayTime = createdAt.ToString("dd/MM/yyyy HH:mm");
-    }
-
     <div class="anime__review__item mb-3">
         <div class="anime__review__item__pic">
             <img src="@rating.AvatarUrl" alt="">
         </div>
         <div class="anime__review__item__text">
-            <!-- Row chứa tên và nút dropdown -->
+            @{
+                var timeAgo = GetRelativeTime(rating.CreatedAt ?? DateTime.UtcNow);
+            }
             <div class="d-flex justify-content-between align-items-start">
-                <h6 class="mb-1">@rating.FullName - <span>@displayTime</span></h6>
+                <h6 class="mb-1">@rating.FullName - <span>@timeAgo</span></h6>
                 <div class="dropdown">
                     <button class="btn btn-link text-white-50 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa fa-ellipsis-v"></i>
@@ -152,6 +139,7 @@
         </div>
     </div>
 
+     <!-- Delete review -->
     <div class="modal fade" id="deleteModal-@rating.Id" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content p-4 custom-modal">
@@ -159,7 +147,7 @@
                 <div class="modal-header border-0">
                     <h5 class="modal-title text-white" id="ratingModalLabel">
                         <i class="bi bi-trash-fill text-danger mr-2"></i>
-                        Delete review
+                        Delete Review
                     </h5>
                     <button type="button" class="btn text-white fs-4 p-1 bg-transparent" data-bs-dismiss="modal" aria-label="Close">
                         &times;

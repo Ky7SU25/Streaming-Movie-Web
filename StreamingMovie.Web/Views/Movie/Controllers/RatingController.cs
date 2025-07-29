@@ -43,21 +43,19 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
 
         // POST: /Rating/Create
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Create(RatingRequestDTO model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = GetUserId();
+            if (userId == null)
+                return RedirectToAction("Login", "Account");
 
-            if (userId != null)
-                model.UserId = int.Parse(userId);
-            else
-                return Unauthorized("User is not authenticated.");
-
+            model.UserId = userId;
             var result = await _ratingService.AddAsync(model);
+
             if (result == null)
             {
                 TempData["error"] = "Failed to create review.";
@@ -72,9 +70,12 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
 
         // POST: /Rating/Update
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Update(RatingRequestDTO model)
         {
+            var userId = GetUserId();
+            if (userId == null)
+                return RedirectToAction("Login", "Account");
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -95,7 +96,7 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             else
             {
                 if (rating.RatingValue == model.RatingValue &&
-                    (rating.Review == null || rating.Review.Equals(model.Review)))
+                     string.Equals(rating.Review, model.Review, StringComparison.Ordinal))
                 {
                     TempData["info"] = "No changes detected in the review.";
                     return Redirect(Request.Headers["Referer"].ToString());
@@ -117,9 +118,12 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
 
         // POST: /Rating/Delete
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Delete(int ratingId)
         {
+            var userId = GetUserId();
+            if (userId == null)
+                return RedirectToAction("Login", "Account");
+
             var isDeleted = await _ratingService.DeleteAsync(ratingId);
             if (!isDeleted)
             {
@@ -139,7 +143,7 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
                 var series = await _seriesService.GetByIdAsync(rating.SeriesId.Value);
                 if (series != null)
                 {
-                    series.OurRating = (float) await _ratingService.CalculateSeriesRating(series.Id);
+                    series.OurRating = (float)await _ratingService.CalculateSeriesRating(series.Id);
                     return await _seriesService.UpdateAsync(series) != null;
                 }
             }
@@ -148,11 +152,21 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
                 var movie = await _movieService.GetByIdAsync(rating.MovieId.Value);
                 if (movie != null)
                 {
-                    movie.OurRating = (float) await _ratingService.CalculateMovieRating(movie.Id);
+                    movie.OurRating = (float)await _ratingService.CalculateMovieRating(movie.Id);
                     return await _movieService.UpdateAsync(movie) != null;
                 }
             }
             return false;
+        }
+
+        private int? GetUserId()
+        {
+            var userIdClaims = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdClaims))
+                return null;
+
+            return int.Parse(userIdClaims);
         }
     }
 }
