@@ -11,5 +11,6 @@ namespace StreamingMovie.Application.Interfaces
     public interface IPaymentService : IGenericService<Payment>
     {
          Task<(string[] Labels, decimal[] Data)> GetMonthlyChartDataAsync(int year);
+        Task<float> GetTotalRevenueAsync();
     }
 }

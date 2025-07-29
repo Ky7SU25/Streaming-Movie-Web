@@ -228,5 +228,10 @@ namespace StreamingMovie.Application.Services
 
             return $"{uri.Scheme}://{uri.Host}{(uri.Port != 80 && uri.Port != 443 ? $":{uri.Port}" : "")}{pathWithoutFile}";
         }
+        public async Task<int> GetTotalMoviesAsync()
+        {
+            // Get total count of movies
+            return await _unitOfWork.MovieRepository.GetTotalMovieAsync();
+        }
     }
 }

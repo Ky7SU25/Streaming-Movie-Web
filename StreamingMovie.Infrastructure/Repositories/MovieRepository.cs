@@ -1,3 +1,5 @@
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using StreamingMovie.Domain.Entities;
 using StreamingMovie.Domain.Interfaces;
 using StreamingMovie.Infrastructure.Data;
@@ -11,5 +13,10 @@ namespace StreamingMovie.Infrastructure.Repositories
     {
         public MovieRepository(MovieDbContext context)
             : base(context) { }
+
+        public Task<int> GetTotalMovieAsync()
+        {
+            return _dbSet.CountAsync();
+        }
     }
 }
