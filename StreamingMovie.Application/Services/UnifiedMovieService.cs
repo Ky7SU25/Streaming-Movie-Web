@@ -15,11 +15,13 @@ namespace StreamingMovie.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-
-        public UnifiedMovieService(IUnitOfWork unitOfWork, IMapper mapper)
+       
+        public UnifiedMovieService(
+            IUnitOfWork unitOfWork,
+            IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task<IEnumerable<UnifiedMovie>> GetAllAsync()
@@ -127,6 +129,8 @@ namespace StreamingMovie.Application.Services
         
             var detailDto = _mapper.Map<MovieDetailDTO>(unifiedMovie);
 
+            detailDto.Movies = (await _unitOfWork.MovieRepository.GetAllAsync()).OrderByDescending(m => m.CreatedAt)
+                .Take(5);
             detailDto.Language = await _unitOfWork.CountryRepository.GetNameByIdAsync(unifiedMovie.CountryId);
 
             detailDto.Genres = unifiedMovie.IsSeries
