@@ -82,6 +82,11 @@ namespace StreamingMovie.Application.Services
             return await _unitOfWork.CommentRepository.UpdateAsync(comment);
         }
 
+        public async Task<bool> DeleteCommentWithChildrenAsync(int id)
+        {
+            return await _unitOfWork.CommentRepository.DeleteCommentWithChildrenAsync(id);
+        }
+
         public async Task<List<CommentResponseDTO>> GetRepliesAsync(int parentCommentId)
         {
             var replies = await _unitOfWork.CommentRepository

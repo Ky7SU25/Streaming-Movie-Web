@@ -19,4 +19,17 @@
         public int? CountryId { get; set; }
         public bool IsSeries { get; set; } 
     }
+
+    public class TopViewMovieDTO
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Slug { get; set; } = string.Empty;
+        public string? PosterUrl { get; set; }
+        public int? ViewCount { get; set; }
+        public int? Duration { get; set; }
+        public int? TotalEpisodes { get; set; }
+        public bool IsSeries { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
 }

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Domain.Entities;
+using System.Security.Claims;
 
 namespace StreamingMovie.Web.Views.Movie.Controllers
 {
@@ -13,48 +15,98 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
         private readonly IUnifiedMovieService _unifiedMovieService;
         private readonly ICategoryService _categoryService;
         private readonly IMovieService _movieService;
+        private readonly IRatingService _ratingService;
+        private readonly IFavoriteService _favoriteService;
 
         public MovieController(
             SignInManager<User> signInManager,
             UserManager<User> userManager,
-            IUnifiedMovieService movieService,
+            IUnifiedMovieService unifiedMovieService,
             ICategoryService categoryService,
-            IMovieService movieService1
+            IMovieService movieService,
+            IRatingService ratingService,
+            IFavoriteService favoriteService
         )
         {
             _signInManager = signInManager;
             _userManager = userManager;
-            _unifiedMovieService = movieService;
+            _unifiedMovieService = unifiedMovieService;
             _categoryService = categoryService;
-            _movieService = movieService1;
+            _movieService = movieService;
+            _ratingService = ratingService;
+            _favoriteService = favoriteService;
         }
 
-        public async Task<IActionResult> Details(string slug)
+        public async Task<IActionResult> Details(string slug, int? page = 1)
         {
             var response = await _unifiedMovieService.GetMovieDetails(slug);
+            if (response != null)
+            {
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int? userId = null;
+
+                if (int.TryParse(userIdClaim, out int parsedUserId))
+                {
+                    userId = parsedUserId;
+                }
+
+                var favorite = await _favoriteService.FindOneAsync(x =>
+                    x.UserId == parsedUserId &&
+                    (response.IsSeries ? x.SeriesId == response.Id : x.MovieId == response.Id));
+                response.IsUserFavorite = favorite != null;
+
+                var pagedRating = await _ratingService.PaginateBySlugAsync(slug, parsedUserId, page ?? 1);
+                response.Ratings = pagedRating;
+                response.UserReview = await _ratingService.GetUserReview(parsedUserId, slug);
+            }
             return View(response);
         }
 
-        public async Task<IActionResult> Watching(int id)
+        public async Task<IActionResult> Watching(string slug)
         {
-            try
+            var unifiedMovie = await _unifiedMovieService.Find(x => x.Slug == slug).FirstOrDefaultAsync();
+
+            if (unifiedMovie == null)
             {
-                var movie = await _movieService.GetMovieVideoAsync(id);
-                if (movie == null)
+                return NotFound("Movie not found");
+            }
+
+            if (!unifiedMovie.IsSeries)
+            {
+                try
                 {
-                    return NotFound("Movie not found");
+                    var movie = await _movieService.GetMovieVideoAsync(unifiedMovie.Id);
+                    if (movie == null)
+                    {
+                        return NotFound("Movie not found");
+                    }
+                    var movieUpdate = await _movieService.FindOneAsync(m => m.Id == unifiedMovie.Id);
+                    if (movieUpdate != null)
+                    {
+                        movieUpdate.ViewCount += 1;
+                        await _movieService.UpdateAsync(movieUpdate);
+                    }
+
+                    return View(movie);
                 }
-                return View(movie);
+                catch (KeyNotFoundException)
+                {
+                    return NotFound("Movie or video not found");
+                }
+                catch (Exception ex)
+                {
+                    // Log the error in a real application
+                    return BadRequest($"Error loading movie: {ex.Message}");
+                }
             }
-            catch (KeyNotFoundException)
+            else
             {
-                return NotFound("Movie or video not found");
+                return RedirectToAction("Details", "Movie", new
+                {
+                    slug = unifiedMovie.Slug
+                });
             }
-            catch (Exception ex)
-            {
-                // Log the error in a real application
-                return BadRequest($"Error loading movie: {ex.Message}");
-            }
+
         }
 
         [HttpGet("search")]
@@ -92,6 +144,13 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             return await RenderMovieList(filter, sectionTitle, returnUrl);
         }
 
+        // AJAX action for reloading sidebar component
+        [HttpGet]
+        public async Task<IActionResult> ReloadSidebar(string period = "day")
+        {
+            return ViewComponent("SidebarMovie", new { period = period });
+        }
+
         private async Task<IActionResult> RenderMovieList(
             MovieFilterDTO filter,
             string? sectionTitle,
@@ -119,7 +178,7 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             ViewBag.Filter = filter;
             ViewBag.SectionTitle = sectionTitle;
             ViewData["ReturnUrl"] = returnUrl;
-            
+
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {

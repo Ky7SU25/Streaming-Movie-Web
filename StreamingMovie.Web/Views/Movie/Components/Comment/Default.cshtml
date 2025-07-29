@@ -2,9 +2,6 @@
 @using StreamingMovie.Application.DTOs
 @model PagedResult<CommentResponseDTO>
 
-
-
-
 @functions {
     public string GetRelativeTime(DateTime createdAt)
     {
@@ -21,94 +18,122 @@
     }
 }
 
-@foreach (var comment in Model.Items)
+@if(Model.TotalItems > 0)
 {
-    <div class="anime__review__item">
-        <div class="anime__review__item__pic">
-            <img src="@comment.AvatarUrl" alt="">
-        </div>
-        <div class="anime__review__item__text">
-            @{
-                var timeAgo = GetRelativeTime(comment.CreatedAt ?? DateTime.UtcNow);
-            }
-            <div class="d-flex justify-content-between align-items-start">
-                <h6>@comment.FullName - <span>@timeAgo</span></h6>
-
-                <div class="dropdown">
-                    <button class="btn btn-link text-dark p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-ellipsis-v"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" style="min-width: 120px; font-size: 0.85rem; padding: 0.25rem 0.5rem;">
-                        <li style="display: flex; gap: 8px; justify-content: center; align-items: center;">
-                            <a href="#" class="text-primary" data-bs-toggle="modal" data-bs-target="#editModal-@comment.Id">Edit</a>
-                            <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@comment.Id">Delete</a>
-                        </li>
-                    </ul>
-                </div>
+    @foreach (var comment in Model.Items)
+    {
+        <div class="anime__review__item">
+            <div class="anime__review__item__pic">
+                <img src="@comment.AvatarUrl" alt="">
             </div>
-            <p>
-                @comment.Content
-            </p>
-        </div>
-    </div>
-    @* <div style="width: 90%; margin-left: auto;">
-        @await Component.InvokeAsync("ChildComment", new { parentId = comment.Id })
-    </div> *@
+            <div class="anime__review__item__text">
+                @{
+                    var timeAgo = GetRelativeTime(comment.CreatedAt ?? DateTime.UtcNow);
+                }
+                <div class="d-flex justify-content-between align-items-start">
+                    <h6>@comment.FullName - <span>@timeAgo</span></h6>
 
-    <!-- Edit Comment Modal -->
-    <div class="modal fade" id="editModal-@comment.Id" tabindex="-1" aria-labelledby="editCommentModalLabel-@comment.Id" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-4" style="background-color: #0b122a; border-radius: 16px;">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title text-white" id="editCommentModalLabel-@comment.Id">✏️ Edit Your Comment</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="dropdown">
+                        <button class="btn btn-link text-white-50 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li class="d-flex align-items-center justify-content-center">
+                                <!-- Nút icon -->
+                                @* @if(comment.IsCurrentUserReview)
+                                { *@
+                                <a href="#" class="text-primary px-3" data-bs-toggle="modal" data-bs-target="#editModal-@comment.Id" title="Edit">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+
+                                <a href="#" class="text-danger pr-3" data-bs-toggle="modal" data-bs-target="#deleteModal-@comment.Id" title="Delete">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                                @* }
+                                else
+                                    {
+                                    <a href="#" class="text-warning px-3" data-bs-toggle="modal" data-bs-target="#reportModal-@comment.Id" title="Report">
+                                        <i class="bi bi-flag-fill"></i>
+                                    </a>
+                                    } *@
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <form asp-action="Update" asp-controller="Comment" method="post">
-                    <div class="modal-body text-white">
-                        <input type="hidden" name="CommentId" value="@comment.Id" />
-
-                        <div class="mb-3">
-                            <label class="form-label">Comment</label>
-                            <textarea class="form-control" name="Content" rows="3">@comment.Content</textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-0">
-                        <button type="submit" class="site-btn">Save Changes</button>
-                    </div>
-                </form>
+                <p>
+                    @comment.Content
+                </p>
             </div>
         </div>
-    </div>
+        @* <div style="width: 90%; margin-left: auto;">
+            @await Component.InvokeAsync("ChildComment", new { parentId = comment.Id })
+        </div> *@
 
-    <!-- Delete Comment Modal -->
-    <div class="modal fade" id="deleteModal-@comment.Id" tabindex="-1" aria-labelledby="deleteModalLabel-@comment.Id" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content rounded-4">
-                <form method="post" action="/Comment/Delete">
-                    <div class="modal-header bg-danger text-white rounded-top-4">
-                        <h5 class="modal-title" id="deleteModalLabel-@comment.Id">
-                            <i class="fa fa-exclamation-triangle me-2"></i> Confirm Delete
+        <!-- Edit Comment Modal -->
+        <div class="modal fade" id="editModal-@comment.Id" tabindex="-1" aria-labelledby="editCommentModalLabel-@comment.Id" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content p-4 custom-modal">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title text-white" id="editRatingModalLabel-@comment.Id">
+                            <i class="bi bi-pencil-square text-primary mr-2"></i>
+                            Edit Your Comment
                         </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-
-                    <div class="modal-body text-center">
-                        <input type="hidden" name="CommentId" value="@comment.Id" />
-                        <p>Are you sure you want to delete this comment?</p>
-                        <p class="text-muted fst-italic">"@comment.Content"</p>
-                    </div>
-
-                    <div class="modal-footer d-flex justify-content-center">
-                        <button type="submit" class="btn btn-danger px-4 rounded-pill">
-                            <i class="fa fa-trash me-1"></i> Delete
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" data-bs-dismiss="modal">
-                            Cancel
+                        <button type="button" class="btn text-white fs-4 p-1 bg-transparent" data-bs-dismiss="modal" aria-label="Close">
+                            &times;
                         </button>
                     </div>
-                </form>
+                    <form asp-action="Update" asp-controller="Comment" method="post">
+                        <div class="modal-body text-white">
+                            <input type="hidden" name="CommentId" value="@comment.Id" />
+
+                            <div class="mb-3">
+                                <label class="form-label">Comment</label>
+                                <textarea class="form-control" name="Content" rows="3">@comment.Content</textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="submit" class="site-btn">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
 
+        <!-- Delete comment -->
+        <div class="modal fade" id="deleteModal-@comment.Id" tabindex="-1" aria-labelledby="deleteModalLabel-@comment.Id" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content p-4 custom-modal">
+
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title text-white" id="commentModalLabel">
+                            <i class="bi bi-trash-fill text-danger mr-2"></i>
+                            Delete Comment
+                        </h5>
+                        <button type="button" class="btn text-white fs-4 p-1 bg-transparent" data-bs-dismiss="modal" aria-label="Close">
+                            &times;
+                        </button>
+                    </div>
+
+                    <form method="post" asp-action="Delete" asp-controller="Comment">
+                        <input type="hidden" name="commentId" value="@comment.Id" />
+
+                        <div class="modal-body text-white">
+                            <p>Are you sure to delete this review?</p>
+                            <p class="text-muted fst-italic">@comment.Content</p>
+                        </div>
+
+                        <div class="modal-footer border-0">
+                            <button type="submit" class="site-btn">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
 }
+@* else
+{
+<div class="col-12 text-center text-white my-5">
+    <h5>No comments yet.</h5>
+</div>
+} *@

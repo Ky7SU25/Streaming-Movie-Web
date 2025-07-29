@@ -7,5 +7,9 @@ namespace StreamingMovie.Application.Interfaces
     public interface IMovieService : IGenericService<Movie>
     {
         Task<MovieVideoDTO> GetMovieVideoAsync(int movieId);
+
+        Task<MovieVideoDTO> GetHighViewMovieVideoAsync();
+
+        Task<List<TopViewMovieDTO>> GetTopViewMoviesAsync(string period = "day", int take = 4);
     }
 }
