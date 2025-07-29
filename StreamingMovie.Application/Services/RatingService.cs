@@ -22,7 +22,7 @@ namespace StreamingRating.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<PagedResult<RatingResponseDTO>> PaginateBySlugAsync(string slug, int page = 1, int pageSize = 5)
+        public async Task<PagedResult<RatingResponseDTO>> PaginateBySlugAsync(string slug, int? currentUserId, int page = 1, int pageSize = 7)
         {
             if (string.IsNullOrWhiteSpace(slug))
             {
@@ -30,16 +30,35 @@ namespace StreamingRating.Application.Services
             }
 
             var unifiedMovie = await _unitOfWork.UnifiedMovieRepository
-               .FindOneAsync(x => x.Slug == slug);
+                .FindOneAsync(x => x.Slug == slug);
 
             var query = _unitOfWork.RatingRepository.Find(r =>
                 unifiedMovie.IsSeries ? r.SeriesId == unifiedMovie.Id : r.MovieId == unifiedMovie.Id);
 
-            return await query
+            var totalCount = await query.CountAsync();
+
+            var ratings = await query
                 .Include(r => r.User)
-                .ProjectTo<RatingResponseDTO>(_mapper.ConfigurationProvider)
                 .OrderByDescending(r => r.CreatedAt)
-                .ToPagedResultAsync(page, pageSize);
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var mappedRatings = _mapper.Map<List<RatingResponseDTO>>(ratings);
+
+            foreach (var dto in mappedRatings)
+            {
+                var correspondingRating = ratings.First(r => r.Id == dto.Id);
+                dto.IsCurrentUserReview = correspondingRating.UserId == currentUserId;
+            }
+
+            return new PagedResult<RatingResponseDTO>
+            {
+                Items = mappedRatings,
+                Page = page,
+                PageSize = pageSize,
+                TotalItems = totalCount
+            };
         }
 
         public async Task<Rating> AddAsync(RatingRequestDTO request)
@@ -68,6 +87,39 @@ namespace StreamingRating.Application.Services
             rating.UpdatedAt = DateTime.UtcNow;
 
             return await _unitOfWork.RatingRepository.UpdateAsync(rating);
+        }
+
+        public async Task<double> CalculateMovieRating(int movieId)
+        {
+            var ratings = await _unitOfWork.RatingRepository.Find(r => r.MovieId == movieId).ToListAsync();
+            if (ratings.Count == 0)
+            {
+                return 0;
+            }
+            return Math.Round(ratings.Average(r => r.RatingValue), 1, MidpointRounding.AwayFromZero);
+        }
+
+        public async Task<double> CalculateSeriesRating(int seriesId)
+        {
+            var ratings = await _unitOfWork.RatingRepository.Find(r => r.SeriesId == seriesId).ToListAsync();
+            if (ratings.Count == 0)
+            {
+                return 0;
+            }
+            return Math.Round(ratings.Average(r => r.RatingValue), 1, MidpointRounding.AwayFromZero);
+        }
+
+        public async Task<RatingResponseDTO?> GetUserReview(int userId, string slug)
+        {
+            var unifiedMovie = await _unitOfWork.UnifiedMovieRepository
+                .FindOneAsync(x => x.Slug == slug);
+            if (unifiedMovie == null)
+            {
+                throw new KeyNotFoundException("Unified movie not found.");
+            }
+            var rating = await _unitOfWork.RatingRepository.FindOneAsync(r =>
+                r.UserId == userId && (unifiedMovie.IsSeries ? r.SeriesId == unifiedMovie.Id : r.MovieId == unifiedMovie.Id));
+            return _mapper.Map<RatingResponseDTO>(rating);
         }
     }
 }

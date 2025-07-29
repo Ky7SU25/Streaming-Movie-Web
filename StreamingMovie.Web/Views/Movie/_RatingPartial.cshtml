@@ -1,0 +1,182 @@
+﻿@using StreamingMovie.Application.Common.Pagination
+@using StreamingMovie.Application.DTOs
+@model Tuple<PagedResult<RatingResponseDTO>, string>
+@{
+    var @ratings = Model.Item1;
+    var slug = Model.Item2;
+}
+
+@functions {
+    public string GetRelativeTime(DateTime createdAt)
+    {
+        var now = DateTime.UtcNow;
+        var diff = now - createdAt.ToUniversalTime();
+
+        if (diff.TotalMinutes < 1)
+            return "Just now";
+        if (diff.TotalMinutes < 60)
+            return $"{(int)diff.TotalMinutes} minute(s) ago";
+        if (diff.TotalHours < 24)
+            return $"{(int)diff.TotalHours} hour(s) ago";
+        return $"{(int)diff.TotalDays} day(s) ago";
+    }
+}
+
+<div class="section-title d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Reviews</h5>
+    <div class="d-flex gap-2 text-white d-flex align-items-center">
+        <p class="mb-0 mr-3">@ratings.Page of @ratings.TotalPages</p>
+
+        <a class="btn btn-outline-secondary px-2 review-pagination-link @(ratings.Page <= 1 ? "disabled" : "")"
+           href="@Url.Action("LoadRatings", "Rating",
+                  new { slug = slug, page = ratings.Page - 1})"
+           data-page="@(ratings.Page - 1)">
+            <i class="bi bi-chevron-left"></i>
+        </a>
+
+        <a class="btn btn-outline-secondary px-2 review-pagination-link @(ratings.Page >= ratings.TotalPages ? "disabled" : "")"
+           href="@Url.Action("LoadRatings", "Rating",
+                  new { slug = slug, page = ratings.Page + 1})"
+           data-page="@(ratings.Page + 1)">
+            <i class="bi bi-chevron-right"></i>
+        </a>
+
+    </div>
+</div>
+
+@if (Model.Item1.TotalItems > 0)
+{
+    @foreach (var rating in ratings.Items)
+    {
+        <div class="anime__review__item mb-3">
+            <div class="anime__review__item__pic">
+                <img src="@rating.AvatarUrl" alt="">
+            </div>
+            <div class="anime__review__item__text">
+                @{
+                    var timeAgo = GetRelativeTime(rating.CreatedAt ?? DateTime.UtcNow);
+                }
+                <div class="d-flex justify-content-between align-items-start">
+                    <h6 class="mb-1">@rating.FullName - <span>@timeAgo</span></h6>
+                    <div class="dropdown">
+                        <button class="btn btn-link text-white-50 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li class="d-flex align-items-center justify-content-center">
+                                <!-- Nút icon -->
+                                @if(rating.IsCurrentUserReview)
+                                {
+                                    <a href="#" class="text-primary px-3" data-bs-toggle="modal" data-bs-target="#editModal-@rating.Id" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+
+                                    <a href="#" class="text-danger pr-3" data-bs-toggle="modal" data-bs-target="#deleteModal-@rating.Id" title="Delete">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                }
+                                else
+                                    {
+                                    <a href="#" class="text-warning px-3" data-bs-toggle="modal" data-bs-target="#reportModal-@rating.Id" title="Report">
+                                        <i class="bi bi-flag-fill"></i>
+                                    </a>
+                                    }
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Sao và review -->
+                <div class="rating mb-2">
+                    <a><i class="fa fa-star text-warning"> @rating.RatingValue</i></a>
+                </div>
+                <p>@rating.Review</p>
+            </div>
+        </div>
+
+        <!-- Edit Rating Modal -->
+        <div class="modal fade" id="editModal-@rating.Id" tabindex="-1" aria-labelledby="editRatingModalLabel-@rating.Id" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content p-4 custom-modal">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title text-white" id="editRatingModalLabel-@rating.Id">
+                            <i class="bi bi-pencil-square text-primary mr-2"></i>
+                            Edit Your Review
+                        </h5>
+                        <button type="button" class="btn text-white fs-4 p-1 bg-transparent" data-bs-dismiss="modal" aria-label="Close">
+                            &times;
+                        </button>
+                    </div>
+
+                    <form asp-action="Update" asp-controller="Rating" method="post">
+                        <div class="modal-body text-white">
+                            <input type="hidden" name="Id" value="@rating.Id" />
+
+                            <!-- Số sao -->
+                            <div class="mb-3">
+                                <label class="form-label">Your Rating</label>
+                                <div class="star-rating d-flex gap-1 fs-5 flex-wrap" id="editStarRating-@rating.Id">
+                                    @for (int i = 1; i <= 10; i++)
+                                    {
+                                        var filled = i <= rating.RatingValue;
+                                        var starClass = filled ? "fa-star" : "fa-star-o";
+                                        <i class="fa @starClass text-warning star mr-2" data-value="@i" style="cursor: pointer;"></i>
+                                    }
+                                    <input type="hidden" name="RatingValue" value="@rating.RatingValue" />
+                                </div>
+                            </div>
+
+                            <!-- Nội dung review -->
+                            <div class="mb-3">
+                                <label class="form-label">Review</label>
+                                <textarea class="form-control" name="Review" rows="3">@rating.Review</textarea>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="submit" class="site-btn">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+         <!-- Delete review -->
+        <div class="modal fade" id="deleteModal-@rating.Id" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content p-4 custom-modal">
+
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title text-white" id="ratingModalLabel">
+                            <i class="bi bi-trash-fill text-danger mr-2"></i>
+                            Delete Review
+                        </h5>
+                        <button type="button" class="btn text-white fs-4 p-1 bg-transparent" data-bs-dismiss="modal" aria-label="Close">
+                            &times;
+                        </button>
+                    </div>
+
+                    <form method="post" asp-action="Delete" asp-controller="Rating">
+                        <input type="hidden" name="ratingId" value="@rating.Id" />
+
+                        <div class="modal-body text-white">
+                            <p>Are you sure to delete this review?</p>
+                            <p><i class="fa fa-star text-warning"> @rating.RatingValue</i></p>
+                            <p class="text-muted fst-italic">@rating.Review</p>
+                        </div>
+
+                        <div class="modal-footer border-0">
+                            <button type="submit" class="site-btn">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="col-12 text-center text-white my-5">
+        <h5>No reviews yet</h5>
+    </div>
+}

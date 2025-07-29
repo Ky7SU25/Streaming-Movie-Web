@@ -52,7 +52,7 @@ public class CommentHub : Hub
             User = user.FullName,
             Content = message,
             CreatedAt = DateTime.UtcNow,
-            Avatar =  String.IsNullOrEmpty(user.AvatarUrl) ? "/img/anime/review-1.jpg" : user.AvatarUrl,
+            Avatar = string.IsNullOrEmpty(user.AvatarUrl) ? "/img/anime/review-1.jpg" : user.AvatarUrl
         };
 
         await Clients.Group(groupName).SendAsync("ReceiveComment", comment);

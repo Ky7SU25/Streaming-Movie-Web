@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Microsoft.EntityFrameworkCore;
 using StreamingMovie.Application.Common.Pagination;
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Application.Interfaces;
@@ -132,6 +131,8 @@ namespace StreamingMovie.Application.Services
         
             var detailDto = _mapper.Map<MovieDetailDTO>(unifiedMovie);
 
+            detailDto.Movies = (await _unitOfWork.MovieRepository.GetAllAsync()).OrderByDescending(m => m.CreatedAt)
+                .Take(5);
             detailDto.Language = await _unitOfWork.CountryRepository.GetNameByIdAsync(unifiedMovie.CountryId);
 
             detailDto.Genres = unifiedMovie.IsSeries

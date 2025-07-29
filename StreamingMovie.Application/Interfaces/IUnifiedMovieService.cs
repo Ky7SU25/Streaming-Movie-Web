@@ -1,6 +1,7 @@
 ﻿using StreamingMovie.Application.Common.Pagination;
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Domain.Entities;
+using StreamingMovie.Domain.Enums;
 using System.Linq.Expressions;
 
 namespace StreamingMovie.Application.Interfaces

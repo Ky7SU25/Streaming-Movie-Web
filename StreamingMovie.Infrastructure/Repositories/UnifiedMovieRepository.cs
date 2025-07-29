@@ -2,12 +2,7 @@
 using StreamingMovie.Domain.Entities;
 using StreamingMovie.Domain.Interfaces;
 using StreamingMovie.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StreamingMovie.Infrastructure.Repositories
 {
@@ -21,7 +16,6 @@ namespace StreamingMovie.Infrastructure.Repositories
             _dbContext = context;
             _dbSet = _dbContext.Set<UnifiedMovie>();
         }
-
 
         public virtual async Task<IEnumerable<UnifiedMovie>> GetAllAsync()
         {
