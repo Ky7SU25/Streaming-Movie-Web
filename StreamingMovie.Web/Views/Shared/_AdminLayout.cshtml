@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="apple-touch-icon" sizes="76x76" href="~/assets/img/apple-icon.png" />
     <link rel="icon" type="image/png" href="~/assets/img/favicon.png" />
-    <title>Argon Dashboard 2 Tailwind by Creative Tim</title>
+    <title>Admin</title>
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <!-- Font Awesome Icons -->
@@ -377,6 +377,69 @@
             arrowIcon.classList.remove('rotate-180');
         }
     }
+</script>
+
+
+<script>
+        $(document).ready(function () {
+        $.ajax({
+            type: "POST",
+            url: '/Admin/MonthlyViews',
+            success: function (response) {
+                console.log('Line Chart Data:', response);
+                renderLineChart(response.labels, response.data);
+            },
+            error: function (xhr, status, error) {
+                console.error("Failed to load line chart data: lỗi", error);
+            }
+        });
+
+        function renderLineChart(labels, data) {
+            const ctx = document.getElementById('chart-line11').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,   // ví dụ: ["Jan", "Feb", "Mar", ...]
+                    datasets: [{
+                        label: 'Views per Month',
+                        data: data,     // ví dụ: [120, 200, 150, ...]
+                        fill: false,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        tension: 0.3,
+                        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: "Revenue"
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: "Month"
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
 </script>
 
 <script src="~/js/ChartJS.js"></script>

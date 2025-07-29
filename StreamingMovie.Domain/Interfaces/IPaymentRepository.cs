@@ -7,6 +7,10 @@ using StreamingMovie.Domain.Entities;
 
 namespace StreamingMovie.Domain.Interfaces
 {
-    public interface IPaymentRepository : IGenericRepository<Payment> { }
+    public interface IPaymentRepository : IGenericRepository<Payment> 
+    {
+        Task<IEnumerable<Payment>> GetPaymentsInMonthAsync(int year, int month);
+        Task<Dictionary<int, decimal>> GetMonthlyTotalsAsync(int year);
+    }
     
 }
