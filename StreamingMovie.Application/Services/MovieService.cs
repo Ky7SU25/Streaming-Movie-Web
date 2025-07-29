@@ -1,4 +1,5 @@
-﻿using StreamingMovie.Application.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using StreamingMovie.Application.DTOs;
 using StreamingMovie.Application.Interfaces;
 using StreamingMovie.Domain.Entities;
 using StreamingMovie.Domain.UnitOfWorks;
@@ -70,6 +71,87 @@ namespace StreamingMovie.Application.Services
             return result;
         }
 
+        public async Task<MovieVideoDTO> GetHighViewMovieVideoAsync()
+        {
+            // Get the movie with highest view count
+            var movie = await _unitOfWork
+                .MovieRepository.Query()
+                .OrderByDescending(m => m.ViewCount)
+                .FirstOrDefaultAsync();
+
+            if (movie == null)
+            {
+                throw new KeyNotFoundException("No movies found.");
+            }
+
+            return await GetMovieVideoAsync(movie.Id);
+        }
+
+        public async Task<List<TopViewMovieDTO>> GetTopViewMoviesAsync(
+            string period = "day",
+            int take = 4
+        )
+        {
+            DateTime filterDate = period.ToLower() switch
+            {
+                "day" => DateTime.Now.AddDays(-1),
+                "week" => DateTime.Now.AddDays(-7),
+                "month" => DateTime.Now.AddMonths(-1),
+                "year" => DateTime.Now.AddYears(-1),
+                _ => DateTime.Now.AddDays(-1)
+            };
+
+            // Get movies with highest view count based on period
+            var movies = await _unitOfWork
+                .MovieRepository.Query()
+                .OrderByDescending(m => m.ViewCount)
+                .ThenByDescending(m => m.ImdbRating)
+                .Take(take)
+                .Select(m => new TopViewMovieDTO
+                {
+                    Id = m.Id,
+                    Title = m.Title,
+                    Slug = m.Slug,
+                    PosterUrl = m.PosterUrl,
+                    ViewCount = m.ViewCount,
+                    Duration = m.Duration,
+                    TotalEpisodes = null, // Movies don't have episodes
+                    IsSeries = false,
+                    CreatedAt = m.CreatedAt ?? DateTime.Now
+                })
+                .ToListAsync();
+
+            // Get series with highest view count based on period
+            var series = await _unitOfWork
+                .SeriesRepository.Query()
+                .OrderByDescending(s => s.ViewCount)
+                .ThenByDescending(s => s.ImdbRating)
+                .Take(take)
+                .Select(s => new TopViewMovieDTO
+                {
+                    Id = s.Id,
+                    Title = s.Title,
+                    Slug = s.Slug,
+                    PosterUrl = s.PosterUrl,
+                    ViewCount = s.ViewCount,
+                    Duration = null, // Series don't have single duration
+                    TotalEpisodes = s.TotalEpisodes,
+                    IsSeries = true,
+                    CreatedAt = s.CreatedAt ?? DateTime.Now
+                })
+                .ToListAsync();
+
+            // Combine and sort by view count, then take top results
+            var combinedResults = movies
+                .Concat(series)
+                .OrderByDescending(x => x.ViewCount)
+                .ThenByDescending(x => x.CreatedAt)
+                .Take(take)
+                .ToList();
+
+            return combinedResults;
+        }
+
         private Dictionary<string, string> GenerateQualityUrls(string? baseVideoUrl)
         {
             var qualityUrls = new Dictionary<string, string>();
@@ -138,7 +220,6 @@ namespace StreamingMovie.Application.Services
             var uri = new Uri(videoUrl);
             var pathWithoutFile = uri.AbsolutePath;
 
-            // Remove the file name (video.mp4, etc.)
             var lastSlashIndex = pathWithoutFile.LastIndexOf('/');
             if (lastSlashIndex > 0)
             {
