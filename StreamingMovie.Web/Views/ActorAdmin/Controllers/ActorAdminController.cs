@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StreamingMovie.Application.Interfaces;
@@ -8,6 +9,7 @@ using StreamingMovie.Web.Views.ActorAdmin.ViewModels;
 
 namespace StreamingMovie.Web.Views.ActorAdmin.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ActorAdminController : Controller
     {
         private readonly SignInManager<User> _signInManager;
@@ -73,19 +75,20 @@ namespace StreamingMovie.Web.Views.ActorAdmin.Controllers
             existingActor.Biography = model.Biography;
             existingActor.DateOfBirth = model.Dob;
             existingActor.Nationality = model.Nationality;
+            existingActor.AvatarUrl = "https://cdn.movieflix.com/directors/bjh.jpg";
 
-            if (model.ImgProfile != null)
-            {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.ImgProfile.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+            //if (model.ImgProfile != null)
+            //{
+            //    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.ImgProfile.FileName);
+            //    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await model.ImgProfile.CopyToAsync(stream);
-                }
+            //    using (var stream = new FileStream(filePath, FileMode.Create))
+            //    {
+            //        await model.ImgProfile.CopyToAsync(stream);
+            //    }
 
-                existingActor.AvatarUrl = "/images/" + fileName; // Lưu URL tương đối vào DB
-            }
+            //    existingActor.AvatarUrl = "/images/" + fileName; // Lưu URL tương đối vào DB
+            //}
 
 
             await _actorService.UpdateAsync(existingActor);
@@ -109,16 +112,17 @@ namespace StreamingMovie.Web.Views.ActorAdmin.Controllers
                 Name = model.Fullname,
                 Biography = model.Biography,
                 DateOfBirth = model.Dob,
-                Nationality = model.Nationality
+                Nationality = model.Nationality,
+                AvatarUrl = "https://cdn.movieflix.com/actors/default.jpg" 
             };
 
-            // Nếu có ảnh thì lưu ảnh
-            if (model.ImgProfile != null)
-            {
-                using var memoryStream = new MemoryStream();
-                await model.ImgProfile.CopyToAsync(memoryStream);
-                newActor.AvatarUrl = Convert.ToBase64String(memoryStream.ToArray()); // hoặc lưu lên host và lấy link
-            }
+            //// Nếu có ảnh thì lưu ảnh
+            //if (model.ImgProfile != null)
+            //{
+            //    using var memoryStream = new MemoryStream();
+            //    await model.ImgProfile.CopyToAsync(memoryStream);
+            //    newActor.AvatarUrl = Convert.ToBase64String(memoryStream.ToArray()); // hoặc lưu lên host và lấy link
+            //}
 
             await _actorService.AddAsync(newActor); // đảm bảo service đã có AddAsync
             return RedirectToAction("ActorList");
@@ -277,16 +281,17 @@ namespace StreamingMovie.Web.Views.ActorAdmin.Controllers
             existingDirector.Biography = model.Biography;
             existingDirector.DateOfBirth = model.Dob;
             existingDirector.Nationality = model.Nationality;
-            if (model.ImgProfile != null)
-            {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.ImgProfile.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await model.ImgProfile.CopyToAsync(stream);
-                }
-                existingDirector.AvatarUrl = "/images/" + fileName; // Lưu URL tương đối vào DB
-            }
+            existingDirector.AvatarUrl = "https://cdn.movieflix.com/directors/default.jpg"; // Cập nhật URL ảnh mặc định
+            //if (model.ImgProfile != null)
+            //{
+            //    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.ImgProfile.FileName);
+            //    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+            //    using (var stream = new FileStream(filePath, FileMode.Create))
+            //    {
+            //        await model.ImgProfile.CopyToAsync(stream);
+            //    }
+            //    existingDirector.AvatarUrl = "/images/" + fileName; // Lưu URL tương đối vào DB
+            //}
             await _directorService.UpdateAsync(existingDirector);
             return RedirectToAction("DirectorList");
         }
@@ -308,16 +313,17 @@ namespace StreamingMovie.Web.Views.ActorAdmin.Controllers
                 Name = model.Fullname,
                 Biography = model.Biography,
                 DateOfBirth = model.Dob,
-                Nationality = model.Nationality
+                Nationality = model.Nationality,
+                AvatarUrl = "https://cdn.movieflix.com/directors/default.jpg" // Cập nhật URL ảnh mặc định
             };
 
-            // Nếu có ảnh thì lưu ảnh
-            if (model.ImgProfile != null)
-            {
-                using var memoryStream = new MemoryStream();
-                await model.ImgProfile.CopyToAsync(memoryStream);
-                newdirector.AvatarUrl = Convert.ToBase64String(memoryStream.ToArray()); // hoặc lưu lên host và lấy link
-            }
+            //// Nếu có ảnh thì lưu ảnh
+            //if (model.ImgProfile != null)
+            //{
+            //    using var memoryStream = new MemoryStream();
+            //    await model.ImgProfile.CopyToAsync(memoryStream);
+            //    newdirector.AvatarUrl = Convert.ToBase64String(memoryStream.ToArray()); // hoặc lưu lên host và lấy link
+            //}
 
             await _directorService.AddAsync(newdirector); // đảm bảo service đã có AddAsync
             return RedirectToAction("DirectorList");
