@@ -38,7 +38,7 @@ namespace StreamingMovie.Web.Views.UserProfile.Controllers
             var userProfileViewModel = new UserProfileViewModel
             {
                 FullName = user.FullName,
-                AvatarUrl = user.AvatarUrl,
+                AvatarUrl = String.IsNullOrEmpty(user.AvatarUrl) ? "/img/anime/review-1.jpg" : user.AvatarUrl,
                 SubscriptionType = user.SubscriptionType,
                 SubscriptionStartDate = user.SubscriptionStartDate,
                 SubscriptionEndDate = user.SubscriptionEndDate,
