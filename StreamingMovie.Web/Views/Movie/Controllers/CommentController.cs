@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Application.Interfaces;
-using StreamingRating.Application.Services;
 using System.Security.Claims;
 
 namespace StreamingMovie.Web.Views.Movie.Controllers

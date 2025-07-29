@@ -1,6 +1,10 @@
 ﻿@using StreamingMovie.Application.Common.Pagination
 @using StreamingMovie.Application.DTOs
 @model PagedResult<CommentResponseDTO>
+@{
+    var targetType = ViewBag.TargetType;
+    var targetId = ViewBag.TargetId;
+}
 
 @functions {
     public string GetRelativeTime(DateTime createdAt)
@@ -40,22 +44,22 @@
                         <ul class="dropdown-menu">
                             <li class="d-flex align-items-center justify-content-center">
                                 <!-- Nút icon -->
-                                @* @if(comment.IsCurrentUserReview)
-                                { *@
-                                <a href="#" class="text-primary px-3" data-bs-toggle="modal" data-bs-target="#editModal-@comment.Id" title="Edit">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
+                                @if(comment.isUserComment)
+                                {
+                                    <a href="#" class="text-primary px-3" data-bs-toggle="modal" data-bs-target="#editModal-@comment.Id" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
 
-                                <a href="#" class="text-danger pr-3" data-bs-toggle="modal" data-bs-target="#deleteModal-@comment.Id" title="Delete">
-                                    <i class="bi bi-trash-fill"></i>
-                                </a>
-                                @* }
+                                    <a href="#" class="text-danger pr-3" data-bs-toggle="modal" data-bs-target="#deleteModal-@comment.Id" title="Delete">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                }
                                 else
-                                    {
+                                {
                                     <a href="#" class="text-warning px-3" data-bs-toggle="modal" data-bs-target="#reportModal-@comment.Id" title="Report">
                                         <i class="bi bi-flag-fill"></i>
                                     </a>
-                                    } *@
+                                }
                             </li>
                         </ul>
                     </div>
@@ -64,10 +68,13 @@
                     @comment.Content
                 </p>
             </div>
+             <button class="text-white small btn btn-link mt-1" style="margin-left: 90px;" onclick="toggleComponent('commentForm-@comment.Id')">       
+                 <i class="bi bi-reply-fill"></i> Reply
+             </button>
         </div>
-        @* <div style="width: 90%; margin-left: auto;">
-            @await Component.InvokeAsync("ChildComment", new { parentId = comment.Id })
-        </div> *@
+        <div style="width: 90%; margin-left: auto;">
+             @await Component.InvokeAsync("ChildComment", new { parentId = comment.Id, targetType = targetType, targetId = targetId })
+        </div>
 
         <!-- Edit Comment Modal -->
         <div class="modal fade" id="editModal-@comment.Id" tabindex="-1" aria-labelledby="editCommentModalLabel-@comment.Id" aria-hidden="true">
@@ -131,9 +138,3 @@
         </div>
     }
 }
-@* else
-{
-<div class="col-12 text-center text-white my-5">
-    <h5>No comments yet.</h5>
-</div>
-} *@

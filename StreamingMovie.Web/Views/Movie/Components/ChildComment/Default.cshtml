@@ -1,21 +1,282 @@
 ﻿@using StreamingMovie.Application.Common.Pagination
 @using StreamingMovie.Application.DTOs
 @model IEnumerable<CommentResponseDTO>
+@{
+    var targetType = ViewBag.TargetType;
+    var targetId = ViewBag.TargetId;
+    var parentId = ViewBag.ParentId;
+}
 
-@foreach (var comment in Model)
-{
-    <div class="anime__review__item">
-        <div class="anime__review__item__pic">
-            <img src="@comment.AvatarUrl" alt="">
+@functions {
+    public string GetRelativeTime(DateTime createdAt)
+    {
+        var now = DateTime.UtcNow;
+        var diff = now - createdAt.ToUniversalTime();
+
+        if (diff.TotalMinutes < 1)
+            return "Just now";
+        if (diff.TotalMinutes < 60)
+            return $"{(int)diff.TotalMinutes} minute(s) ago";
+        if (diff.TotalHours < 24)
+            return $"{(int)diff.TotalHours} hour(s) ago";
+        return $"{(int)diff.TotalDays} day(s) ago";
+    }
+}
+<div class="anime__details__form mb-5" id="commentForm-@parentId">
+    <form id="childCommentForm-@parentId" action="javascript:void(0);">
+        <textarea id="messageInput-@parentId" placeholder="Your Comment"></textarea>
+        <button type="submit"><i class="fa fa-location-arrow"></i> Review</button>
+    </form>
+</div>
+
+<div id="childCommentsList-@parentId">
+    @foreach (var comment in Model)
+    {
+        <div class="anime__review__item">
+            <div class="anime__review__item__pic">
+                <img src="@comment.AvatarUrl" alt="">
+            </div>
+            <div class="anime__review__item__text">
+                @{
+                    var timeAgo = GetRelativeTime(comment.CreatedAt ?? DateTime.UtcNow);
+                }
+                <div class="d-flex justify-content-between align-items-start">
+                    <h6>@comment.FullName - <span>@timeAgo</span></h6>
+
+                    <div class="dropdown">
+                        <button class="btn btn-link text-white-50 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li class="d-flex align-items-center justify-content-center">
+                                <!-- Nút icon -->
+                                @if(comment.isUserComment)
+                                {
+                                    <a href="#" class="text-primary px-3" data-bs-toggle="modal" data-bs-target="#editModal-@comment.Id" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+
+                                    <a href="#" class="text-danger pr-3" data-bs-toggle="modal" data-bs-target="#deleteModal-@comment.Id" title="Delete">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="#" class="text-warning px-3" data-bs-toggle="modal" data-bs-target="#reportModal-@comment.Id" title="Report">
+                                        <i class="bi bi-flag-fill"></i>
+                                    </a>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <p>
+                    @comment.Content
+                </p>
+            </div>
+                <button class="text-white small btn btn-link mt-1" style="margin-left: 90px;"  onclick="toggleComponent('commentForm-@comment.Id')">
+                    <i class="bi bi-reply-fill"></i> Reply
+                </button>
         </div>
-        <div class="anime__review__item__text">
-            <h6>@comment.FullName - <span>1 Hour ago</span></h6>
-            <p>
-                @comment.Content
-            </p>
+        <div style="width: 90%; margin-left: auto;">
+              @await Component.InvokeAsync("ChildComment", new { parentId = comment.Id, targetType = targetType, targetId = targetId })
         </div>
+
+
+        <!-- Edit Comment Modal -->
+        <div class="modal fade" id="editModal-@comment.Id" tabindex="-1" aria-labelledby="editCommentModalLabel-@comment.Id" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content p-4 custom-modal">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title text-white" id="editRatingModalLabel-@comment.Id">
+                            <i class="bi bi-pencil-square text-primary mr-2"></i>
+                            Edit Your Comment
+                        </h5>
+                        <button type="button" class="btn text-white fs-4 p-1 bg-transparent" data-bs-dismiss="modal" aria-label="Close">
+                            &times;
+                        </button>
+                    </div>
+                    <form asp-action="Update" asp-controller="Comment" method="post">
+                        <div class="modal-body text-white">
+                            <input type="hidden" name="CommentId" value="@comment.Id" />
+
+                            <div class="mb-3">
+                                <label class="form-label">Comment</label>
+                                <textarea class="form-control" name="Content" rows="3">@comment.Content</textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="submit" class="site-btn">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete comment -->
+        <div class="modal fade" id="deleteModal-@comment.Id" tabindex="-1" aria-labelledby="deleteModalLabel-@comment.Id" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content p-4 custom-modal">
+
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title text-white" id="commentModalLabel">
+                            <i class="bi bi-trash-fill text-danger mr-2"></i>
+                            Delete Comment
+                        </h5>
+                        <button type="button" class="btn text-white fs-4 p-1 bg-transparent" data-bs-dismiss="modal" aria-label="Close">
+                            &times;
+                        </button>
+                    </div>
+
+                    <form method="post" asp-action="Delete" asp-controller="Comment">
+                        <input type="hidden" name="commentId" value="@comment.Id" />
+
+                        <div class="modal-body text-white">
+                            <p>Are you sure to delete this review?</p>
+                            <p class="text-muted fst-italic">@comment.Content</p>
+                        </div>
+
+                        <div class="modal-footer border-0">
+                            <button type="submit" class="site-btn">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
     </div>
-    <div style="width: 90%; margin-left: auto;">
-        @await Component.InvokeAsync("ChildComment", new { parentId = comment.Id })
-    </div>
+
+ @section Scripts{
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script>
+    console.log("Initializing comment section...");
+    const targetType = '@targetType';
+    const targetId = parseInt('@targetId');
+    const parentId = parseInt('@parentId');
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/commentHub")
+        .build();
+
+    connection.start().then(() => {
+        console.log("Connected to SignalR hub");
+        connection.invoke("JoinGroup", targetType, targetId);
+    }).catch(err => console.error("Connection failed:", err));
+
+    document.getElementById("childCommentForm-@parentId").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const message = document.getElementById("messageInput-@parentId").value;
+        if (message.trim()) {
+            connection.invoke("SendReplyComment", targetType, targetId, message, parentId);
+            document.getElementById("messageInput-@parentId").value = '';
+        }
+    });
+
+    connection.on("ReceiveComment", function (comment) {
+        const commentHtml = `
+            <div class="anime__review__item">
+                <div class="anime__review__item__pic">
+                    <img src="${comment.avatar}" alt="">
+                </div>
+                <div class="anime__review__item__text">
+                   <div class="d-flex justify-content-between align-items-start">
+                      <h6>${comment.user} - <span>${formatRelativeTime(comment.createdAt)}</span></h6>
+                          <div class="dropdown">
+                             <button class="btn btn-link text-white-50 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                 <i class="fa fa-ellipsis-v"></i>
+                             </button>
+                             <ul class="dropdown-menu">
+                                 <li class="d-flex align-items-center justify-content-center">
+                                     <!-- Nút icon -->
+                                     <a href="#" class="text-primary px-3" data-bs-toggle="modal" data-bs-target="#editModal-${comment.id}" title="Edit">
+                                         <i class="bi bi-pencil-square"></i>
+                                     </a>
+                        
+                                     <a href="#" class="text-danger pr-3" data-bs-toggle="modal" data-bs-target="#deleteModal-${comment.id}" title="Delete">
+                                         <i class="bi bi-trash-fill"></i>
+                                     </a>
+                                 </li>
+                             </ul>
+                          </div>
+                       </div>
+                    <p>${comment.content}</p>
+                </div>
+
+
+                <!-- Edit Comment Modal -->
+                <div class="modal fade" id="editModal-${comment.id}" tabindex="-1" aria-labelledby="editCommentModalLabel-${comment.id}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content p-4 custom-modal">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title text-white" id="editRatingModalLabel-${comment.id}">
+                                    <i class="bi bi-pencil-square text-primary mr-2"></i>
+                                    Edit Your Comment
+                                </h5>
+                                <button type="button" class="btn text-white fs-4 p-1 bg-transparent" data-bs-dismiss="modal" aria-label="Close">
+                                    &times;
+                                </button>
+                            </div>
+                            <form action="/Comment/Update" method="post">
+                                <div class="modal-body text-white">
+                                    <input type="hidden" name="CommentId" value="${comment.id}" />
+                                    <div class="mb-3">
+                                        <label class="form-label">Comment</label>
+                                        <textarea class="form-control" name="Content" rows="3">${comment.content}</textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-0">
+                                    <button type="submit" class="site-btn">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete comment -->
+                <div class="modal fade" id="deleteModal-${comment.id}" tabindex="-1" aria-labelledby="deleteModalLabel-${comment.id}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content p-4 custom-modal">
+
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title text-white" id="commentModalLabel">
+                                    <i class="bi bi-trash-fill text-danger mr-2"></i>
+                                    Delete Comment
+                                </h5>
+                                <button type="button" class="btn text-white fs-4 p-1 bg-transparent" data-bs-dismiss="modal" aria-label="Close">
+                                    &times;
+                                </button>
+                            </div>
+
+                            <form method="post" action="/Comment/Delete">
+                                <input type="hidden" name="commentId" value="${comment.id}" />
+
+                                <div class="modal-body text-white">
+                                    <p>Are you sure to delete this review?</p>
+                                    <p class="text-muted fst-italic">${comment.content}</p>
+                                </div>
+
+                                <div class="modal-footer border-0">
+                                    <button type="submit" class="site-btn">Delete</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        document.getElementById("childCommentsList-@parentId").insertAdjacentHTML('afterbegin', commentHtml);
+    });
+
+    function formatRelativeTime(isoString) {
+        const now = new Date();
+        const past = new Date(isoString);
+        const diffMs = now - past;
+        const diffMin = Math.floor(diffMs / 60000);
+        if (diffMin < 1) return "Just now";
+        if (diffMin < 60) return `${diffMin} minute(s) ago`;
+        const diffHrs = Math.floor(diffMin / 60);
+        if (diffHrs < 24) return `${diffHrs} hour(s) ago`;
+        const diffDays = Math.floor(diffHrs / 24);
+        return `${diffDays} day(s) ago`;
+    }
+</script>
 }

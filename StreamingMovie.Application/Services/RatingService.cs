@@ -38,8 +38,8 @@ namespace StreamingRating.Application.Services
             var totalCount = await query.CountAsync();
 
             var ratings = await query
-                .Include(r => r.User)
                 .OrderByDescending(r => r.CreatedAt)
+                .Include(r => r.User)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();

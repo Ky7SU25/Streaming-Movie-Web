@@ -4,26 +4,23 @@
     ViewBag.TargetId = Model.TargetId;
 }
 
-<div class="anime__details__review">
+<div class="anime__details__form mb-5">
     <div class="section-title">
         <h5>Comments</h5>
-    </div>
-    <div id="commentsList">
-        @{
-            var slug = Context.Request.Query["slug"].ToString();
-        }
-        @await Component.InvokeAsync("Comment", new { slug = slug })
-    </div>
-</div>
-
-<div class="anime__details__form">
-    <div class="section-title">
-        <h5>Your Comment</h5>
     </div>
     <form id="commentForm" action="javascript:void(0);">
         <textarea id="messageInput" placeholder="Your Comment"></textarea>
         <button type="submit"><i class="fa fa-location-arrow"></i> Review</button>
     </form>
+</div>
+
+<div class="anime__details__review">
+    <div id="commentsList">
+        @{
+            var slug = Context.Request.Query["slug"].ToString();
+        }
+        @await Component.InvokeAsync("Comment", new { slug = slug, targetType = ViewBag.TargetType, targetId = ViewBag.TargetId })
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
@@ -54,7 +51,7 @@
         const commentHtml = `
             <div class="anime__review__item">
                 <div class="anime__review__item__pic">
-                    <img src="${comment.Avatar}" alt="">
+                    <img src="${comment.avatar}" alt="">
                 </div>
                 <div class="anime__review__item__text">
                    <div class="d-flex justify-content-between align-items-start">
@@ -66,11 +63,11 @@
                              <ul class="dropdown-menu">
                                  <li class="d-flex align-items-center justify-content-center">
                                      <!-- Nút icon -->
-                                     <a href="#" class="text-primary px-3" data-bs-toggle="modal" data-bs-target="#editModal-${comment.Id}" title="Edit">
+                                     <a href="#" class="text-primary px-3" data-bs-toggle="modal" data-bs-target="#editModal-${comment.id}" title="Edit">
                                          <i class="bi bi-pencil-square"></i>
                                      </a>
                         
-                                     <a href="#" class="text-danger pr-3" data-bs-toggle="modal" data-bs-target="#deleteModal-${comment.Id}" title="Delete">
+                                     <a href="#" class="text-danger pr-3" data-bs-toggle="modal" data-bs-target="#deleteModal-${comment.id}" title="Delete">
                                          <i class="bi bi-trash-fill"></i>
                                      </a>
                                  </li>
@@ -79,14 +76,17 @@
                        </div>
                     <p>${comment.content}</p>
                 </div>
+                <a href="#" class="text-white small mt-1" style="margin-left: 90px;" data-comment-id="${comment.id}" onclick="onReplyClick(${comment.id}, '${comment.id}'); return false;">
+                      <i class="bi bi-reply-fill"></i> Reply
+                </a>
 
 
                 <!-- Edit Comment Modal -->
-                <div class="modal fade" id="editModal-${comment.Id}" tabindex="-1" aria-labelledby="editCommentModalLabel-${comment.Id}" aria-hidden="true">
+                <div class="modal fade" id="editModal-${comment.id}" tabindex="-1" aria-labelledby="editCommentModalLabel-${comment.id}" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content p-4 custom-modal">
                             <div class="modal-header border-0">
-                                <h5 class="modal-title text-white" id="editRatingModalLabel-${comment.Id}">
+                                <h5 class="modal-title text-white" id="editRatingModalLabel-${comment.id}">
                                     <i class="bi bi-pencil-square text-primary mr-2"></i>
                                     Edit Your Comment
                                 </h5>
@@ -94,13 +94,13 @@
                                     &times;
                                 </button>
                             </div>
-                            <form asp-action="Update" asp-controller="Comment" method="post">
+                            <form action="/Comment/Update" method="post">
                                 <div class="modal-body text-white">
-                                    <input type="hidden" name="CommentId" value="${comment.Id}" />
+                                    <input type="hidden" name="CommentId" value="${comment.id}" />
 
                                     <div class="mb-3">
                                         <label class="form-label">Comment</label>
-                                        <textarea class="form-control" name="Content" rows="3">${comment.Content}</textarea>
+                                        <textarea class="form-control" name="Content" rows="3">${comment.content}</textarea>
                                     </div>
                                 </div>
                                 <div class="modal-footer border-0">
@@ -112,7 +112,7 @@
                 </div>
 
                 <!-- Delete comment -->
-                <div class="modal fade" id="deleteModal-${comment.Id}" tabindex="-1" aria-labelledby="deleteModalLabel-${comment.Id}" aria-hidden="true">
+                <div class="modal fade" id="deleteModal-${comment.id}" tabindex="-1" aria-labelledby="deleteModalLabel-${comment.id}" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content p-4 custom-modal">
 
@@ -126,12 +126,12 @@
                                 </button>
                             </div>
 
-                            <form method="post" asp-action="Delete" asp-controller="Comment">
-                                <input type="hidden" name="commentId" value="${comment.Id}" />
+                            <form method="post" action="/Comment/Delete">
+                                <input type="hidden" name="commentId" value="${comment.id}" />
 
                                 <div class="modal-body text-white">
                                     <p>Are you sure to delete this review?</p>
-                                    <p class="text-muted fst-italic">${comment.Content}</p>
+                                    <p class="text-muted fst-italic">${comment.content}</p>
                                 </div>
 
                                 <div class="modal-footer border-0">
@@ -142,7 +142,7 @@
                     </div>
                 </div>
             </div>`;
-        document.getElementById("commentsList").insertAdjacentHTML('beforeend', commentHtml);
+        document.getElementById("commentsList").insertAdjacentHTML('afterbegin', commentHtml);
     });
 
     function formatRelativeTime(isoString) {
