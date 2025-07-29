@@ -42,7 +42,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-    options.KnownProxies.Add(IPAddress.Parse("127.0.0.1"));
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
 });
 var app = builder.Build();
 app.UseForwardedHeaders();
