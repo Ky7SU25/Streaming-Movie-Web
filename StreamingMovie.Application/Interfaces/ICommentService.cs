@@ -7,10 +7,10 @@ namespace StreamingMovie.Application.Interfaces
 {
     public interface ICommentService : IGenericService<Comment> 
     {
-        Task<PagedResult<CommentResponseDTO>> PaginateBySlugAsync(string slug, int? episodeId, int page = 1, int pageSize = 5);
+        Task<PagedResult<CommentResponseDTO>> PaginateBySlugAsync(string slug, int? episodeId, int? currentUserId, int page = 1, int pageSize = 5);
         Task<Comment> AddAsync(CommentRequestDTO request);
         Task<Comment> UpdateAsync(int commentId, string content);
         Task<bool> DeleteCommentWithChildrenAsync(int id);
-        Task<List<CommentResponseDTO>> GetRepliesAsync(int parentCommentId);
+        Task<List<CommentResponseDTO>> GetRepliesAsync(int parentCommentId, int? currentUserId);
     }
 }

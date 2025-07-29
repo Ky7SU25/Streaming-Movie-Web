@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using StreamingMovie.Application.Common.Pagination;
 using StreamingMovie.Application.DTOs;
@@ -21,7 +20,7 @@ namespace StreamingMovie.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<PagedResult<CommentResponseDTO>> PaginateBySlugAsync(string slug, int? episodeId, int page = 1, int pageSize = 5)
+        public async Task<PagedResult<CommentResponseDTO>> PaginateBySlugAsync(string slug, int? episodeId, int? currentUserId, int page = 1, int pageSize = 5)
         {
             if (string.IsNullOrWhiteSpace(slug))
             {
@@ -57,10 +56,29 @@ namespace StreamingMovie.Application.Services
                     c.MovieId == unifiedMovie.Id && c.SeriesId == null && c.ParentId == null);
             }
 
-            return await query
+            var totalCount = await query.CountAsync();
+
+            var comments = await query
+                .OrderByDescending(c => c.CreatedAt)
                 .Include(c => c.User)
-                .ProjectTo<CommentResponseDTO>(_mapper.ConfigurationProvider)
-                .ToPagedResultAsync(page, pageSize);
+                .Take(pageSize)
+                .ToListAsync();
+;
+            var mappedComments = _mapper.Map<List<CommentResponseDTO>>(comments);
+
+            foreach (var dto in mappedComments)
+            {
+                var correspondingComment = comments.First(r => r.Id == dto.Id);
+                dto.isUserComment = correspondingComment.UserId == currentUserId;
+            }
+
+            return new PagedResult<CommentResponseDTO>
+            {
+                Items = mappedComments,
+                Page = page,
+                PageSize = pageSize,
+                TotalItems = totalCount
+            };
         }
 
         public async Task<Comment> AddAsync(CommentRequestDTO request)
@@ -87,16 +105,23 @@ namespace StreamingMovie.Application.Services
             return await _unitOfWork.CommentRepository.DeleteCommentWithChildrenAsync(id);
         }
 
-        public async Task<List<CommentResponseDTO>> GetRepliesAsync(int parentCommentId)
+        public async Task<List<CommentResponseDTO>> GetRepliesAsync(int parentCommentId, int? currentUserId)
         {
             var replies = await _unitOfWork.CommentRepository
                 .Find(c => c.ParentId == parentCommentId)
+                .OrderByDescending(c => c.CreatedAt)
                 .Include(c => c.User)
-                .ProjectTo<CommentResponseDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
-            return replies;
-        }
+            var mappedComments = _mapper.Map<List<CommentResponseDTO>>(replies);
 
+            foreach (var dto in mappedComments)
+            {
+                var correspondingComment = replies.First(r => r.Id == dto.Id);
+                dto.isUserComment = correspondingComment.UserId == currentUserId;
+            }
+
+            return mappedComments;
+        }
     }
 }
