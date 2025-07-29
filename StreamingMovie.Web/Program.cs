@@ -65,10 +65,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCookiePolicy();
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapHub<CommentHub>("/commentHub");
 app.UseStatusCodePagesWithReExecute("/Home/Error404");
