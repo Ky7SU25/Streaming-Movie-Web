@@ -2,11 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="description" content="Anime Template">
-    <meta name="keywords" content="Anime, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>@ViewData["Title"] - Streaming Movie</title>
+
+    <!-- SEO Meta Tags -->
+    <title>@(ViewData["Title"] ?? "NgDat Movie - Xem Phim Online HD Miễn Phí | Phim Mới Nhất 2025")</title>
+    <meta name="description" content="@(ViewData["Description"] ?? "NgDat Movie - Trang web xem phim online miễn phí chất lượng HD. Xem phim mới nhất 2025, phim bộ, phim lẻ, phim chiếu rạp với phụ đề tiếng Việt. Không quảng cáo, tốc độ cao.")">
+    <meta name="keywords" content="@(ViewData["Keywords"] ?? "xem phim online, phim HD miễn phí, phim mới 2025, phim bộ, phim lẻ, phim chiếu rạp, NgDat Movie, movie.ngdat.io.vn, phim vietsub, phim hay nhất")">
+    <meta name="author" content="NgDat Movie">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://movie.ngdat.io.vn@(Context.Request.Path)">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:site_name" content="NgDat Movie">
+    <meta property="og:title" content="@(ViewData["OgTitle"] ?? ViewData["Title"] ?? "NgDat Movie - Xem Phim Online HD Miễn Phí")">
+    <meta property="og:description" content="@(ViewData["OgDescription"] ?? ViewData["Description"] ?? "Trang web xem phim online miễn phí chất lượng HD. Xem phim mới nhất 2025, phim bộ, phim lẻ với phụ đề tiếng Việt.")">
+    <meta property="og:image" content="@(ViewData["OgImage"] ?? "https://movie.ngdat.io.vn/img/og-image.jpg")">
+    <meta property="og:url" content="https://movie.ngdat.io.vn@(Context.Request.Path)">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="vi_VN">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@(ViewData["TwitterTitle"] ?? ViewData["Title"] ?? "NgDat Movie - Xem Phim Online HD Miễn Phí")">
+    <meta name="twitter:description" content="@(ViewData["TwitterDescription"] ?? ViewData["Description"] ?? "Trang web xem phim online miễn phí chất lượng HD với phụ đề tiếng Việt.")">
+    <meta name="twitter:image" content="@(ViewData["TwitterImage"] ?? "https://movie.ngdat.io.vn/img/og-image.jpg")">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+        {
+            "name": "NgDat Movie",
+            "alternateName": ["NgDat", "movie.ngdat.io.vn"],
+            "url": "https://movie.ngdat.io.vn",
+            "description": "Trang web xem phim online miễn phí chất lượng HD với phụ đề tiếng Việt",
+            "potentialAction": {
+                "target": "https://movie.ngdat.io.vn/Movie/Search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+            }
+        }
+    </script>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
