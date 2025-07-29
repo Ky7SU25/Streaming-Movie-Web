@@ -1,6 +1,6 @@
-
-﻿using Microsoft.AspNetCore.Authentication;
-﻿using System;
+using System;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -51,8 +51,14 @@ public static class DatabseServiceRegistration
             })
             .AddEntityFrameworkStores<MovieDbContext>()
             .AddDefaultTokenProviders();
-        
-        services.AddAuthentication()
+
+        services
+            .AddAuthentication()
+            .AddCookie(options =>
+            {
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            })
             .AddGoogle(options =>
             {
                 options.ClientId = config["Authentication:Google:ClientId"];
