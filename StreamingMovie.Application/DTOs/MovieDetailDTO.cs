@@ -7,7 +7,10 @@ namespace StreamingMovie.Application.DTOs
     {
         public string? Language { get; set; }
         public IEnumerable<string>? Genres { get; set; }
-        public RatingResponseDTO? UserReview { get; set; }
         public PagedResult<RatingResponseDTO>? Ratings { get; set; }
+
+        // For current user
+        public bool IsUserFavorite { get; set; }
+        public RatingResponseDTO? UserReview { get; set; }
     }
 }

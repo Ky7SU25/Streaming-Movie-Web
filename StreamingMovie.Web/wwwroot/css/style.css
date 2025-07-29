@@ -1113,6 +1113,20 @@ ol {
     margin-right: 11px;
 }
 
+.anime__details__btn .site-btn {
+    font-size: 13px;
+    color: #ffffff;
+    background: #AA0000;
+    font-weight: 700;
+    border: none;
+    border-radius: 4px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: inline-block;
+    padding: 14px 20px;
+    margin-right: 11px;
+}
+
 .anime__details__btn .watch-btn span {
     font-size: 13px;
     color: #ffffff;

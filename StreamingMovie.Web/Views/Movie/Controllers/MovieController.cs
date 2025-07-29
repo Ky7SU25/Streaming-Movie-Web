@@ -16,6 +16,7 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IMovieService _movieService;
         private readonly IRatingService _ratingService;
+        private readonly IFavoriteService _favoriteService;
 
         public MovieController(
             SignInManager<User> signInManager,
@@ -23,7 +24,8 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             IUnifiedMovieService unifiedMovieService,
             ICategoryService categoryService,
             IMovieService movieService,
-            IRatingService ratingService
+            IRatingService ratingService,
+            IFavoriteService favoriteService
         )
         {
             _signInManager = signInManager;
@@ -32,6 +34,7 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             _categoryService = categoryService;
             _movieService = movieService;
             _ratingService = ratingService;
+            _favoriteService = favoriteService;
         }
 
         public async Task<IActionResult> Details(string slug, int? page = 1)
@@ -47,11 +50,14 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
                     userId = parsedUserId;
                 }
 
+                var favorite = await _favoriteService.FindOneAsync(x =>
+                    x.UserId == parsedUserId &&
+                    (response.IsSeries ? x.SeriesId == response.Id : x.MovieId == response.Id));
+                response.IsUserFavorite = favorite != null;
+
                 var pagedRating = await _ratingService.PaginateBySlugAsync(slug, parsedUserId, page ?? 1);
                 response.Ratings = pagedRating;
-
-                if (userId != null)
-                    response.UserReview = await _ratingService.GetUserReview(parsedUserId, slug);
+                response.UserReview = await _ratingService.GetUserReview(parsedUserId, slug);
             }
             return View(response);
         }
