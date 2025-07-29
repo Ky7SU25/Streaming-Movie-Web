@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace StreamingMovie.Domain.Entities
 {
@@ -54,6 +56,14 @@ namespace StreamingMovie.Domain.Entities
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
 
         public DateTime? UpdatedAt { get; set; } = DateTime.Now;
+
+        public string EmbeddingJson { get; set; } // stringified float[]
+        [NotMapped]
+        public float[] Embedding
+        {
+            get => string.IsNullOrEmpty(EmbeddingJson) ? new float[0] : JsonSerializer.Deserialize<float[]>(EmbeddingJson);
+            set => EmbeddingJson = JsonSerializer.Serialize(value);
+        }
 
         // Navigation Properties
         public virtual Country Country { get; set; }

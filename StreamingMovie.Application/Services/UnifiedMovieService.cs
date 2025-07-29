@@ -4,10 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using StreamingMovie.Application.Common.Pagination;
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Application.Interfaces;
+using StreamingMovie.Application.Interfaces.ExternalServices.Huggingface;
 using StreamingMovie.Domain.Entities;
 using StreamingMovie.Domain.Enums;
 using StreamingMovie.Domain.UnitOfWorks;
 using System.Linq.Expressions;
+using System.Text.Json;
 
 namespace StreamingMovie.Application.Services
 {
@@ -15,11 +17,14 @@ namespace StreamingMovie.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IEmbeddingService _embeddingService;
 
-        public UnifiedMovieService(IUnitOfWork unitOfWork, IMapper mapper)
+
+        public UnifiedMovieService(IUnitOfWork unitOfWork, IMapper mapper, IEmbeddingService embeddingService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _embeddingService = embeddingService;
         }
 
         public async Task<IEnumerable<UnifiedMovie>> GetAllAsync()
@@ -134,6 +139,49 @@ namespace StreamingMovie.Application.Services
                 : await _unitOfWork.MovieCategoryRepository.GetNamesByMovieIdAsync(unifiedMovie.Id);
 
             return detailDto;
+        }
+
+        public async Task<PagedResult<UnifiedMovieDTO>> GetAISearchPagedMovies(string query)
+        {
+            var queryEmbedding = await _embeddingService.GetEmbeddingAsync(query);
+            var movies = await _unitOfWork.UnifiedMovieRepository.Find(m => m.IsSeries == false).ToListAsync();
+            var result = movies
+            .Select(m => new
+            {
+                Movie = m,
+                Score = CosineSimilarity(
+                    queryEmbedding,
+                    JsonSerializer.Deserialize<float[]>(m.EmbeddingJson) ?? new float[0]
+                )
+            })
+            .Where(x => x.Score >= 0.3f) // lọc những phim có điểm số tương đồng tối thiểu
+            .OrderByDescending(x => x.Score)
+            .Take(10)
+            .Select(x => x.Movie)
+            .ToList();
+            var pagedResult = new PagedResult<UnifiedMovieDTO>
+            {
+                Items = _mapper.Map<IEnumerable<UnifiedMovieDTO>>(result),
+                TotalItems = result.Count,
+                PageSize = 10,
+                Page = 1
+            };
+            return pagedResult;
+        }
+
+        private float CosineSimilarity(float[] vec1, float[] vec2)
+        {
+            if (vec1.Length != vec2.Length || vec1.Length == 0)
+                return 0;
+
+            float dot = 0, mag1 = 0, mag2 = 0;
+            for (int i = 0; i < vec1.Length; i++)
+            {
+                dot += vec1[i] * vec2[i];
+                mag1 += vec1[i] * vec1[i];
+                mag2 += vec2[i] * vec2[i];
+            }
+            return dot / ((float)Math.Sqrt(mag1) * (float)Math.Sqrt(mag2));
         }
     }
 }

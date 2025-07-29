@@ -14,6 +14,7 @@ namespace StreamingMovie.Application.Interfaces
         IQueryable<UnifiedMovie> Find(params Expression<Func<UnifiedMovie, bool>>[] predicates);
         // Filter
         Task<PagedResult<UnifiedMovieDTO>> GetFilteredPagedMovies(MovieFilterDTO filter);
+        Task<PagedResult<UnifiedMovieDTO>> GetAISearchPagedMovies(string query);
         // Get Movie Details
         Task<MovieDetailDTO?> GetMovieDetails(string slug);
     }

@@ -57,14 +57,30 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             }
         }
 
-        [HttpGet("search")]
-        public async Task<IActionResult> Search(string q, string returnUrl = null)
-        {
-            var filter = new MovieFilterDTO { Keyword = q, Page = 1, };
-            var sectionTitle = string.IsNullOrEmpty(q) ? "Search" : $"Search results for '{q}'";
+        //[HttpGet("search")]
+        //public async Task<IActionResult> Search(string q, string returnUrl = null)
+        //{
+        //    var filter = new MovieFilterDTO { Keyword = q, Page = 1, };
+        //    var sectionTitle = string.IsNullOrEmpty(q) ? "Search" : $"Search results for '{q}'";
 
-            return await RenderMovieList(filter, sectionTitle, returnUrl);
+        //    return await RenderMovieList(filter, sectionTitle, returnUrl);
+        //}
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(string q)
+        {
+           var result = await _unifiedMovieService.GetAISearchPagedMovies(q);
+            var filter = new MovieFilterDTO
+            {
+                Keyword = q,
+                Page = 1,
+            };
+            var sectionTitle = string.IsNullOrEmpty(q) ? "Search" : $"Search results for '{q}'";
+            ViewBag.Filter = filter;
+            ViewBag.SectionTitle = sectionTitle;
+            return View("MovieList", result);
         }
+
 
         [HttpGet("category")]
         public async Task<IActionResult> Category(string slug, string returnUrl = null)
@@ -126,6 +142,21 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
                 return PartialView("_MovieListPartial", result);
             }
             return View("MovieList", result);
+        }
+
+        private float CosineSimilarity(float[] vec1, float[] vec2)
+        {
+            if (vec1.Length != vec2.Length || vec1.Length == 0)
+                return 0;
+
+            float dot = 0, mag1 = 0, mag2 = 0;
+            for (int i = 0; i < vec1.Length; i++)
+            {
+                dot += vec1[i] * vec2[i];
+                mag1 += vec1[i] * vec1[i];
+                mag2 += vec2[i] * vec2[i];
+            }
+            return dot / ((float)Math.Sqrt(mag1) * (float)Math.Sqrt(mag2));
         }
     }
 }
