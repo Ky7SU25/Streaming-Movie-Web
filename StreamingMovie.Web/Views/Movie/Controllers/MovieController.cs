@@ -144,6 +144,13 @@ namespace StreamingMovie.Web.Views.Movie.Controllers
             return await RenderMovieList(filter, sectionTitle, returnUrl);
         }
 
+        // AJAX action for reloading sidebar component
+        [HttpGet]
+        public async Task<IActionResult> ReloadSidebar(string period = "day")
+        {
+            return ViewComponent("SidebarMovie", new { period = period });
+        }
+
         private async Task<IActionResult> RenderMovieList(
             MovieFilterDTO filter,
             string? sectionTitle,
