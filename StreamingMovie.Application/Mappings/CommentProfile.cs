@@ -9,7 +9,8 @@ namespace StreamingMovie.Application.Mappings
         public CommentProfile()
         {
             CreateMap<RatingRequestDTO, Rating>()
-                .ForMember(dest => dest.UserId, opt => {
+                .ForMember(dest => dest.UserId, opt =>
+                {
                     opt.PreCondition(src => src.UserId.HasValue);
                     opt.MapFrom(src => src.UserId.Value);
                 })
@@ -20,7 +21,6 @@ namespace StreamingMovie.Application.Mappings
                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
                .ForMember(dest => dest.AvatarUrl, opt => opt.MapFrom(src => src.User.AvatarUrl));
-
             CreateMap<CommentRequestDTO, Comment>()
                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 

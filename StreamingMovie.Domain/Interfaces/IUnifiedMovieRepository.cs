@@ -1,4 +1,5 @@
 ﻿using StreamingMovie.Domain.Entities;
+using StreamingMovie.Domain.Enums;
 using System.Linq.Expressions;
 namespace StreamingMovie.Domain.Interfaces
 {
