@@ -1,5 +1,8 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using System.Text.Json;
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using StreamingMovie.Application.Common.Pagination;
 using StreamingMovie.Application.DTOs;
 using StreamingMovie.Application.Interfaces;
@@ -7,8 +10,6 @@ using StreamingMovie.Application.Interfaces.ExternalServices.Huggingface;
 using StreamingMovie.Domain.Entities;
 using StreamingMovie.Domain.Enums;
 using StreamingMovie.Domain.UnitOfWorks;
-using System.Linq.Expressions;
-using System.Text.Json;
 
 namespace StreamingMovie.Application.Services
 {
@@ -18,8 +19,11 @@ namespace StreamingMovie.Application.Services
         private readonly IMapper _mapper;
         private readonly IEmbeddingService _embeddingService;
 
-
-        public UnifiedMovieService(IUnitOfWork unitOfWork, IMapper mapper, IEmbeddingService embeddingService)
+        public UnifiedMovieService(
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IEmbeddingService embeddingService
+        )
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -31,17 +35,23 @@ namespace StreamingMovie.Application.Services
             return await _unitOfWork.UnifiedMovieRepository.GetAllAsync();
         }
 
-        public IQueryable<UnifiedMovie> Query(params Expression<Func<UnifiedMovie, object>>[] includes)
+        public IQueryable<UnifiedMovie> Query(
+            params Expression<Func<UnifiedMovie, object>>[] includes
+        )
         {
             return _unitOfWork.UnifiedMovieRepository.Query(includes);
         }
 
-        public IQueryable<UnifiedMovie> Find(params Expression<Func<UnifiedMovie, bool>>[] predicates)
+        public IQueryable<UnifiedMovie> Find(
+            params Expression<Func<UnifiedMovie, bool>>[] predicates
+        )
         {
             return _unitOfWork.UnifiedMovieRepository.Find(predicates);
         }
 
-        public async Task<PagedResult<UnifiedMovieDTO>> GetFilteredPagedMovies(MovieFilterDTO filter)
+        public async Task<PagedResult<UnifiedMovieDTO>> GetFilteredPagedMovies(
+            MovieFilterDTO filter
+        )
         {
             var predicates = new List<Expression<Func<UnifiedMovie, bool>>>();
 
@@ -49,23 +59,28 @@ namespace StreamingMovie.Application.Services
             if (!string.IsNullOrWhiteSpace(filter.Keyword))
             {
                 predicates.Add(x =>
-                    x.Slug.Contains(filter.Keyword) ||
-                    x.Title.Contains(filter.Keyword) ||
-                    (x.Description != null && x.Description.Contains(filter.Keyword)) ||
-                    (x.OriginalTitle != null && x.OriginalTitle.Contains(filter.Keyword)));
+                    x.Slug.Contains(filter.Keyword)
+                    || x.Title.Contains(filter.Keyword)
+                    || (x.Description != null && x.Description.Contains(filter.Keyword))
+                    || (x.OriginalTitle != null && x.OriginalTitle.Contains(filter.Keyword))
+                );
             }
 
             // Country
             if (filter.Countries?.Any(x => !string.IsNullOrWhiteSpace(x)) == true)
             {
-                var countryIds = await _unitOfWork.CountryRepository.GetIdsByCodesAsync(filter.Countries);
+                var countryIds = await _unitOfWork.CountryRepository.GetIdsByCodesAsync(
+                    filter.Countries
+                );
                 predicates.Add(x => x.CountryId.HasValue && countryIds.Contains(x.CountryId.Value));
             }
 
             // Year
             if (filter.Years?.Any() == true)
             {
-                predicates.Add(x => x.ReleaseDate.HasValue && filter.Years.Contains(x.ReleaseDate.Value.Year));
+                predicates.Add(x =>
+                    x.ReleaseDate.HasValue && filter.Years.Contains(x.ReleaseDate.Value.Year)
+                );
             }
 
             // Type
@@ -87,21 +102,27 @@ namespace StreamingMovie.Application.Services
             // Query
             var query = _unitOfWork.UnifiedMovieRepository.Find(predicates.ToArray());
 
-            // Category 
+            // Category
             if (filter.Categories?.Any(x => !string.IsNullOrWhiteSpace(x)) == true)
             {
-                var categoryIds = await _unitOfWork.CategoryRepository
-                    .GetCategoryIdsBySlugsAsync(filter.Categories);
+                var categoryIds = await _unitOfWork.CategoryRepository.GetCategoryIdsBySlugsAsync(
+                    filter.Categories
+                );
 
-                var movieIds = await _unitOfWork.MovieCategoryRepository
-                    .GetMovieIdsByCategoryIdsAsync(categoryIds);
+                var movieIds =
+                    await _unitOfWork.MovieCategoryRepository.GetMovieIdsByCategoryIdsAsync(
+                        categoryIds
+                    );
 
-                var seriesIds = await _unitOfWork.SeriesCategoryRepository
-                    .GetSeriesIdsByCategoryIdsAsync(categoryIds);
+                var seriesIds =
+                    await _unitOfWork.SeriesCategoryRepository.GetSeriesIdsByCategoryIdsAsync(
+                        categoryIds
+                    );
 
                 query = query.Where(x =>
-                    (!x.IsSeries && movieIds.Contains(x.Id)) ||
-                    (x.IsSeries && seriesIds.Contains(x.Id)));
+                    (!x.IsSeries && movieIds.Contains(x.Id))
+                    || (x.IsSeries && seriesIds.Contains(x.Id))
+                );
             }
 
             // Sort
@@ -126,14 +147,18 @@ namespace StreamingMovie.Application.Services
                 throw new ArgumentException("Slug cannot be null or empty.", nameof(slug));
             }
 
-            var unifiedMovie = await _unitOfWork.UnifiedMovieRepository
-                .FindOneAsync(x => x.Slug == slug);
-        
+            var unifiedMovie = await _unitOfWork.UnifiedMovieRepository.FindOneAsync(x =>
+                x.Slug == slug
+            );
+
             var detailDto = _mapper.Map<MovieDetailDTO>(unifiedMovie);
 
-            detailDto.Movies = (await _unitOfWork.MovieRepository.GetAllAsync()).OrderByDescending(m => m.CreatedAt)
+            detailDto.Movies = (await _unitOfWork.MovieRepository.GetAllAsync())
+                .OrderByDescending(m => m.CreatedAt)
                 .Take(5);
-            detailDto.Language = await _unitOfWork.CountryRepository.GetNameByIdAsync(unifiedMovie.CountryId);
+            detailDto.Language = await _unitOfWork.CountryRepository.GetNameByIdAsync(
+                unifiedMovie.CountryId
+            );
 
             detailDto.Genres = unifiedMovie.IsSeries
                 ? await _unitOfWork.SeriesCategoryRepository.GetNameBySeriesIdAsync(unifiedMovie.Id)
@@ -145,21 +170,23 @@ namespace StreamingMovie.Application.Services
         public async Task<PagedResult<UnifiedMovieDTO>> GetAISearchPagedMovies(string query)
         {
             var queryEmbedding = await _embeddingService.GetEmbeddingAsync(query);
-            var movies = await _unitOfWork.UnifiedMovieRepository.Find(m => m.IsSeries == false).ToListAsync();
+            var movies = await _unitOfWork
+                .UnifiedMovieRepository.Find(m => m.IsSeries == false)
+                .ToListAsync();
             var result = movies
-            .Select(m => new
-            {
-                Movie = m,
-                Score = CosineSimilarity(
-                    queryEmbedding,
-                    JsonSerializer.Deserialize<float[]>(m.EmbeddingJson) ?? new float[0]
-                )
-            })
-            .Where(x => x.Score >= 0.3f) // lọc những phim có điểm số tương đồng tối thiểu
-            .OrderByDescending(x => x.Score)
-            .Take(10)
-            .Select(x => x.Movie)
-            .ToList();
+                .Select(m => new
+                {
+                    Movie = m,
+                    Score = CosineSimilarity(
+                        queryEmbedding,
+                        JsonSerializer.Deserialize<float[]>(m.EmbeddingJson) ?? new float[0]
+                    )
+                })
+                .Where(x => x.Score >= 0.3f) // lọc những phim có điểm số tương đồng tối thiểu
+                .OrderByDescending(x => x.Score)
+                .Take(10)
+                .Select(x => x.Movie)
+                .ToList();
             var pagedResult = new PagedResult<UnifiedMovieDTO>
             {
                 Items = _mapper.Map<IEnumerable<UnifiedMovieDTO>>(result),
@@ -175,7 +202,9 @@ namespace StreamingMovie.Application.Services
             if (vec1.Length != vec2.Length || vec1.Length == 0)
                 return 0;
 
-            float dot = 0, mag1 = 0, mag2 = 0;
+            float dot = 0,
+                mag1 = 0,
+                mag2 = 0;
             for (int i = 0; i < vec1.Length; i++)
             {
                 dot += vec1[i] * vec2[i];
