@@ -76,9 +76,9 @@
                        </div>
                     <p>${comment.content}</p>
                 </div>
-                <a href="#" class="text-white small mt-1" style="margin-left: 90px;" data-comment-id="${comment.id}" onclick="onReplyClick(${comment.id}, '${comment.id}'); return false;">
-                      <i class="bi bi-reply-fill"></i> Reply
-                </a>
+                <button class="text-white small btn btn-link" style="margin-left: 80px;"  onclick="toggleComponent('commentForm-@comment.Id')">
+                    <i class="bi bi-reply-fill"></i> Reply
+                </button>
 
 
                 <!-- Edit Comment Modal -->
