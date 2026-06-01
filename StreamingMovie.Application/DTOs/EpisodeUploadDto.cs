@@ -5,7 +5,7 @@ namespace StreamingMovie.Application.DTOs;
 public class EpisodeUploadDto
 {
     // Episode Information
-    [Required(ErrorMessage = "Series ID is required")]
+    [Required(ErrorMessage = "Series ID is requireda")]
     public int SeriesId { get; set; }
 
     [Required(ErrorMessage = "Season number is required")]
